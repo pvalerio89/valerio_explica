@@ -1,0 +1,37 @@
+# Autoriza o canal Valerio Explica (uma vez). 1) Rode sem endereço: o resumo/log mostra o link.
+# 2) Abra, entre na conta do canal VALERIO EXPLICA (não a do Quiz) e aceite.
+# 3) A página final "não abre" (127.0.0.1): copie o endereço inteiro e rode de novo colando no campo.
+# 4) O log mostra o valor para o Secret YT_REFRESH_TOKEN. Salve o Secret e apague esta execução.
+name: Autorizar YouTube
+
+on:
+  workflow_dispatch:
+    inputs:
+      endereco:
+        description: "Endereço da página depois do login (vazio = pegar o link)"
+        required: false
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  autorizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    env:
+      YT_CLIENT_ID: ${{ vars.YT_CLIENT_ID || secrets.YT_CLIENT_ID }}
+      YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+      ENDERECO: ${{ inputs.endereco }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Link ou troca do código
+        run: |
+          if [ -z "$ENDERECO" ]; then
+            { echo "### Abra este link e autorize com a conta do Valerio Explica"; echo; python automacao/youtube.py link; } | tee -a "$GITHUB_STEP_SUMMARY"
+          else
+            python automacao/youtube.py trocar "$ENDERECO"
+          fi

@@ -1,0 +1,81 @@
+# Envia ao YouTube o vídeo que o "Gerar vídeo" guardou na Release "video-NN".
+# Título, descrição e thumbnail vêm de <pasta>/publicar/. Anota o link no publicados.json.
+name: Enviar ao YouTube
+
+on:
+  workflow_dispatch:
+    inputs:
+      pasta:
+        description: "Pasta do vídeo (ex.: video-07-tema)"
+        required: true
+        type: string
+      privacidade:
+        description: "privado = só você vê; publico = vai ao ar; agendado = usa o campo abaixo"
+        required: true
+        default: privado
+        type: choice
+        options: [privado, publico, agendado]
+      quando:
+        description: "Só para agendado: data e hora de Brasília (ex.: 2026-11-14T12:00)"
+        required: false
+        type: string
+
+concurrency:
+  group: publicacao
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  enviar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      PASTA: ${{ inputs.pasta }}
+      PRIV: ${{ inputs.privacidade }}
+      QUANDO: ${{ inputs.quando }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Baixar o vídeo da Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          PASTA=$(basename "${PASTA%/}")
+          NN=$(printf "%02d" "$(echo "$PASTA" | sed -E 's/^video-0*([0-9]+).*/\1/')")
+          echo "PASTA=$PASTA" >> "$GITHUB_ENV"
+          mkdir -p baixado
+          gh release download "video-$NN" --dir baixado --pattern '*-final.mp4'
+          echo "MP4=$(ls baixado/*.mp4 | head -1)" >> "$GITHUB_ENV"
+
+      - name: Enviar
+        env:
+          YT_CLIENT_ID: ${{ vars.YT_CLIENT_ID || secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: |
+          extra=""
+          [ "$PRIV" = publico ] && extra="--publico"
+          if [ "$PRIV" = agendado ]; then
+            [ -n "$QUANDO" ] || { echo "::error::Escolheu agendado mas não preencheu a data."; exit 1; }
+            extra="--agendar $QUANDO"
+          fi
+          python automacao/youtube.py enviar "$PASTA" "$MP4" $extra | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Gravar no publicados.json
+        if: always()
+        run: |
+          git diff --quiet publicados.json && exit 0
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add publicados.json
+          git commit -m "YouTube: $PASTA enviado ($PRIV)"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"

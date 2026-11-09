@@ -11,7 +11,7 @@ import path from "node:path";
 import { pathToFileURL } from "node:url";
 import puppeteer from "puppeteer-core";
 
-const CHROME = "C:/Program Files/Google/Chrome/Application/chrome.exe";
+const CHROME = process.env.CHROME || "C:/Program Files/Google/Chrome/Application/chrome.exe";
 const W = 1920, H = 1080;
 const argv = process.argv.slice(2);
 const pagina = argv[0];
@@ -20,7 +20,8 @@ if (!pagina) { console.error("uso: node render.mjs pagina.html saida.mp4 [--dur 
 
 const browser = await puppeteer.launch({
   executablePath: CHROME, headless: true,
-  args: ["--allow-file-access-from-files", "--hide-scrollbars", "--force-color-profile=srgb", "--font-render-hinting=none"],
+  args: ["--allow-file-access-from-files", "--hide-scrollbars", "--force-color-profile=srgb", "--font-render-hinting=none",
+    ...(process.env.CHROME_NO_SANDBOX ? ["--no-sandbox"] : [])],
   defaultViewport: { width: W, height: H, deviceScaleFactor: 1 },
 });
 const page = await browser.newPage();

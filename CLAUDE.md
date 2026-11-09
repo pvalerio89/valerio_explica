@@ -13,6 +13,8 @@ Canal **Valerio Explica** (@ValerioExplica, ID `UCpt3lpOipp-lWumvdIUD9jg`) sobre
 - Repositório privado `pvalerio89/valerio_explica`: só código, roteiros, imagens e textos. `.mp4` e `.wav` ficam fora do Git (ver `.gitignore`).
 - Vídeo final + `narracao.wav` + thumbnail de cada vídeo vão para a Release `video-NN` do repositório.
 - Chaves (Gemini, YouTube) só em Secrets do GitHub ou no `.env` do PC, nunca no repositório.
+- Automação (ver `COMO-USAR.md`): workflow **Gerar vídeo** (Windows; `automacao/gerar.py`: voz → `alinhar_whisper.py` → `montar.py` → eventos → `motion/audio.py NN pasta` → render em 3 pedaços) e **Enviar ao YouTube** (`automacao/youtube.py`, lê `publicar/titulo-descricao.txt` e `publicar/thumbnail*.jpg`; registra em `publicados.json`). Para um vídeo novo o Claude só precisa deixar no repositório: `video-NN-*/roteiro.md` (blocos `## BLOCO N` com falas `> ...`), `gerar_voz.py`, `publicar/` e `motion/hf/vNN/index.html` (ou `cenas.js` + `montar.py`).
+- `render.mjs` aceita `CHROME=<caminho>` (e `CHROME_NO_SANDBOX=1` no Linux) para rodar fora do PC.
 
 ## Regras principais
 - Voz oficial: Gemini **Sadaltager**, estilo "youtuber brasileiro explicando um segredo". Grátis = 10 pedidos/dia → narrar em blocos grandes.

@@ -1,0 +1,111 @@
+# Gera um vídeo longo na nuvem (Windows, para ter as fontes Bahnschrift / Segoe UI / Consolas do estilo).
+# Prévia: entrega a prancha (1 quadro a cada 15 s). Completo: entrega o mp4 e guarda na Release "video-NN",
+# junto com a narração, para o "Enviar ao YouTube" e para não gastar a cota de voz de novo.
+name: Gerar vídeo
+
+on:
+  workflow_dispatch:
+    inputs:
+      pasta:
+        description: "Pasta do vídeo (ex.: video-07-tema)"
+        required: true
+        type: string
+      modo:
+        description: "previa = só a prancha; completo = vídeo final"
+        required: true
+        default: previa
+        type: choice
+        options: [previa, completo]
+
+concurrency:
+  group: gerar-${{ inputs.pasta }}
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  gerar:
+    runs-on: windows-latest
+    timeout-minutes: 240
+    defaults:
+      run:
+        shell: bash
+    env:
+      PASTA: ${{ inputs.pasta }}
+      MODO: ${{ inputs.modo }}
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: utf-8
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: motion/package-lock.json
+
+      - name: Instalar pacotes e ffmpeg
+        run: |
+          python -m pip install -q -r requirements.txt
+          (cd motion && npm ci --no-audit --no-fund)
+          choco install ffmpeg -y --no-progress > /dev/null
+          ffmpeg -version | head -1
+
+      - name: Número do vídeo
+        id: n
+        run: |
+          PASTA=$(basename "${PASTA%/}")
+          NN=$(echo "$PASTA" | sed -E 's/^video-0*([0-9]+).*/\1/')
+          NN=$(printf "%02d" "$NN")
+          echo "PASTA=$PASTA" >> "$GITHUB_ENV"
+          echo "NN=$NN" >> "$GITHUB_ENV"
+          echo "tag=video-$NN" >> "$GITHUB_OUTPUT"
+
+      - name: Reaproveitar a narração já gerada (se houver)
+        run: |
+          mkdir -p "$PASTA/voz"
+          gh release download "video-$NN" --dir "$PASTA/voz" --pattern '*.wav' --skip-existing 2>/dev/null \
+            && echo "narração baixada da Release" || echo "sem narração guardada: vai gerar com o Gemini"
+          ls "$PASTA/voz" || true
+
+      - name: Gerar
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if [ "$MODO" = previa ]; then python automacao/gerar.py "$PASTA" --previa; else python automacao/gerar.py "$PASTA"; fi
+
+      - name: Guardar resultado (7 dias, aba Actions)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.n.outputs.tag }}-${{ inputs.modo }}
+          path: saida/
+          retention-days: 7
+
+      - name: Guardar na Release (vídeo + narração)
+        run: |
+          arquivos=("$PASTA"/voz/*.wav)
+          [ "$MODO" = completo ] && arquivos+=(saida/video-$NN-final.mp4)
+          for t in "$PASTA"/publicar/thumbnail*.jpg; do [ -f "$t" ] && arquivos+=("$t"); done
+          if gh release view "video-$NN" > /dev/null 2>&1; then
+            gh release upload "video-$NN" "${arquivos[@]}" --clobber
+          else
+            gh release create "video-$NN" "${arquivos[@]}" --title "Vídeo $NN ($PASTA)" \
+              --notes "Gerado na nuvem em $(date -u +%Y-%m-%d) (commit $GITHUB_SHA)."
+          fi
+
+      - name: Gravar tempos e eventos no repositório
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "motion/v$NN" "motion/hf/v$NN/index.html" 2>/dev/null || true
+          git diff --cached --quiet && exit 0
+          git commit -m "Gerar vídeo: tempos e eventos de $PASTA"
+          git pull --rebase origin "$GITHUB_REF_NAME"
+          git push origin "HEAD:$GITHUB_REF_NAME"
