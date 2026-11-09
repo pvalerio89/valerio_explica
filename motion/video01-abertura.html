@@ -1,0 +1,312 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Valerio Explica - video 1 abertura</title>
+<!--
+  Abertura do vídeo 1 (0–10 s). Desenho à mão com p5.brush (canvas WEBGL) + textos/legenda em SVG.
+  Renderizar: node capturar.mjs video01-abertura.html saida.mp4 10 30 ../video-01-70-views/voz/bloco-1.wav
+  A página expõe window.renderFrame(t) e window.cenaPronta para o capturar.mjs.
+-->
+<style>
+  html, body { margin: 0; background: #000; }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+  #stage canvas { position: absolute; inset: 0; z-index: 0; }
+  #svg { position: absolute; inset: 0; z-index: 1; }
+  .giz { font-family: "Segoe Print", cursive; font-weight: 700; }
+  .forte { font-family: "Segoe UI Black", "Segoe UI", sans-serif; font-weight: 900; }
+  .ui { font-family: "Segoe UI", sans-serif; font-weight: 700; }
+</style>
+<script src="node_modules/p5/lib/p5.min.js"></script>
+<script src="node_modules/p5.brush/dist/p5.brush.js"></script>
+</head>
+<body>
+<div id="stage"><svg id="svg" width="1920" height="1080" viewBox="0 0 1920 1080"></svg></div>
+<script>
+// ---------------- paleta e utilidades ----------------
+const C = {
+  lousa: [21, 25, 29], noite: [15, 19, 46], manha: [58, 46, 20],
+  branco: "#f3f1ea", verde: "#22e07a", verdeEsc: "#1c6b4e", amarelo: "#ffc83d",
+  cinza: "#9aa3ad", vermelho: "#ff4b4b",
+};
+const W = 1920, H = 1080;
+const clamp = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const outCubic = (x) => 1 - Math.pow(1 - x, 3);
+const inOut = (x) => x * x * (3 - 2 * x);
+const outBack = (x, s = 1.7) => { x -= 1; return 1 + x * x * ((s + 1) * x + s); };
+const lerp = (a, b, x) => a + (b - a) * x;
+const mixRGB = (c1, c2, x) => c1.map((v, i) => Math.round(lerp(v, c2[i], x)));
+
+// pontos de um retângulo arredondado (sentido horário, começando no topo-esquerdo)
+function rectPts(x, y, w, h, r, passo = 14) {
+  const pts = [];
+  const arco = (cx, cy, a0, a1) => {
+    const n = Math.max(4, Math.round((Math.abs(a1 - a0) * r) / passo));
+    for (let i = 0; i <= n; i++) {
+      const a = lerp(a0, a1, i / n);
+      pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]);
+    }
+  };
+  const lado = (x0, y0, x1, y1) => {
+    const n = Math.max(1, Math.round(Math.hypot(x1 - x0, y1 - y0) / (passo * 3)));
+    for (let i = 1; i < n; i++) pts.push([lerp(x0, x1, i / n), lerp(y0, y1, i / n)]);
+  };
+  arco(x + r, y + r, Math.PI, 1.5 * Math.PI); lado(x + r, y, x + w - r, y);
+  arco(x + w - r, y + r, 1.5 * Math.PI, 2 * Math.PI); lado(x + w, y + r, x + w, y + h - r);
+  arco(x + w - r, y + h - r, 0, 0.5 * Math.PI); lado(x + w - r, y + h, x + r, y + h);
+  arco(x + r, y + h - r, 0.5 * Math.PI, Math.PI); lado(x, y + h - r, x, y + r);
+  pts.push([...pts[0]]);
+  return pts;
+}
+function circPts(cx, cy, r, a0 = -Math.PI / 2, volta = 2 * Math.PI, n = 72) {
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const a = a0 + (volta * i) / n;
+    pts.push([cx + Math.cos(a) * r, cy + Math.sin(a) * r]);
+  }
+  return pts;
+}
+// parte inicial de um caminho (efeito de "desenhar" o traço)
+function parcial(pts, p) {
+  if (p >= 1) return pts;
+  if (p <= 0) return [];
+  const seg = [];
+  let total = 0;
+  for (let i = 1; i < pts.length; i++) {
+    const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]);
+    seg.push(d); total += d;
+  }
+  let alvo = total * p, out = [pts[0]];
+  for (let i = 1; i < pts.length; i++) {
+    if (alvo >= seg[i - 1]) { out.push(pts[i]); alvo -= seg[i - 1]; continue; }
+    const k = alvo / seg[i - 1];
+    out.push([lerp(pts[i - 1][0], pts[i][0], k), lerp(pts[i - 1][1], pts[i][1], k)]);
+    break;
+  }
+  return out;
+}
+function traco(pts, p, pincel, cor, peso) {
+  const q = parcial(pts, p);
+  if (q.length < 2) return;
+  brush.set(pincel, cor, peso);
+  brush.spline(q, 0);
+}
+function mancha(x, y, w, h, cor, alpha, modo) {
+  if (alpha <= 2 || w <= 2 || h <= 2) return;
+  brush.noStroke(); brush.noHatch();
+  brush.fill(cor, alpha);
+  brush.rect(x, y, w, h, modo);
+  brush.noFill();
+}
+function resetPincel() {
+  brush.noFill(); brush.noHatch();
+  if (brush.noWash) brush.noWash();
+  if (brush.noField) brush.noField();
+}
+
+// ---------------- legenda (tempos das pausas do áudio) ----------------
+const LEG = [
+  [0.00, 1.10, "Você posta um vídeo.", ["vídeo."]],
+  [1.15, 2.40, "Passou dias nele.", ["dias"]],
+  [2.45, 4.95, "Roteiro, edição, thumbnail...", ["Roteiro,", "edição,", "thumbnail..."]],
+  [5.05, 7.35, "Vai dormir ansioso, acorda,", ["ansioso,"]],
+  [7.40, 9.10, "abre o YouTube Studio...", ["Studio..."]],
+  [9.15, 10.0, "e ele está lá.", ["lá."]],
+];
+function legendaSVG(t) {
+  for (const [a, b, txt, dest] of LEG) {
+    if (t < a || t >= b) continue;
+    const op = prog(t, a, a + 0.15) * (1 - prog(t, b - 0.08, b));
+    const dy = (1 - outCubic(prog(t, a, a + 0.2))) * 20;
+    const spans = txt.split(" ").map((w) =>
+      `<tspan fill="${dest.includes(w) ? C.verde : C.branco}">${w}</tspan>`).join(" ");
+    return `<text class="forte" x="960" y="${1000 + dy}" font-size="58" text-anchor="middle"
+      stroke="#000" stroke-width="12" stroke-linejoin="round" paint-order="stroke" opacity="${op}">${spans}</text>`;
+  }
+  return "";
+}
+
+// ---------------- quadro ----------------
+let T = 0, prontoSetup;
+window.cenaPronta = new Promise((r) => (prontoSetup = r));
+new p5((p) => {
+  brush.instance(p);
+  p.setup = () => {
+    const c = p.createCanvas(W, H, p.WEBGL);
+    c.parent("stage");
+    p.setAttributes("preserveDrawingBuffer", true);
+    p.pixelDensity(1);
+    brush.scaleBrushes(1.5);
+    p.noLoop();
+    document.fonts.ready.then(() => prontoSetup());
+  };
+
+  p.draw = () => {
+    const t = T;
+    p.randomSeed(1000 + Math.floor(t * 8)); // "boil": o traço muda 8x por segundo, como desenho à mão
+    p.noiseSeed(7);
+    resetPincel();
+
+    // cor da lousa: noite e amanhecer na cena 3
+    const noite = prog(t, 4.85, 5.25) * (1 - prog(t, 6.45, 6.9));
+    const manha = prog(t, 6.45, 6.6) * (1 - prog(t, 6.75, 7.3));
+    let bg = mixRGB(C.lousa, C.noite, noite);
+    bg = mixRGB(bg, C.manha, manha * 0.9);
+    p.background(bg[0], bg[1], bg[2]);
+    p.translate(-W / 2, -H / 2);
+
+    let svg = "";
+
+    // câmera (zoom no número no final)
+    const zoom = inOut(prog(t, 9.15, 9.7));
+    const camS = lerp(1, 1.25, zoom), camX = 960, camY = 640;
+    const tremor = Math.sin(t * 70) * 7 * prog(t, 9.7, 9.78) * (1 - prog(t, 9.85, 10));
+    p.push();
+    p.translate(camX + tremor, camY); p.scale(camS); p.translate(-camX, -camY);
+    let g = ""; // SVG que acompanha a câmera
+
+    // ===== cena 1 e 2: cartão do vídeo (0 -> 5) =====
+    if (t < 5.05) {
+      const sai = inOut(prog(t, 4.55, 4.95));
+      const lado = inOut(prog(t, 2.05, 2.45));
+      const cw = 680, ch = 470;
+      const cx = lerp(960, 560, lado) - cw / 2, cy = lerp(300, 290, lado) - ch / 2 + 170 - sai * 40;
+      const pc = outCubic(prog(t, 0.0, 0.6)) * (1 - sai);
+      // contorno do cartão sendo desenhado
+      traco(rectPts(cx, cy, cw, ch, 34), pc, "charcoal", C.branco, 2.2);
+      // miniatura em aquarela
+      const aMini = 170 * prog(t, 0.3, 0.6) * (1 - sai);
+      mancha(cx + 26, cy + 26, cw - 52, 310, C.verdeEsc, aMini);
+      // botão play
+      const ppl = outBack(prog(t, 0.45, 0.75)) * (1 - sai);
+      if (ppl > 0.02) {
+        const px = cx + cw / 2, py = cy + 26 + 155, r = 58 * ppl;
+        traco(circPts(px, py, r), 1, "crayon", C.branco, 1.6);
+        brush.noStroke(); brush.fill(C.branco, 230);
+        brush.polygon([[px - r * 0.35, py - r * 0.5], [px - r * 0.35, py + r * 0.5], [px + r * 0.55, py]]);
+        brush.noFill();
+      }
+      // barra de envio
+      const pe = outCubic(prog(t, 0.3, 1.05));
+      const bx = cx + 26, by = cy + 365, bw = cw - 52;
+      traco(rectPts(bx, by, bw, 26, 13, 10), prog(t, 0.25, 0.5) * (1 - sai), "HB", C.cinza, 1.2);
+      if (pe > 0) mancha(bx + 3, by + 3, (bw - 6) * pe, 20, C.verde, 230 * (1 - sai));
+      const txt = pe < 1 ? `Enviando... ${Math.round(pe * 100)}%` : "✓ Publicado";
+      g += `<text class="giz" x="${bx}" y="${by + 72}" font-size="30" fill="${pe < 1 ? C.cinza : C.verde}"
+        opacity="${prog(t, 0.3, 0.45) * (1 - sai)}">${txt}</text>`;
+
+      // selo "DIA n" (passou dias nele)
+      if (t >= 1.15 && t < 2.3) {
+        const e = outBack(prog(t, 1.15, 1.45)) * (1 - prog(t, 2.0, 2.25));
+        const dias = 1 + Math.floor(6 * outCubic(prog(t, 1.25, 1.95)));
+        const sx = 1290, sy = 250;
+        p.push(); p.translate(sx, sy); p.rotate(-0.1); p.scale(Math.max(0.01, e));
+        mancha(-120, -48, 240, 96, C.amarelo, 235);
+        p.pop();
+        g += `<text class="forte" x="${sx}" y="${sy + 17}" font-size="50" text-anchor="middle" fill="#15191d"
+          transform="rotate(-5.7 ${sx} ${sy}) translate(${sx} ${sy}) scale(${Math.max(0.01, e)}) translate(${-sx} ${-sy})">DIA ${dias}</text>`;
+      }
+
+      // checklist (cena 2)
+      [["ROTEIRO", 2.5], ["EDIÇÃO", 3.2], ["THUMBNAIL", 3.95]].forEach(([nome, tk], k) => {
+        if (t < tk - 0.3) return;
+        const y = 330 + k * 150, x = 1080;
+        const ent = outCubic(prog(t, tk - 0.3, tk)) * (1 - sai);
+        traco(rectPts(x, y - 40, 80, 80, 14, 8), ent, "charcoal", C.branco, 1.8);
+        const pc2 = prog(t, tk, tk + 0.3);
+        if (pc2 > 0) traco([[x + 14, y + 2], [x + 34, y + 26], [x + 72, y - 30]], pc2 * (1 - sai), "crayon", C.verde, 3.2);
+        g += `<text class="giz" x="${x + 115 - (1 - ent) * 40}" y="${y + 18}" font-size="58" fill="${C.branco}"
+          opacity="${ent}">${nome}</text>`;
+      });
+    }
+
+    // ===== cena 3: noite, relógio (5 -> 7.4) =====
+    if (t >= 4.95 && t < 7.45) {
+      const a = prog(t, 4.95, 5.3) * (1 - prog(t, 7.1, 7.42));
+      const giro = inOut(prog(t, 5.2, 6.45));
+      const horas = 23 + giro * 8;
+      const corR = manha > 0.05 ? C.amarelo : C.branco;
+      const tr = Math.sin(t * 90) * 8 * prog(t, 6.45, 6.55) * (1 - prog(t, 6.9, 7.2));
+      const cx = 960 + tr, cy = 460, r = 220;
+      traco(circPts(cx, cy, r), outCubic(prog(t, 4.95, 5.45)) * a, "charcoal", corR, 3);
+      for (let k = 0; k < 12; k++) {
+        const ang = (k * Math.PI) / 6, r0 = k % 3 === 0 ? r - 40 : r - 26;
+        if (a > 0.5) traco([[cx + Math.sin(ang) * r0, cy - Math.cos(ang) * r0],
+                            [cx + Math.sin(ang) * (r - 12), cy - Math.cos(ang) * (r - 12)]], 1, "HB", corR, 1.6);
+      }
+      const angM = giro * Math.PI * 2 * 8, angH = ((horas % 12) / 12) * Math.PI * 2;
+      if (a > 0.3) {
+        traco([[cx, cy], [cx + Math.sin(angH) * r * 0.5, cy - Math.cos(angH) * r * 0.5]], 1, "crayon", corR, 3.5);
+        traco([[cx, cy], [cx + Math.sin(angM) * r * 0.78, cy - Math.cos(angM) * r * 0.78]], 1, "crayon", C.amarelo, 2.5);
+      }
+      const hh = Math.floor(horas) % 24, mm = Math.floor((horas % 1) * 60);
+      g += `<text class="forte" x="960" y="790" font-size="70" text-anchor="middle" opacity="${a}"
+        fill="${manha > 0.05 ? C.amarelo : C.cinza}">${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}</text>`;
+      if (noite > 0.05) {
+        // lua com contorno áspero e Zzz subindo
+        g += `<g opacity="${noite}" filter="url(#aspero)">
+          <path d="M1560 120 a110 110 0 1 0 90 200 a95 95 0 1 1 -90 -200z" fill="#efe9cf"/></g>`;
+        for (let k = 0; k < 3; k++) {
+          const f = (t * 0.9 + k * 0.33) % 1;
+          g += `<text class="giz" x="${1240 + f * 120 + k * 12}" y="${330 - f * 170 - k * 10}" font-size="${46 + k * 14}"
+            fill="${C.branco}" opacity="${noite * (1 - f)}">z</text>`;
+        }
+      }
+    }
+
+    // ===== cena 4: celular com 70 views (7.3 -> 10) =====
+    if (t >= 7.3) {
+      const sob = outCubic(prog(t, 7.3, 7.85));
+      const pw = 520, ph = 900, px = 960 - pw / 2, py = lerp(1150, 70, sob);
+      traco(rectPts(px, py, pw, ph, 70), 1, "charcoal", C.branco, 3);
+      traco(rectPts(px + 22, py + 22, pw - 44, ph - 44, 52), 1, "HB", C.cinza, 1);
+      mancha(px + 205, py + 40, 110, 22, "#0b0d10", 220);
+      // cabeçalho "Studio"
+      mancha(px + 50, py + 100, 56, 40, C.vermelho, 230);
+      g += `<path d="M${px + 70} ${py + 109} l0 22 l18 -11z" fill="#fff"/>
+        <text class="forte" x="${px + 122}" y="${py + 134}" font-size="42" fill="${C.branco}">Studio</text>
+        <text class="ui" x="${px + 50}" y="${py + 210}" font-size="28" fill="${C.cinza}">Seu vídeo mais recente</text>`;
+      mancha(px + 50, py + 240, pw - 100, 200, C.verdeEsc, 190);
+      const n = Math.round(70 * outCubic(prog(t, 7.75, 8.9)));
+      g += `<text class="ui" x="${px + 50}" y="${py + 510}" font-size="32" fill="${C.cinza}">Visualizações</text>
+        <text class="forte" x="${px + 44}" y="${py + 650}" font-size="150" fill="${C.branco}">${n}</text>`;
+      // gráfico que achata
+      const gx0 = px + 50, gx1 = px + pw - 50, gy = py + 800;
+      const curva = [[0, 0], [0.1, 25], [0.2, 48], [0.3, 60], [0.45, 65], [0.65, 67], [0.85, 68], [1, 68]]
+        .map(([u, v]) => [lerp(gx0, gx1, u), gy - v * 1.5]);
+      traco(curva, prog(t, 7.8, 8.9), "crayon", C.verde, 2.6);
+      traco([[gx0, gy + 8], [gx1, gy + 8]], prog(t, 7.7, 8.0), "HB", C.cinza, 0.8);
+      // carimbo PARADO
+      if (t >= 9.68) {
+        const e = outBack(prog(t, 9.68, 9.88), 2.4);
+        const s = lerp(1.6, 0.72, e), op = Math.min(1, e * 1.6);
+        const sx = 1100, sy = py + 590;
+        g += `<g transform="translate(${sx} ${sy}) rotate(-12) scale(${s})" opacity="${op}" filter="url(#aspero)">
+          <rect x="-245" y="-75" width="490" height="150" rx="22" fill="rgba(255,75,75,0.12)" stroke="${C.vermelho}" stroke-width="14"/>
+          <text class="forte" x="0" y="38" font-size="104" text-anchor="middle" fill="${C.vermelho}">PARADO</text></g>`;
+      }
+    }
+
+    p.pop();
+    svg += `<g transform="translate(${camX + tremor} ${camY}) scale(${camS}) translate(${-camX} ${-camY})">${g}</g>`;
+    svg += legendaSVG(t);
+    // fade de entrada e saída
+    const f = Math.min(prog(t, 0, 0.12), 1 - prog(t, 9.88, 10));
+    if (f < 1) svg += `<rect width="1920" height="1080" fill="#000" opacity="${1 - f}"/>`;
+    document.getElementById("conteudo").innerHTML = svg;
+  };
+
+  window.renderFrame = async (t) => { T = t; await p.redraw(); };
+});
+
+// SVG base: filtro de textura de giz + grão por cima de tudo
+document.getElementById("svg").innerHTML = `
+  <defs>
+    <filter id="aspero"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="3"/>
+      <feDisplacementMap in="SourceGraphic" scale="6"/></filter>
+    <filter id="grao"><feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="3" seed="9"/>
+      <feColorMatrix values="0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.07 0"/></filter>
+  </defs>
+  <g id="conteudo"></g>
+  <rect width="1920" height="1080" filter="url(#grao)" pointer-events="none"/>`;
+</script>
+</body></html>

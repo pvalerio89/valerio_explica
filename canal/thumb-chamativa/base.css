@@ -1,0 +1,10 @@
+@font-face{font-family:TB;src:url(InterDisplay-Black.otf)}
+*{box-sizing:border-box}
+body{margin:0;width:1280px;height:720px;overflow:hidden;position:relative;font-family:TB,sans-serif;background:var(--bg)}
+.rays{position:absolute;inset:-400px;background:repeating-conic-gradient(from 0deg at 50% 50%,var(--ray) 0 9deg,transparent 9deg 18deg);opacity:.55}
+.glow{position:absolute;inset:0;background:radial-gradient(circle at 30% 55%,rgba(255,255,255,.9),rgba(255,255,255,0) 45%)}
+.foto{position:absolute;bottom:-10px;filter:drop-shadow(0 0 0 #fff) drop-shadow(6px 0 0 #fff) drop-shadow(-6px 0 0 #fff) drop-shadow(0 -6px 0 #fff) drop-shadow(0 6px 0 #fff) drop-shadow(14px 18px 0 rgba(0,0,0,.35))}
+.txt{position:absolute;text-transform:uppercase;line-height:.86;letter-spacing:-3px}
+.big{color:#111;-webkit-text-stroke:0;text-shadow:8px 8px 0 #fff,10px 12px 0 rgba(0,0,0,.25)}
+.tag{display:inline-block;background:#149a55;color:#fff;padding:12px 26px 6px;border-radius:18px;border:7px solid #111;box-shadow:10px 10px 0 #111}
+.red{white-space:nowrap;display:inline-block;background:#ff2d2d;color:#fff;padding:10px 24px 4px;border-radius:16px;border:7px solid #111;box-shadow:9px 9px 0 #111}

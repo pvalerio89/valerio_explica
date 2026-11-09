@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Video 5 - previa bloco 1</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  @font-face{font-family:"Bahnschrift";src:local("Bahnschrift");font-weight:100 900;}
+  :root{--bg:#f3eee4;--ink:#16191c;--muted:#5c574e;--line:#d8cfbe;--card:#fffdf8;--acc:#149a55;--red:#d14343;}
+  html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:var(--bg);}
+  #root{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--bg);font-family:"Segoe UI",sans-serif;color:var(--ink);}
+  #world{position:absolute;left:0;top:0;width:10000px;height:1080px;}
+  .dots{position:absolute;inset:-100px;background-image:radial-gradient(#cfc5b2 1.6px,transparent 1.7px);background-size:36px 36px;opacity:.55;}
+  .h{font-family:"Bahnschrift",sans-serif;font-weight:700;letter-spacing:-1px;}
+  .card{position:absolute;background:var(--card);border:2px solid var(--line);border-radius:22px;box-shadow:0 18px 40px rgba(80,60,30,.10);}
+  .tag{font-family:"Consolas",monospace;font-size:30px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+  svg.m{position:absolute;overflow:visible;}
+  .ln{stroke:#16191c;stroke-width:7;stroke-linejoin:round;stroke-linecap:round;}
+  .chip{position:absolute;padding:8px 26px;border-radius:999px;font-family:"Bahnschrift";font-weight:700;font-size:54px;}
+  /* cena 1: contador */
+  #cont{left:760px;top:250px;width:1080px;height:380px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  #cont .lab{position:absolute;left:36px;top:26px;}
+  #cont .n{font-family:"Consolas",monospace;font-weight:700;font-size:170px;line-height:1;letter-spacing:-4px;}
+  #cont .s{font-size:46px;color:var(--muted);margin-top:8px;}
+  #play{position:absolute;right:36px;top:28px;width:78px;height:54px;}
+  #quanto{left:1080px;top:690px;background:var(--acc);color:#fff;font-size:76px;padding:12px 44px;box-shadow:0 14px 30px rgba(20,154,85,.25);}
+  /* cena 2: balança */
+  #bal{position:absolute;left:2700px;top:110px;}
+  #fonte2{position:absolute;left:2900px;top:900px;}
+  .views{position:absolute;top:792px;font-family:"Consolas";font-size:30px;color:var(--muted);letter-spacing:1px;}
+  #stamp{position:absolute;left:3080px;top:300px;padding:6px 34px;border:9px solid var(--red);border-radius:18px;color:var(--red);
+    font-family:"Bahnschrift";font-weight:700;font-size:140px;line-height:1.05;transform:rotate(-9deg);opacity:0;background:rgba(255,253,248,.92);}
+  /* cena 3: sorte x algoritmo x conta */
+  .pq{width:400px;height:300px;top:230px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .pq .ic{width:120px;height:120px;margin-bottom:16px;}
+  .pq .s{font-family:"Bahnschrift";font-weight:700;font-size:52px;}
+  .pq .x{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Bahnschrift";font-weight:700;font-size:220px;color:var(--red);opacity:0;}
+  #conta{left:4680px;top:600px;width:600px;height:230px;display:flex;align-items:center;justify-content:center;gap:30px;border:3px solid var(--acc);}
+  #conta .s{font-family:"Bahnschrift";font-weight:700;font-size:96px;color:var(--acc);}
+  #balao{position:absolute;left:470px;top:70px;width:330px;height:150px;opacity:0;}
+  #balao .t{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Bahnschrift";font-weight:700;font-size:62px;}
+  #balao .risco{position:absolute;left:52px;top:68px;width:226px;height:9px;background:var(--red);border-radius:5px;transform-origin:left center;transform:scaleX(0) rotate(-6deg);}
+  /* cena 4: fórmula */
+  #form{left:6540px;top:250px;width:1260px;height:360px;}
+  #form .lab{position:absolute;left:36px;top:26px;}
+  .pc{position:absolute;top:110px;width:250px;height:170px;border-radius:18px;background:#ece5d6;border:2px dashed #c8bda7;}
+  .pc .q,.pc .v{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Bahnschrift";font-weight:700;}
+  .pc .q{font-size:110px;color:#b9ae98;}
+  .pc .v{font-size:76px;opacity:0;}
+  .op{position:absolute;top:120px;width:60px;text-align:center;font-family:"Bahnschrift";font-weight:700;font-size:110px;color:var(--muted);}
+  #abrir{left:6700px;top:690px;background:var(--ink);color:#fff;font-size:50px;}
+  /* cena 5: teaser fevereiro */
+  #cal{left:8520px;top:180px;width:470px;height:520px;overflow:hidden;}
+  #cal .topo{position:absolute;left:0;right:0;top:0;height:130px;background:var(--red);display:flex;align-items:center;justify-content:center;color:#fff;font-family:"Bahnschrift";font-weight:700;font-size:64px;letter-spacing:4px;}
+  #cal .d{position:absolute;left:0;right:0;top:150px;text-align:center;font-family:"Bahnschrift";font-weight:700;font-size:240px;line-height:1;}
+  #cal .a{position:absolute;left:0;right:0;top:400px;text-align:center;font-family:"Consolas";font-size:52px;color:var(--muted);letter-spacing:6px;}
+  #lock{position:absolute;left:8890px;top:520px;width:190px;height:220px;}
+  #peq{left:9180px;top:300px;width:560px;height:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  #peq .s{font-family:"Bahnschrift";font-weight:700;font-size:56px;}
+  #peq .r{font-family:"Bahnschrift";font-weight:700;font-size:56px;color:var(--red);margin-top:10px;}
+  #legenda{position:absolute;left:720px;right:40px;bottom:36px;text-align:center;font-family:"Bahnschrift";font-weight:700;font-size:46px;}
+  #legenda span{display:inline-block;opacity:0;margin:0 8px;}
+  #legenda .g{color:var(--acc);}
+  #legenda .r{color:var(--red);}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="root" data-width="1920" data-height="1080" data-start="0" data-duration="32.8">
+  <div id="world">
+    <div class="dots"></div>
+
+    <!-- CENA 1: contador de views -->
+    <div id="cont" class="card"><div class="lab tag">visualizações</div>
+      <svg id="play" viewBox="0 0 78 54"><rect width="78" height="54" rx="14" fill="#d14343"/><path d="M31 15l20 12-20 12z" fill="#fff"/></svg>
+      <div class="n" id="num">0</div><div class="s">views</div></div>
+    <div id="quanto" class="chip">= R$ ?</div>
+
+    <!-- CENA 2: balança -->
+    <svg id="bal" width="1100" height="700" viewBox="0 0 1100 700">
+      <path d="M470 640 L630 640 L590 600 L510 600 Z" fill="#fffdf8" class="ln"/>
+      <rect x="538" y="150" width="24" height="455" fill="#fffdf8" class="ln" style="stroke-width:6"/>
+      <g id="beam">
+        <rect x="130" y="128" width="840" height="26" rx="13" fill="#2c3238" class="ln" style="stroke-width:6"/>
+        <circle cx="550" cy="141" r="26" fill="#149a55" class="ln" style="stroke-width:6"/>
+      </g>
+      <g id="panL">
+        <path d="M150 141 L70 420 M150 141 L230 420" stroke="#16191c" stroke-width="5"/>
+        <path d="M40 420 L260 420 Q250 490 150 490 Q50 490 40 420 Z" fill="#fffdf8" class="ln"/>
+        <g id="coins"><ellipse cx="130" cy="408" rx="34" ry="12" fill="#e9b949" class="ln" style="stroke-width:5"/><ellipse cx="170" cy="396" rx="34" ry="12" fill="#e9b949" class="ln" style="stroke-width:5"/></g>
+        <text id="tL" x="150" y="560" text-anchor="middle" font-family="Bahnschrift" font-weight="700" font-size="76" fill="#149a55" opacity="0">R$ 50</text>
+      </g>
+      <g id="panR">
+        <path d="M950 141 L870 420 M950 141 L1030 420" stroke="#16191c" stroke-width="5"/>
+        <path d="M840 420 L1060 420 Q1050 490 950 490 Q850 490 840 420 Z" fill="#fffdf8" class="ln"/>
+        <g id="bills">
+          <rect x="880" y="384" width="140" height="34" rx="6" fill="#7fc79b" class="ln" style="stroke-width:5"/>
+          <rect x="872" y="350" width="140" height="34" rx="6" fill="#8fcfa9" class="ln" style="stroke-width:5"/>
+          <rect x="886" y="316" width="140" height="34" rx="6" fill="#7fc79b" class="ln" style="stroke-width:5"/>
+          <rect x="878" y="282" width="140" height="34" rx="6" fill="#8fcfa9" class="ln" style="stroke-width:5"/>
+          <rect x="884" y="248" width="140" height="34" rx="6" fill="#7fc79b" class="ln" style="stroke-width:5"/>
+        </g>
+        <text id="tR" x="950" y="560" text-anchor="middle" font-family="Bahnschrift" font-weight="700" font-size="76" fill="#149a55" opacity="0">R$ 20.000</text>
+      </g>
+    </svg>
+    <div class="views" id="vL" style="left:2722px;width:300px;text-align:center">1 mi de views</div>
+    <div class="views" id="vR" style="left:3522px;width:300px;text-align:center">1 mi de views</div>
+    <div id="fonte2" class="tag">segundo estimativas de sites · não é número oficial</div>
+    <div id="stamp">400×</div>
+
+    <!-- CENA 3: sorte? algoritmo? conta -->
+    <div id="pq1" class="card pq" style="left:4560px"><svg class="ic" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="#fffdf8" stroke="#16191c" stroke-width="1.8"/><circle cx="8" cy="8" r="1.7" fill="#16191c"/><circle cx="16" cy="16" r="1.7" fill="#16191c"/><circle cx="12" cy="12" r="1.7" fill="#16191c"/><circle cx="16" cy="8" r="1.7" fill="#16191c"/><circle cx="8" cy="16" r="1.7" fill="#16191c"/></svg><div class="s">sorte</div><div class="x">✕</div></div>
+    <div id="pq2" class="card pq" style="left:5040px"><svg class="ic" viewBox="0 0 24 24"><path d="M12 2l2 3 3.5-.8.6 3.5 3 2-1.9 3 1.9 3-3 2-.6 3.5L14 19l-2 3-2-3-3.5.8-.6-3.5-3-2 1.9-3-1.9-3 3-2 .6-3.5L10 5z" fill="#8a8172"/><circle cx="12" cy="12" r="3.6" fill="#fffdf8"/></svg><div class="s">algoritmo</div><div class="x">✕</div></div>
+    <div id="conta" class="card"><svg width="120" height="120" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="3" fill="#149a55"/><rect x="6.5" y="4.5" width="11" height="4.5" rx="1" fill="#e6f5ec"/><g fill="#fff"><rect x="6.5" y="11" width="3" height="3" rx=".6"/><rect x="10.5" y="11" width="3" height="3" rx=".6"/><rect x="14.5" y="11" width="3" height="3" rx=".6"/><rect x="6.5" y="15.5" width="3" height="3" rx=".6"/><rect x="10.5" y="15.5" width="3" height="3" rx=".6"/><rect x="14.5" y="15.5" width="3" height="3" rx=".6"/></g></svg><div class="s">conta</div></div>
+
+    <!-- CENA 4: a conta, peça por peça -->
+    <div id="form" class="card"><div class="lab tag">a conta inteira</div>
+      <div class="pc" id="p0" style="left:40px"><div class="q">?</div><div class="v">views</div></div>
+      <div class="op" style="left:300px">÷</div>
+      <div class="pc" id="p1" style="left:370px"><div class="q">?</div><div class="v">1.000</div></div>
+      <div class="op" style="left:630px">×</div>
+      <div class="pc" id="p2" style="left:700px"><div class="q">?</div><div class="v" style="color:#149a55">RPM</div></div>
+      <div class="op" style="left:960px">=</div>
+      <div class="pc" id="p3" style="left:1020px;width:200px"><div class="q">?</div><div class="v">R$</div></div>
+    </div>
+    <div id="abrir" class="chip">peça por peça</div>
+
+    <!-- CENA 5: teaser fevereiro -->
+    <div id="cal" class="card"><div class="topo">FEV</div><div class="d">1º</div><div class="a">2027</div></div>
+    <svg id="lock" viewBox="0 0 190 220">
+      <path id="arco" d="M45 110 V70 Q45 20 95 20 Q145 20 145 70 V110" fill="none" stroke="#16191c" stroke-width="22" stroke-linecap="round"/>
+      <path id="arco2" d="M45 110 V70 Q45 20 95 20 Q145 20 145 70 V110" fill="none" stroke="#8a8172" stroke-width="10" stroke-linecap="round"/>
+      <rect x="15" y="100" width="160" height="115" rx="20" fill="#e9b949" class="ln"/>
+      <circle cx="95" cy="148" r="14" fill="#16191c"/><rect x="88" y="150" width="14" height="36" rx="5" fill="#16191c"/>
+    </svg>
+    <div id="peq" class="card"><svg width="90" height="90" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4" fill="#149a55"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg><div class="s">canal pequeno</div><div class="r">bem mais difícil</div></div>
+  </div>
+
+  <!--MASC-->
+
+  <div id="balao"><svg width="330" height="170" viewBox="0 0 330 170" style="position:absolute;left:0;top:0;overflow:visible"><path d="M30 10 H300 Q322 10 322 32 V118 Q322 140 300 140 H120 L70 175 L82 140 H30 Q8 140 8 118 V32 Q8 10 30 10 Z" fill="#fffdf8" stroke="#16191c" stroke-width="6" stroke-linejoin="round"/></svg>
+    <div class="t" id="bt1" style="height:150px">sorte?</div><div class="t" id="bt2" style="height:150px;color:#149a55;opacity:0">conta!</div><div class="risco" id="risco"></div></div>
+
+  <div id="legenda"></div>
+</div>
+
+<script>
+  /*W*/
+  const verdes=new Set(["milhão","visualizações","views.","conta.","conta,","conta","inteira.","peça.","cinquenta","vinte","mil"]);
+  const vermelhos=new Set(["quatrocentas","vezes.","fevereiro","difícil."]);
+  const leg=document.getElementById('legenda');
+  W.forEach(([w],i)=>{const s=document.createElement('span');s.id='w'+i;s.textContent=w;if(verdes.has(w))s.className='g';if(vermelhos.has(w))s.className='r';leg.appendChild(s);});
+  const T=(i)=>W[i][1];
+
+  const tl=gsap.timeline({paused:true});
+  const E='power3.inOut';
+  const DUR=32.8;
+
+  // legenda: uma frase por vez (algumas frases curtas juntas)
+  const grupo=[0,0,1,1,2,2,3,3,3,4,5]; // frase -> grupo na tela
+  const gIni={};W.forEach(([w,t,f])=>{const g=grupo[f];if(gIni[g]===undefined)gIni[g]=t;});
+  W.forEach(([w,t,f],i)=>{
+    const g=grupo[f];
+    tl.set('#w'+i,{display:'none'},0);
+    tl.set('#w'+i,{display:'inline-block'},Math.max(0,gIni[g]-0.05));
+    tl.fromTo('#w'+i,{opacity:0,y:16},{opacity:1,y:0,duration:0.2,ease:'power3.out'},t);
+    if(gIni[g+1]!==undefined) tl.set('#w'+i,{display:'none'},gIni[g+1]-0.06);
+  });
+
+  // câmera
+  const cam=[[0,0],[3.75,-1920],[15.25,-3840],[19.45,-5760],[25.0,-7680]];
+  cam.forEach(([t,x],k)=>{
+    if(k>0) tl.to('#world',{x,duration:0.9,ease:E},t);
+    const fim=k<cam.length-1?cam[k+1][0]:DUR;
+    tl.to('#world',{x:x-40,duration:fim-(t+(k?0.9:0)),ease:'none'},t+(k?0.9:0));
+  });
+
+  // ---------- MASCOTE ----------
+  tl.to('#guy',{y:-6,duration:0.9,ease:'sine.inOut',yoyo:true,repeat:35},0);
+  [1.2,5.1,9.0,12.4,17.0,21.0,24.0,27.2,30.5].forEach(t=>{tl.to('#eyes',{scaleY:0.1,svgOrigin:'760 330',duration:0.07},t);tl.to('#eyes',{scaleY:1,svgOrigin:'760 330',duration:0.09},t+0.08);});
+  const braco=(r,t,d=0.5,e='back.out(1.8)')=>tl.to('#arm',{rotation:r,svgOrigin:'865 485',duration:d,ease:e},t);
+  tl.set('#arm',{rotation:55,svgOrigin:'865 485'},0);
+  braco(-8,0.35); braco(55,3.4,0.5,E);            // aponta o contador
+  braco(-14,7.5); braco(55,11.0,0.5,E);           // aponta a balança
+  braco(-80,15.55,0.55,'power2.out');              // coça a cabeça
+  tl.to('#arm',{rotation:-74,svgOrigin:'865 485',duration:0.14,yoyo:true,repeat:13,ease:'sine.inOut'},16.1);
+  tl.to('#head',{rotation:6,svgOrigin:'760 440',duration:0.4,ease:'sine.inOut'},15.6).to('#head',{rotation:0,svgOrigin:'760 440',duration:0.4},18.6);
+  braco(-8,18.75,0.5);                              // "conta!" aponta
+  braco(55,21.0,0.5,E);
+  braco(-8,23.35); braco(55,25.6,0.5,E);           // aponta a fórmula
+  braco(-14,27.8); braco(55,30.0,0.5,E);           // aponta o calendário
+  // sobrancelhas / espanto
+  tl.to('#sobr',{y:-12,duration:0.18},13.75).to('#sobr',{y:0,duration:0.3},15.0);
+  tl.to('#sobr',{y:6,duration:0.25},15.6).to('#sobr',{y:0,duration:0.25},18.6);
+  tl.to('#sobr',{y:-12,duration:0.18},19.05).to('#sobr',{y:0,duration:0.3},20.0);
+  tl.fromTo('#sweat',{opacity:0,y:-10},{opacity:1,y:10,duration:0.6},30.9);
+  // boca no ritmo da fala
+  const fala=[[0.21,2.44],[2.86,3.59],[3.97,8.06],[8.52,10.62],[11.18,12.16],[12.67,19.32],[19.64,22.56],[22.88,24.84],[25.26,26.04],[26.42,31.92]];
+  fala.forEach(([a,b])=>{let k=0;for(let t=a;t<b;t+=0.13,k++){const m=['m1','m2','m1','m0'][k%4];['m0','m1','m2','m3'].forEach(x=>tl.set('#'+x,{opacity:x===m?1:0},t));}
+    ['m1','m2','m3'].forEach(x=>tl.set('#'+x,{opacity:0},b));tl.set('#m0',{opacity:1},b);});
+  [[13.79,14.2],[14.94,15.2]].forEach(([a])=>{['m0','m1','m2'].forEach(x=>tl.set('#'+x,{opacity:0},a+0.001));tl.set('#m3',{opacity:1},a+0.001);});
+
+  // ---------- CENA 1: contador ----------
+  tl.from('#cont',{scale:0.85,opacity:0,duration:0.45,ease:'back.out(1.7)'},0.05);
+  const cnt={v:0};const num=document.getElementById('num');
+  const fmt=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+  tl.to(cnt,{v:1000000,duration:2.1,ease:'power2.in',onUpdate:()=>{num.textContent=fmt(cnt.v);}},0.3);
+  tl.set(cnt,{v:1000000,onComplete:()=>{num.textContent='1.000.000';}},2.41);
+  tl.to('#num',{color:'#149a55',scale:1.06,duration:0.15,yoyo:true,repeat:1},2.4);
+  tl.from('#quanto',{y:40,opacity:0,scale:0.7,duration:0.4,ease:'back.out(2)'},2.86);
+  tl.to('#quanto',{rotation:-3,duration:0.12,yoyo:true,repeat:3},3.38);
+
+  // ---------- CENA 2: balança ----------
+  tl.from('#bal',{y:60,opacity:0,duration:0.5,ease:'power3.out'},4.0);
+  tl.from('#fonte2',{opacity:0,y:12,duration:0.4},4.6);
+  tl.to('#fonte2',{color:'#149a55',duration:0.3},4.77).to('#fonte2',{color:'#5c574e',duration:0.4},6.4);
+  tl.from('#coins',{y:-120,opacity:0,duration:0.4,ease:'bounce.out'},7.55);
+  tl.to('#tL',{opacity:1,duration:0.25},7.62);
+  tl.from('#bills',{y:-160,opacity:0,duration:0.45,ease:'bounce.out'},9.9);
+  tl.to('#tR',{opacity:1,duration:0.25},9.94);
+  // inclina para o lado do R$ 20.000
+  const tilt=(a,t,d,e)=>{const dy=410*Math.sin(a*Math.PI/180);
+    tl.to('#beam',{rotation:a,svgOrigin:'550 141',duration:d,ease:e},t);
+    tl.to('#panL',{y:-dy,duration:d,ease:e},t);tl.to('#panR',{y:dy,duration:d,ease:e},t);};
+  tilt(-3,7.7,0.5,'back.out(2)');      // 50 reais mexe pouco
+  tilt(9,10.15,0.7,'back.out(1.6)');   // 20 mil desce
+  tl.from(['#vL','#vR'],{opacity:0,y:14,duration:0.35,stagger:0.25},11.2);
+  tl.to(['#vL','#vR'],{color:'#16191c',duration:0.2},11.9);
+  tl.fromTo('#stamp',{scale:2.4,opacity:0},{scale:1,opacity:1,duration:0.22,ease:'power4.in'},13.6);
+  tl.to('#bal',{x:-8,duration:0.05,yoyo:true,repeat:3},13.82);
+
+  // ---------- CENA 3: sorte? algoritmo? conta ----------
+  tl.fromTo('#balao',{opacity:0,scale:0.6,transformOrigin:'25% 100%'},{opacity:1,scale:1,duration:0.35,ease:'back.out(2)'},16.0);
+  tl.from('#pq1',{y:60,opacity:0,duration:0.45,ease:'back.out(1.6)'},16.05);
+  tl.from('#pq2',{y:60,opacity:0,duration:0.45,ease:'back.out(1.6)'},16.75);
+  tl.to('#pq1 .x',{opacity:1,duration:0.1},18.6);
+  tl.to('#pq1',{rotation:-5,y:16,opacity:0.5,duration:0.3,ease:'power2.in'},18.62);
+  tl.to('#pq2 .x',{opacity:1,duration:0.1},18.72);
+  tl.to('#pq2',{rotation:5,y:16,opacity:0.5,duration:0.3,ease:'power2.in'},18.74);
+  tl.to('#risco',{scaleX:1,rotation:-6,duration:0.25,ease:'power2.out'},18.6);
+  tl.to(['#bt1','#risco'],{opacity:0,duration:0.15},19.0);
+  tl.to('#bt2',{opacity:1,duration:0.15},19.05);
+  tl.to('#balao',{scale:1.1,duration:0.12,yoyo:true,repeat:1},19.05);
+  tl.from('#conta',{scale:0.6,opacity:0,duration:0.4,ease:'back.out(2.2)'},19.05);
+  tl.to('#balao',{opacity:0,scale:0.7,duration:0.3},21.2);
+
+  // ---------- CENA 4: a conta peça por peça ----------
+  tl.from('#form',{y:50,opacity:0,duration:0.45,ease:'power3.out'},19.75);
+  tl.from(['#p0','#p1','#p2','#p3'],{scale:0.6,opacity:0,duration:0.35,stagger:0.12,ease:'back.out(2)'},20.1);
+  tl.to(['#p0 .q','#p1 .q','#p2 .q','#p3 .q'],{rotation:12,duration:0.12,yoyo:true,repeat:3,stagger:0.05},21.25);
+  [23.48,23.95,24.3,24.65].forEach((t,i)=>{
+    tl.to('#p'+i,{scaleX:0,duration:0.1,ease:'power2.in'},t);
+    tl.set('#p'+i+' .q',{opacity:0},t+0.1);tl.set('#p'+i+' .v',{opacity:1},t+0.1);
+    tl.set('#p'+i,{background:'#fffdf8',borderStyle:'solid',borderColor:i==2?'#149a55':'#d8cfbe'},t+0.1);
+    tl.to('#p'+i,{scaleX:1,duration:0.14,ease:'back.out(2)'},t+0.1);
+  });
+  tl.from('#abrir',{y:30,opacity:0,duration:0.35,ease:'back.out(2)'},24.25);
+
+  // ---------- CENA 5: teaser fevereiro ----------
+  tl.from('#cal',{y:70,opacity:0,rotation:-4,duration:0.5,ease:'back.out(1.6)'},25.85);
+  tl.to('#cal',{scale:1.07,duration:0.18,yoyo:true,repeat:1},27.95);
+  tl.from('#lock',{y:-260,opacity:0,duration:0.45,ease:'bounce.out'},28.55);
+  tl.fromTo(['#arco','#arco2'],{y:-34},{y:0,duration:0.12,ease:'power3.in'},29.1);
+  tl.to('#lock',{rotation:-6,transformOrigin:'50% 100%',duration:0.06,yoyo:true,repeat:3},29.22);
+  tl.from('#peq',{x:60,opacity:0,duration:0.45,ease:'power3.out'},29.95);
+  tl.from('#peq .r',{opacity:0,scale:0.7,duration:0.3,ease:'back.out(2)'},30.95);
+  // aparece e some (teaser)
+  tl.to(['#cal','#lock','#peq'],{opacity:0,scale:0.85,duration:0.5,stagger:0.05,ease:'power2.in'},32.15);
+  tl.to('#root',{opacity:1,duration:0.01},DUR-0.01);
+
+  window.__timelines=window.__timelines||{};window.__timelines['root']=tl;
+  window.seek=(t)=>{tl.seek(t,false);};
+  // sons das cenas (lidos pelo script de áudio)
+  window.EVENTOS=[];
+</script>
+</body>
+</html>

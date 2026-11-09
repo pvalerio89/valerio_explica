@@ -1,0 +1,15 @@
+{
+  "nota": "Cortes do teste (vídeo 2, 0 a 16,4 s). Lido pelo Remotion (imagem) e pelo audio_remotion.py (efeitos). Tempos em segundos.",
+  "cortes": [
+    { "ini": 0.0,   "cena": "feed",       "fundo": "preto", "sfx": ["whoosh"] },
+    { "ini": 2.45,  "cena": "grade",      "fundo": "verde", "sfx": ["whoosh"] },
+    { "ini": 3.6,   "cena": "gradeRapida","fundo": "preto", "sfx": ["whoosh"] },
+    { "ini": 4.5,   "cena": "para",       "fundo": "papel", "sfx": ["impacto"] },
+    { "ini": 4.84,  "cena": "porque",     "fundo": "verde", "sfx": ["pop"] },
+    { "ini": 6.09,  "cena": "descricao",  "fundo": "papel", "sfx": ["whoosh", "risca@0.9"] },
+    { "ini": 7.93,  "cena": "tags",       "fundo": "preto", "sfx": ["whoosh", "risca@0.8"] },
+    { "ini": 9.39,  "cena": "inscritos",  "fundo": "verde", "sfx": ["whoosh", "contador", "risca@1.6"] },
+    { "ini": 11.79, "cena": "mascote",    "fundo": "papel", "sfx": ["whoosh", "pop@1.0", "pop@2.2"] },
+    { "ini": 14.4,  "cena": "segundo",    "fundo": "preto", "sfx": ["impacto", "tique"] }
+  ]
+}

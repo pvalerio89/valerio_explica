@@ -1,0 +1,721 @@
+{
+ "total": 469.55,
+ "blocos": [
+  {
+   "n": 1,
+   "inicio_global": 0.0,
+   "dur": 54.64,
+   "frases": [
+    {
+     "txt": "Você posta um vídeo.",
+     "ini": 0.0,
+     "fim": 1.215
+    },
+    {
+     "txt": "Passou dias nele.",
+     "ini": 1.215,
+     "fim": 2.47
+    },
+    {
+     "txt": "Roteiro, edição, thumbnail...",
+     "ini": 2.47,
+     "fim": 4.118
+    },
+    {
+     "txt": "Vai dormir ansioso, acorda, abre o YouTube Studio...",
+     "ini": 4.118,
+     "fim": 7.461
+    },
+    {
+     "txt": "e ele está lá.",
+     "ini": 7.461,
+     "fim": 9.225
+    },
+    {
+     "txt": "Parado.",
+     "ini": 9.225,
+     "fim": 9.525
+    },
+    {
+     "txt": "Setenta visualizações.",
+     "ini": 9.525,
+     "fim": 11.583
+    },
+    {
+     "txt": "E a sensação é de que o algoritmo está rindo da sua cara.",
+     "ini": 11.583,
+     "fim": 14.972
+    },
+    {
+     "txt": "Só que eu vou te contar uma coisa que quase ninguém fala: o problema, na maioria das vezes, não é o seu vídeo ser ruim.",
+     "ini": 14.972,
+     "fim": 22.234
+    },
+    {
+     "txt": "É que você está jogando com as regras de um YouTube que não existe mais.",
+     "ini": 22.234,
+     "fim": 26.699
+    },
+    {
+     "txt": "Nesse vídeo eu vou te mostrar quatro coisas.",
+     "ini": 26.699,
+     "fim": 29.397
+    },
+    {
+     "txt": "Primeiro: como o YouTube decide quem vê o seu vídeo hoje.",
+     "ini": 29.397,
+     "fim": 33.234
+    },
+    {
+     "txt": "Segundo: por que ter inscritos já não garante quase nada.",
+     "ini": 33.234,
+     "fim": 37.061
+    },
+    {
+     "txt": "Terceiro: o erro que trava a maioria dos canais pequenos logo nos primeiros segundos.",
+     "ini": 37.061,
+     "fim": 42.494
+    },
+    {
+     "txt": "E quarto, o mais importante: como transformar o seu vídeo num videogame que ninguém consegue largar.",
+     "ini": 42.494,
+     "fim": 49.248
+    },
+    {
+     "txt": "Fica até o final, porque a última parte muda completamente o jeito de escrever um roteiro.",
+     "ini": 49.248,
+     "fim": 54.64
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "inicio_global": 55.09,
+   "dur": 62.84,
+   "frases": [
+    {
+     "txt": "Pra entender o que mudou, você precisa saber como era antes.",
+     "ini": 0.236,
+     "fim": 3.467
+    },
+    {
+     "txt": "Durante muitos anos, o YouTube funcionava mais ou menos assim: você conquistava inscritos, postava um vídeo, os inscritos recebiam a notificação e iam lá assistir.",
+     "ini": 3.467,
+     "fim": 13.031
+    },
+    {
+     "txt": "Quanto mais inscritos, mais views garantidas.",
+     "ini": 13.031,
+     "fim": 16.035
+    },
+    {
+     "txt": "Simples.",
+     "ini": 16.035,
+     "fim": 16.335
+    },
+    {
+     "txt": "Era por isso que todo mundo falava: \"o importante é crescer o número de inscritos\".",
+     "ini": 16.335,
+     "fim": 21.317
+    },
+    {
+     "txt": "Um canal grande podia postar qualquer coisa que as visualizações vinham.",
+     "ini": 21.317,
+     "fim": 25.803
+    },
+    {
+     "txt": "Só que isso criou um problema pra plataforma.",
+     "ini": 25.803,
+     "fim": 27.946
+    },
+    {
+     "txt": "Pensa comigo: se um canal enorme posta um vídeo fraco, milhões de pessoas recebem a notificação, clicam, se decepcionam...",
+     "ini": 27.946,
+     "fim": 36.213
+    },
+    {
+     "txt": "e fecham o YouTube.",
+     "ini": 36.213,
+     "fim": 37.564
+    },
+    {
+     "txt": "E fechar o YouTube é exatamente o que a plataforma não quer que você faça.",
+     "ini": 37.564,
+     "fim": 42.609
+    },
+    {
+     "txt": "Porque o negócio do YouTube é um só: manter as pessoas assistindo o máximo de tempo possível.",
+     "ini": 42.609,
+     "fim": 47.444
+    },
+    {
+     "txt": "Mais tempo assistindo significa mais anúncios.",
+     "ini": 47.444,
+     "fim": 50.933
+    },
+    {
+     "txt": "E mais anúncios significa mais dinheiro, pra eles e pros criadores.",
+     "ini": 50.933,
+     "fim": 55.425
+    },
+    {
+     "txt": "Então o YouTube começou a mudar a pergunta.",
+     "ini": 55.425,
+     "fim": 57.927
+    },
+    {
+     "txt": ", ele passou a perguntar: \"esse vídeo, especificamente, faz as pessoas continuarem aqui?\"",
+     "ini": 57.927,
+     "fim": 62.84
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "inicio_global": 118.38,
+   "dur": 71.08,
+   "frases": [
+    {
+     "txt": "E é aqui que entra a primeira missão: como o YouTube decide quem vê o seu vídeo hoje.",
+     "ini": 0.0,
+     "fim": 4.789
+    },
+    {
+     "txt": "O próprio pessoal do YouTube costuma repetir uma frase: o algoritmo não presta atenção nos vídeos, ele presta atenção nas pessoas.",
+     "ini": 4.789,
+     "fim": 12.986
+    },
+    {
+     "txt": "Ele tenta adivinhar o que cada pessoa vai querer assistir e ficar satisfeita.",
+     "ini": 12.986,
+     "fim": 17.734
+    },
+    {
+     "txt": "Na prática, os grandes criadores descrevem o processo assim: quando você posta, o YouTube mostra o seu vídeo pra um grupo pequeno de pessoas.",
+     "ini": 17.734,
+     "fim": 26.716
+    },
+    {
+     "txt": "Ele observa duas coisas: quantas clicaram, e o quanto elas assistiram e gostaram.",
+     "ini": 26.716,
+     "fim": 32.158
+    },
+    {
+     "txt": "Se o resultado for bom, ele mostra pra um grupo maior.",
+     "ini": 32.158,
+     "fim": 35.324
+    },
+    {
+     "txt": "Se for bom de novo, maior ainda.",
+     "ini": 35.324,
+     "fim": 38.225
+    },
+    {
+     "txt": "É uma escada.",
+     "ini": 38.225,
+     "fim": 38.525
+    },
+    {
+     "txt": "Se o grupo não clica, ou clica e sai logo, a escada para.",
+     "ini": 38.525,
+     "fim": 42.053
+    },
+    {
+     "txt": "E é aí que nasce o famoso vídeo travado em setenta views.",
+     "ini": 42.053,
+     "fim": 45.816
+    },
+    {
+     "txt": "Não é castigo.",
+     "ini": 45.816,
+     "fim": 46.116
+    },
+    {
+     "txt": "É o YouTube dizendo: \"testei, e as pessoas não ficaram\".",
+     "ini": 46.116,
+     "fim": 50.667
+    },
+    {
+     "txt": "Isso explica uma coisa que deixa muita gente confusa: por que, no mesmo canal, um vídeo tem duzentas views e o outro tem um milhão.",
+     "ini": 50.667,
+     "fim": 58.619
+    },
+    {
+     "txt": "Porque cada vídeo sobe a escada sozinho.",
+     "ini": 58.619,
+     "fim": 61.495
+    },
+    {
+     "txt": "É muito parecido com o que o TikTok faz.",
+     "ini": 61.495,
+     "fim": 63.79
+    },
+    {
+     "txt": "E isso tem um lado ótimo: um canal com zero inscritos pode viralizar com o primeiro vídeo, se esse vídeo segurar as pessoas.",
+     "ini": 63.79,
+     "fim": 71.08
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "inicio_global": 189.91,
+   "dur": 59.52,
+   "frases": [
+    {
+     "txt": "Missão dois: por que ter inscritos já não garante quase nada.",
+     "ini": 0.242,
+     "fim": 4.428
+    },
+    {
+     "txt": "Lembra da escada?",
+     "ini": 4.428,
+     "fim": 5.683
+    },
+    {
+     "txt": "Pois é, o primeiro degrau costuma ser justamente os seus inscritos, as pessoas que já conhecem você.",
+     "ini": 5.683,
+     "fim": 11.449
+    },
+    {
+     "txt": "Elas te dão uma vantagem no começo, porque confiam no seu canal.",
+     "ini": 11.449,
+     "fim": 15.449
+    },
+    {
+     "txt": "Mas quando o vídeo sobe pros próximos degraus, ele chega em gente que nunca ouviu falar de você.",
+     "ini": 15.449,
+     "fim": 22.193
+    },
+    {
+     "txt": "E essa pessoa não está nem aí pro seu número de inscritos.",
+     "ini": 22.193,
+     "fim": 26.133
+    },
+    {
+     "txt": "Ela só vê duas coisas: o título e a thumbnail.",
+     "ini": 26.133,
+     "fim": 29.042
+    },
+    {
+     "txt": "E decide em menos de um segundo se clica ou não.",
+     "ini": 29.042,
+     "fim": 32.345
+    },
+    {
+     "txt": "Depois que ela clica, só existe uma coisa que importa: o vídeo segurar ela.",
+     "ini": 32.345,
+     "fim": 37.902
+    },
+    {
+     "txt": "Então a conta é essa: o título e a thumbnail trazem a pessoa.",
+     "ini": 37.902,
+     "fim": 40.614
+    },
+    {
+     "txt": "O vídeo mantém a pessoa.",
+     "ini": 40.614,
+     "fim": 42.845
+    },
+    {
+     "txt": "Se uma dessas duas partes falha, a escada para.",
+     "ini": 42.845,
+     "fim": 46.148
+    },
+    {
+     "txt": "E aqui vem a parte que dói: tem um monte de gente gastando horas com tags, descrição perfeita, horário certo de postar...",
+     "ini": 46.148,
+     "fim": 53.568
+    },
+    {
+     "txt": "e quase nada no vídeo em si.",
+     "ini": 53.568,
+     "fim": 55.02
+    },
+    {
+     "txt": "Mas o vídeo é o produto.",
+     "ini": 55.02,
+     "fim": 56.199
+    },
+    {
+     "txt": "É ele que as pessoas vieram assistir.",
+     "ini": 56.199,
+     "fim": 59.52
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "inicio_global": 249.88,
+   "dur": 56.68,
+   "frases": [
+    {
+     "txt": "Missão três: o erro que trava a maioria dos canais pequenos.",
+     "ini": 0.326,
+     "fim": 3.497
+    },
+    {
+     "txt": "Pensa num videogame.",
+     "ini": 3.497,
+     "fim": 5.914
+    },
+    {
+     "txt": "Quando você começa um jogo bom, o tutorial é rápido: ele te diz quem você é, qual é o objetivo e já te joga na ação.",
+     "ini": 5.914,
+     "fim": 12.435
+    },
+    {
+     "txt": "Em poucos segundos você sabe por que vale a pena continuar.",
+     "ini": 12.435,
+     "fim": 15.667
+    },
+    {
+     "txt": "Agora imagina um jogo em que você passa quinze minutos vendo instrução antes de poder jogar.",
+     "ini": 15.667,
+     "fim": 19.929
+    },
+    {
+     "txt": "Você desiste, né?",
+     "ini": 19.929,
+     "fim": 21.474
+    },
+    {
+     "txt": "Todo mundo desiste.",
+     "ini": 21.474,
+     "fim": 22.391
+    },
+    {
+     "txt": "A introdução do seu vídeo é o tutorial do jogo.",
+     "ini": 22.391,
+     "fim": 25.074
+    },
+    {
+     "txt": "E é exatamente aí que a maioria trava.",
+     "ini": 25.074,
+     "fim": 26.862
+    },
+    {
+     "txt": "Fala galera, tudo bem?",
+     "ini": 26.862,
+     "fim": 29.053
+    },
+    {
+     "txt": "Antes de começar, deixa o like, se inscreve, ativa o sininho, hoje o vídeo é sobre...\"",
+     "ini": 29.053,
+     "fim": 32.887
+    },
+    {
+     "txt": "Enquanto isso, a pessoa já foi embora.",
+     "ini": 32.887,
+     "fim": 34.703
+    },
+    {
+     "txt": "Uma boa introdução faz três coisas, rápido.",
+     "ini": 34.703,
+     "fim": 37.97
+    },
+    {
+     "txt": "Primeiro: mostra a promessa, o que a pessoa vai ganhar assistindo.",
+     "ini": 37.97,
+     "fim": 41.597
+    },
+    {
+     "txt": "Segundo: dá um motivo pra ficar até o final.",
+     "ini": 41.597,
+     "fim": 44.126
+    },
+    {
+     "txt": "E terceiro: entra no assunto sem enrolar.",
+     "ini": 44.126,
+     "fim": 47.043
+    },
+    {
+     "txt": "Repara que foi isso que eu fiz no começo desse vídeo: eu te falei que iam ser quatro missões, e que a última era a mais importante.",
+     "ini": 47.043,
+     "fim": 55.355
+    },
+    {
+     "txt": "Você está aqui até agora, né?",
+     "ini": 55.355,
+     "fim": 56.68
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "inicio_global": 307.01,
+   "dur": 52.96,
+   "frases": [
+    {
+     "txt": "E agora, a missão mais importante: como transformar seu vídeo num videogame.",
+     "ini": 0.0,
+     "fim": 5.348
+    },
+    {
+     "txt": "Me responde uma coisa: você jogaria um jogo que tem uma missão só?",
+     "ini": 5.348,
+     "fim": 9.734
+    },
+    {
+     "txt": "Você liga o jogo, ele fala \"vai lá no final e derrota o chefão\", e acabou?",
+     "ini": 9.734,
+     "fim": 13.83
+    },
+    {
+     "txt": "Ninguém joga isso.",
+     "ini": 13.83,
+     "fim": 15.524
+    },
+    {
+     "txt": "O que prende num jogo é a sequência: mata dez zumbis, missão cumprida, ganha uma recompensa.",
+     "ini": 15.524,
+     "fim": 20.569
+    },
+    {
+     "txt": "Aí aparece outra missão.",
+     "ini": 20.569,
+     "fim": 23.625
+    },
+    {
+     "txt": "Depois outra.",
+     "ini": 23.625,
+     "fim": 23.925
+    },
+    {
+     "txt": "E quando você vê, passaram três horas.",
+     "ini": 23.925,
+     "fim": 26.788
+    },
+    {
+     "txt": "E aqui está o erro que quase todo mundo comete: o vídeo faz uma promessa no começo e só entrega no final.",
+     "ini": 26.788,
+     "fim": 33.544
+    },
+    {
+     "txt": "Uma missão só.",
+     "ini": 33.544,
+     "fim": 35.025
+    },
+    {
+     "txt": "Entre o começo e o fim, não tem nada puxando a pessoa pra frente.",
+     "ini": 35.025,
+     "fim": 39.123
+    },
+    {
+     "txt": "Aí ela sai no meio.",
+     "ini": 39.123,
+     "fim": 40.589
+    },
+    {
+     "txt": "No vídeo-videogame, os papéis se invertem.",
+     "ini": 40.589,
+     "fim": 43.357
+    },
+    {
+     "txt": "O espectador é o jogador.",
+     "ini": 43.357,
+     "fim": 45.169
+    },
+    {
+     "txt": "E você é o personagem que entrega as missões.",
+     "ini": 45.169,
+     "fim": 47.905
+    },
+    {
+     "txt": "O seu trabalho é ir dando pequenas missões e recompensas ao longo do vídeo inteiro.",
+     "ini": 47.905,
+     "fim": 52.96
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "inicio_global": 360.42,
+   "dur": 61.84,
+   "frases": [
+    {
+     "txt": "Na prática, uma missão dentro do vídeo é só um problema seguido de uma solução.",
+     "ini": 0.268,
+     "fim": 4.408
+    },
+    {
+     "txt": "Uma pergunta e uma resposta.",
+     "ini": 4.408,
+     "fim": 5.92
+    },
+    {
+     "txt": "Uma curiosidade e a revelação.",
+     "ini": 5.92,
+     "fim": 7.563
+    },
+    {
+     "txt": "Exemplo: um vídeo de receita de macarrão.",
+     "ini": 7.563,
+     "fim": 10.15
+    },
+    {
+     "txt": "O objetivo final é o prato pronto, esse é o chefão.",
+     "ini": 10.15,
+     "fim": 13.514
+    },
+    {
+     "txt": "Mas no caminho você pode ter várias missões.",
+     "ini": 13.514,
+     "fim": 16.002
+    },
+    {
+     "txt": "Por que a massa sempre gruda?",
+     "ini": 16.002,
+     "fim": 17.82
+    },
+    {
+     "txt": "Já te conto.\"",
+     "ini": 17.82,
+     "fim": 18.12
+    },
+    {
+     "txt": "Resolveu.",
+     "ini": 18.12,
+     "fim": 19.412
+    },
+    {
+     "txt": "Tem um ingrediente que quase ninguém usa e que muda tudo.\"",
+     "ini": 19.412,
+     "fim": 23.16
+    },
+    {
+     "txt": "Revelou.",
+     "ini": 23.16,
+     "fim": 24.303
+    },
+    {
+     "txt": "E o erro na hora de escorrer, que estraga o molho.\"",
+     "ini": 24.303,
+     "fim": 26.835
+    },
+    {
+     "txt": "Mais uma missão cumprida.",
+     "ini": 26.835,
+     "fim": 27.952
+    },
+    {
+     "txt": "Cada vez que você abre uma pergunta, a pessoa quer a resposta.",
+     "ini": 27.952,
+     "fim": 32.862
+    },
+    {
+     "txt": "Cada vez que você responde, ela sente que ganhou alguma coisa.",
+     "ini": 32.862,
+     "fim": 36.568
+    },
+    {
+     "txt": "E logo em seguida você já abre a próxima.",
+     "ini": 36.568,
+     "fim": 38.843
+    },
+    {
+     "txt": "E olha só: esse vídeo inteiro foi montado assim.",
+     "ini": 38.843,
+     "fim": 41.887
+    },
+    {
+     "txt": "Quatro missões, cada uma com a sua resposta, e a lista ali na tela indo se completando.",
+     "ini": 41.887,
+     "fim": 47.141
+    },
+    {
+     "txt": "Foi isso que te trouxe até aqui.",
+     "ini": 47.141,
+     "fim": 48.62
+    },
+    {
+     "txt": "Então, da próxima vez que for escrever um roteiro, antes de gravar, faz um teste simples: lista as missões do seu vídeo.",
+     "ini": 48.62,
+     "fim": 56.573
+    },
+    {
+     "txt": "Se só tiver uma, o seu vídeo é um jogo com uma missão só.",
+     "ini": 56.573,
+     "fim": 60.241
+    },
+    {
+     "txt": "E ninguém fica num jogo assim.",
+     "ini": 60.241,
+     "fim": 61.84
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "inicio_global": 422.71,
+   "dur": 46.84,
+   "frases": [
+    {
+     "txt": "Recapitulando rapidinho.",
+     "ini": 0.229,
+     "fim": 1.715
+    },
+    {
+     "txt": "O YouTube não empurra mais o seu canal.",
+     "ini": 1.715,
+     "fim": 4.091
+    },
+    {
+     "txt": "Ele testa cada vídeo, um degrau de cada vez.",
+     "ini": 4.091,
+     "fim": 7.183
+    },
+    {
+     "txt": "Inscritos te ajudam no primeiro degrau, mas quem sobe a escada é o vídeo.",
+     "ini": 7.183,
+     "fim": 11.843
+    },
+    {
+     "txt": "O título e a thumbnail trazem a pessoa, e o vídeo precisa segurar.",
+     "ini": 11.843,
+     "fim": 15.252
+    },
+    {
+     "txt": "A introdução é o tutorial: rápida, com promessa e motivo pra ficar.",
+     "ini": 15.252,
+     "fim": 19.808
+    },
+    {
+     "txt": "E o vídeo precisa de várias missões, não de uma só.",
+     "ini": 19.808,
+     "fim": 22.929
+    },
+    {
+     "txt": "Se o seu último vídeo travou em setenta views, não desiste.",
+     "ini": 22.929,
+     "fim": 26.646
+    },
+    {
+     "txt": "Ele não foi um fracasso.",
+     "ini": 26.646,
+     "fim": 28.34
+    },
+    {
+     "txt": "Foi um teste.",
+     "ini": 28.34,
+     "fim": 28.64
+    },
+    {
+     "txt": "E agora você sabe o que o YouTube estava medindo.",
+     "ini": 28.64,
+     "fim": 32.161
+    },
+    {
+     "txt": "No próximo vídeo eu vou mostrar como os maiores canais escolhem títulos e thumbnails, a outra metade dessa escada.",
+     "ini": 32.161,
+     "fim": 38.437
+    },
+    {
+     "txt": "Se você quer entender o que o YouTube não te conta, se inscreve no canal, que toda semana tem vídeo novo aqui no Valerio Explica.",
+     "ini": 38.437,
+     "fim": 46.84
+    }
+   ]
+  }
+ ]
+}

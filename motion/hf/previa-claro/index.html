@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Previa claro - Valerio Explica</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  @font-face{font-family:"Bahnschrift";src:local("Bahnschrift");font-weight:100 900;}
+  :root{
+    --bg:#f3eee4; --ink:#16191c; --muted:#5c574e; --line:#d8cfbe;
+    --card:#fffdf8; --acc:#149a55; --acc-soft:#dff3e6;
+  }
+  html,body{margin:0;padding:0;width:1920px;height:1080px;overflow:hidden;background:var(--bg);}
+  #root{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--bg);
+    font-family:"Segoe UI",sans-serif;color:var(--ink);}
+  /* grade de pontos fixa */
+  .dots{position:absolute;inset:-200px;background-image:radial-gradient(#cfc5b2 1.6px,transparent 1.7px);
+    background-size:36px 36px;opacity:.55;}
+  .grain{position:absolute;inset:0;opacity:.06;pointer-events:none;z-index:50;
+    background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");}
+  #world{position:absolute;left:0;top:0;width:5000px;height:3000px;}
+  .h{font-family:"Bahnschrift",sans-serif;font-weight:700;letter-spacing:-1px;line-height:1.02;}
+  .card{position:absolute;background:var(--card);border:2px solid var(--line);border-radius:22px;
+    box-shadow:0 18px 40px rgba(80,60,30,.10);}
+  .tag{font-family:"Consolas",monospace;font-size:30px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+  /* cena 1: celular */
+  #phone{left:260px;top:150px;width:430px;height:780px;border-radius:46px;border:2px solid #cbc1ae;}
+  .bar{position:absolute;left:30px;right:30px;height:14px;border-radius:7px;background:#e9e2d3;}
+  .thumb{position:absolute;left:30px;width:370px;height:190px;border-radius:14px;background:#e9e2d3;}
+  .thumb.hl{background:var(--acc-soft);outline:3px solid var(--acc);}
+  .thumb .play{position:absolute;left:50%;top:50%;width:0;height:0;margin:-18px 0 0 -10px;
+    border-left:30px solid var(--acc);border-top:18px solid transparent;border-bottom:18px solid transparent;}
+  #ripple{position:absolute;width:120px;height:120px;border-radius:50%;border:4px solid var(--acc);
+    left:395px;top:420px;opacity:0;}
+  .w{display:inline-block;opacity:0;margin-right:22px;}
+  #h1{position:absolute;left:820px;top:300px;font-size:118px;width:1000px;}
+  #h1 .acc{color:var(--acc);}
+  /* cursor */
+  #cursor{position:absolute;left:0;top:0;width:44px;height:58px;z-index:20;}
+  /* cena 2 */
+  #s2{left:2160px;top:330px;width:900px;height:420px;display:flex;align-items:center;justify-content:center;gap:40px;}
+  #check{width:150px;height:150px;border-radius:50%;background:var(--acc);display:flex;align-items:center;justify-content:center;}
+  #s2 .h{font-size:120px;}
+  /* cena 3 */
+  #h3{position:absolute;left:3400px;top:250px;font-size:112px;width:1100px;}
+  #h3 .acc{color:var(--acc);}
+  .btn{position:absolute;top:660px;height:120px;width:330px;border-radius:60px;font-family:"Bahnschrift",sans-serif;
+    font-size:52px;font-weight:700;display:flex;align-items:center;justify-content:center;}
+  #ficar{left:3400px;background:var(--acc);color:#fff;}
+  #voltar{left:3780px;background:var(--card);border:2px solid var(--line);color:var(--ink);}
+  /* cena 4 */
+  #player{left:3330px;top:1500px;width:1000px;height:600px;overflow:hidden;}
+  #player .screen{position:absolute;left:0;top:0;right:0;height:480px;background:#ece5d6;}
+  #player .track{position:absolute;left:40px;right:40px;top:530px;height:12px;border-radius:6px;background:#e4dccb;}
+  #fill{position:absolute;left:0;top:0;height:12px;width:920px;border-radius:6px;background:var(--acc);transform-origin:left center;transform:scaleX(0);}
+  #zone{position:absolute;left:0;top:-10px;width:184px;height:32px;border-radius:8px;border:2px dashed var(--acc);}
+  #clock{position:absolute;right:40px;top:30px;font-family:"Consolas",monospace;font-size:44px;background:var(--card);
+    border:2px solid var(--line);border-radius:14px;padding:6px 18px;}
+  #clock span{position:absolute;left:0;top:0;opacity:0;white-space:nowrap;}
+  #clockbox{position:relative;display:inline-block;width:290px;height:56px;}
+  #bubble{left:4380px;top:1560px;width:620px;padding:40px 44px;font-size:56px;}
+  #bubble .h{font-size:58px;}
+  #bubble .c{opacity:0;}
+  #bubble:after{content:"";position:absolute;left:-26px;top:120px;width:40px;height:40px;background:var(--card);
+    border-left:2px solid var(--line);border-bottom:2px solid var(--line);transform:rotate(45deg);}
+  #bigplay{position:absolute;left:50%;top:50%;width:150px;height:150px;margin:-75px 0 0 -75px;border-radius:50%;background:var(--card);border:2px solid var(--line);}
+  #bigplay:after{content:"";position:absolute;left:60px;top:42px;border-left:50px solid var(--acc);border-top:33px solid transparent;border-bottom:33px solid transparent;}
+  #q{left:4480px;top:300px;width:380px;height:380px;display:flex;align-items:center;justify-content:center;font-family:"Bahnschrift",sans-serif;font-weight:700;font-size:260px;color:var(--acc);}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="root" data-width="1920" data-height="1080" data-start="0" data-duration="12.4">
+  <div id="world">
+    <div class="dots"></div>
+
+    <!-- CENA 1: alguém clicou -->
+    <div id="phone" class="card">
+      <div class="bar" style="top:40px;width:160px"></div>
+      <div class="thumb" style="top:90px"></div>
+      <div class="bar" style="top:296px;width:300px"></div>
+      <div class="thumb hl" id="alvo" style="top:340px"><div class="play"></div></div>
+      <div class="bar" style="top:546px;width:260px"></div>
+      <div class="thumb" style="top:590px"></div>
+    </div>
+    <div id="ripple"></div>
+    <div id="h1" class="h"><span class="w" id="w1">Alguém</span><span class="w" id="w2">viu,</span><span class="w" id="w3">leu</span><br><span class="w" id="w4">e</span><span class="w acc" id="w5">clicou.</span></div>
+
+    <!-- CENA 2: parabéns -->
+    <div id="s2" class="card">
+      <div id="check"><svg width="86" height="86" viewBox="0 0 24 24"><path id="ck" d="M4 12.5l5 5L20 6.5" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="26" stroke-dashoffset="26"/></svg></div>
+      <div class="h">Parabéns.</div>
+    </div>
+
+    <!-- CENA 3: ainda não decidiu -->
+    <div id="h3" class="h"><span class="w" id="x1">Só</span><span class="w" id="x2">que</span><span class="w" id="x3">ela</span><span class="w" id="x4">ainda</span><br><span class="w acc" id="x5">não</span><span class="w acc" id="x6">decidiu</span><span class="w acc" id="x7">ficar.</span></div>
+    <div id="q" class="card">?</div>
+    <div id="ficar" class="btn">Ficar</div>
+    <div id="voltar" class="btn">Voltar</div>
+
+    <!-- CENA 4: 30 segundos -->
+    <div id="player" class="card">
+      <div class="screen"><div id="bigplay"></div></div>
+      <div id="clock"><div id="clockbox"></div></div>
+      <div class="track"><div id="fill"></div><div id="zone"></div></div>
+    </div>
+    <div class="tag" style="position:absolute;left:3370px;top:2130px">os primeiros 30 segundos</div>
+    <div id="bubble" class="card"><div class="h" id="pergunta"></div></div>
+  </div>
+
+  <!-- cursor (fora do mundo, segue a câmera via x/y) -->
+  <svg id="cursor" viewBox="0 0 22 29"><path d="M1 1v23l6-6 4 9 4-2-4-9h8z" fill="#16191c" stroke="#fff" stroke-width="1.6" stroke-linejoin="round"/></svg>
+  <div class="grain"></div>
+</div>
+
+<script>
+  // relógio 0:00..0:30 e pergunta letra a letra (só opacidade -> seek seguro)
+  const box=document.getElementById('clockbox');
+  for(let s=0;s<=30;s++){const sp=document.createElement('span');sp.id='t'+s;sp.textContent='0:'+String(s).padStart(2,'0')+' / 0:30';box.appendChild(sp);}
+  const frase='“Esse vídeo é o que eu achei que era?”';
+  const perg=document.getElementById('pergunta');
+  [...frase].forEach((c,i)=>{const sp=document.createElement('span');sp.className='c';sp.id='c'+i;sp.textContent=c;perg.appendChild(sp);});
+
+  const tl=gsap.timeline({paused:true});
+  const E='power3.inOut', O='back.out(1.6)';
+  const cam=(x,y,t,d=0.9)=>tl.to('#world',{x:-x,y:-y,duration:d,ease:E},t);
+  const word=(id,t)=>tl.fromTo('#'+id,{opacity:0,y:40},{opacity:1,y:0,duration:0.35,ease:'power3.out'},t);
+
+  // câmera inicial: leve deriva
+  tl.set('#world',{x:0,y:0},0);
+  tl.to('#world',{x:-40,duration:3,ease:'none'},0);
+
+  // CENA 1 (0.0–3.0)
+  
+  tl.set('#w1',{opacity:1},0); word('w2',0.95); word('w3',1.45);
+  tl.fromTo('#cursor',{x:900,y:900,opacity:0},{x:560,y:540,opacity:1,duration:1.0,ease:E},0.6);
+  tl.to('#cursor',{scale:0.85,duration:0.08},1.95).to('#cursor',{scale:1,duration:0.12},2.03);
+  tl.fromTo('#ripple',{opacity:1,scale:0.3},{opacity:0,scale:1.6,duration:0.5,ease:'power2.out'},2.0);
+  tl.to('#alvo',{scale:1.04,duration:0.15,yoyo:true,repeat:1},2.0);
+  word('w4',2.0); word('w5',2.25);
+  tl.to('#cursor',{opacity:0,duration:0.2},2.7);
+
+  // CENA 2 (3.0–4.1)
+  cam(1760,0,2.6,0.6);
+  tl.from('#s2',{scale:0.9,opacity:0,duration:0.45,ease:O},2.95);
+  tl.from('#check',{scale:0,duration:0.4,ease:'back.out(2.2)'},3.0);
+  tl.to('#ck',{strokeDashoffset:0,duration:0.3,ease:'power2.out'},3.15);
+
+  // CENA 3 (4.1–6.8)
+  cam(3240,0,3.85,0.75);
+  ['x1','x2','x3','x4'].forEach((id,i)=>word(id,4.15+i*0.18));
+  ['x5','x6','x7'].forEach((id,i)=>word(id,5.15+i*0.3));
+  tl.from('#q',{scale:0.6,opacity:0,rotation:-8,duration:0.5,ease:'back.out(2)'},5.15);
+  tl.from(['#ficar','#voltar'],{y:50,opacity:0,duration:0.4,stagger:0.12,ease:'power3.out'},5.5);
+  tl.fromTo('#cursor',{x:1150,y:960,opacity:0,scale:1},{x:520,y:690,opacity:1,duration:0.6,ease:E,immediateRender:false},5.6);
+  tl.to('#cursor',{x:890,duration:0.5,ease:E},6.2);
+  tl.to('#cursor',{x:700,duration:0.4,ease:E},6.7);
+  tl.to('#cursor',{opacity:0,duration:0.2},7.0);
+
+  // CENA 4 (6.8–12.4)
+  cam(3150,1290,6.7,1.0);
+  tl.from('#player',{y:80,opacity:0,duration:0.6,ease:'power3.out'},6.9);
+  // 0:00 -> 0:30 em ~5 s
+  for(let s=0;s<=30;s++){const t=7.2+s*0.15; tl.set('#t'+s,{opacity:1},t); if(s<30) tl.set('#t'+s,{opacity:0},t+0.15);}
+  tl.fromTo('#fill',{scaleX:0},{scaleX:0.2,duration:4.5,ease:'none'},7.2);
+  tl.from('#zone',{opacity:0,duration:0.4},7.4);
+  tl.from('#bubble',{x:-40,opacity:0,duration:0.5,ease:'power3.out'},8.6);
+  cam(3205,1290,8.4,1.2);
+  [...frase].forEach((c,i)=>tl.set('#c'+i,{opacity:1},9.0+i*0.055));
+  tl.to('#world',{x:-3245,duration:2.0,ease:'none'},10.3);
+  tl.to('#root',{opacity:1,duration:0.01},12.39);
+
+  window.__timelines=window.__timelines||{};
+  window.__timelines['root']=tl;
+  // fora do HyperFrames: render.mjs do canal usa window.seek(t)
+  window.seek=(t)=>{tl.seek(t,false);};
+</script>
+</body>
+</html>

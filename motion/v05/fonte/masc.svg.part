@@ -1,0 +1,45 @@
+  <svg id="masc" class="m" width="1920" height="1080" viewBox="0 0 1920 1080" style="left:0;top:0">
+    <g id="guyWrap" transform="translate(-380 30) scale(0.92)">
+    <ellipse cx="760" cy="905" rx="190" ry="22" fill="#e2d9c7"/>
+    <g id="guy">
+      <path d="M668 700 L660 880 L716 880 L728 700 Z" fill="#3a5f8f" class="ln"/>
+      <path d="M782 700 L796 880 L852 880 L840 700 Z" fill="#3a5f8f" class="ln"/>
+      <path d="M640 880 h86 q16 0 16 18 v8 h-110 v-8 q0-18 8-18z" fill="#fff" class="ln"/>
+      <path d="M786 880 h86 q16 0 16 18 v8 h-110 v-8 q0-18 8-18z" fill="#fff" class="ln"/>
+      <path d="M640 470 Q650 430 700 420 L820 420 Q870 430 880 470 L880 720 L640 720 Z" fill="#2c3238" class="ln"/>
+      <path d="M690 640 h140 v60 h-140z" fill="#262b30" class="ln" style="stroke-width:5"/>
+      <path d="M735 440 L728 520 M785 440 L792 520" stroke="#149a55" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="728" cy="524" r="7" fill="#149a55"/><circle cx="792" cy="524" r="7" fill="#149a55"/>
+      <path d="M650 480 Q600 560 640 640" fill="none" stroke="#16191c" stroke-width="62" stroke-linecap="round"/>
+      <path d="M650 480 Q600 560 640 640" fill="none" stroke="#2c3238" stroke-width="48" stroke-linecap="round"/>
+      <g id="head">
+        <path d="M640 330 Q640 170 760 160 Q880 170 880 330 Q880 440 760 450 Q640 440 640 330 Z" fill="#2c3238" class="ln"/>
+        <ellipse cx="760" cy="335" rx="92" ry="100" fill="#f2c9a0" class="ln"/>
+        <path d="M672 290 Q700 225 760 232 Q820 225 848 290 Q812 262 780 272 Q760 252 735 272 Q700 262 672 290 Z" fill="#2a1d14" class="ln" style="stroke-width:5"/>
+        <path d="M660 330 Q655 215 760 205 Q865 215 860 330" fill="none" stroke="#16191c" stroke-width="7"/>
+        <g id="eyes">
+          <ellipse cx="725" cy="330" rx="15" ry="19" fill="#16191c"/>
+          <ellipse cx="795" cy="330" rx="15" ry="19" fill="#16191c"/>
+          <circle cx="730" cy="323" r="5" fill="#fff"/><circle cx="800" cy="323" r="5" fill="#fff"/>
+        </g>
+        <path id="sobr" d="M705 298 Q725 288 745 296 M775 296 Q795 288 815 298" fill="none" stroke="#16191c" stroke-width="7" stroke-linecap="round"/>
+        <ellipse cx="700" cy="368" rx="14" ry="8" fill="#ec9f86" opacity=".7"/>
+        <ellipse cx="820" cy="368" rx="14" ry="8" fill="#ec9f86" opacity=".7"/>
+        <path id="m0" d="M735 382 Q760 402 785 382" fill="none" stroke="#16191c" stroke-width="7" stroke-linecap="round"/>
+        <path id="m1" d="M738 378 Q760 412 782 378 Z" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+        <path id="m2" d="M742 380 Q760 398 778 380 Z" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+        <ellipse id="m3" cx="760" cy="392" rx="15" ry="20" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+      </g>
+      <g id="arm">
+        <path d="M865 485 Q930 520 985 470" fill="none" stroke="#16191c" stroke-width="62" stroke-linecap="round"/>
+        <path d="M865 485 Q930 520 985 470" fill="none" stroke="#2c3238" stroke-width="48" stroke-linecap="round"/>
+        <g id="hand">
+          <circle cx="1000" cy="458" r="26" fill="#f2c9a0" class="ln" style="stroke-width:6"/>
+          <path d="M1015 448 L1062 432" stroke="#16191c" stroke-width="24" stroke-linecap="round"/>
+          <path d="M1015 448 L1062 432" stroke="#f2c9a0" stroke-width="12" stroke-linecap="round"/>
+        </g>
+      </g>
+    </g>
+    <g id="sweat" opacity="0"><path d="M880 250 q-14 22 0 30 q14 -8 0 -30z" fill="#7cc4e8" class="ln" style="stroke-width:4"/></g>
+    </g>
+  </svg>

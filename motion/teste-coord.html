@@ -1,0 +1,45 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#111}#stage{position:relative;width:1920px;height:1080px}canvas{position:absolute;inset:0}
+svg{position:absolute;inset:0;font-family:"Segoe UI Black";fill:#fff}</style>
+<script src="node_modules/p5/lib/p5.min.js"></script>
+<script src="node_modules/p5.brush/dist/p5.brush.js"></script>
+</head><body><div id="stage"><svg id="svg" width="1920" height="1080"></svg></div>
+<script>
+let pronto;
+window.cenaPronta = new Promise(r => pronto = r);
+const NOMES = ["pen","rotring","2B","HB","cpencil","pastel","crayon","charcoal","marker"];
+new p5((p) => {
+  brush.instance(p);
+  p.setup = () => {
+    const c = p.createCanvas(1920, 1080, p.WEBGL);
+    c.parent("stage"); c.elt.style.zIndex = 0;
+    p.setAttributes("preserveDrawingBuffer", true);
+    p.noLoop(); pronto();
+  };
+  p.draw = () => {
+    p.randomSeed(1);
+    p.background("#15191d");
+    p.translate(-960, -540);
+    brush.scaleBrushes(1.5);
+    let s = "";
+    NOMES.forEach((n, i) => {
+      const y = 70 + i * 105;
+      [1, 2, 4].forEach((w, j) => {
+        brush.set(n, "#f5f7fa", w);
+        brush.line(260 + j * 330, y, 520 + j * 330, y + 30);
+      });
+      brush.set(n, "#22e07a", 2);
+      brush.noFill();
+      brush.circle(1350, y + 15, 38, 0.6);
+      s += `<text x="20" y="${y + 28}" font-size="34">${n}</text>`;
+    });
+    brush.noStroke();
+    brush.fill("#22e07a", 140); brush.rect(1500, 80, 360, 200);
+    brush.noFill(); brush.set("HB","#ffc83d",1); brush.hatch(10, 45); brush.rect(1500, 340, 360, 200); brush.noHatch();
+    brush.noStroke(); brush.wash ? brush.wash("#ffc83d", 200) : 0; brush.rect(1500, 600, 360, 200);
+    document.getElementById("svg").innerHTML = s;
+  };
+  window.renderFrame = async (t) => { await p.redraw(); };
+});
+</script></body></html>

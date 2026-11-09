@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Video 4 - previa</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  @font-face{font-family:"Bahnschrift";src:local("Bahnschrift");font-weight:100 900;}
+  :root{--bg:#f3eee4;--ink:#16191c;--muted:#5c574e;--line:#d8cfbe;--card:#fffdf8;--acc:#149a55;--red:#d14343;}
+  html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:var(--bg);}
+  #root{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--bg);font-family:"Segoe UI",sans-serif;color:var(--ink);}
+  #world{position:absolute;left:0;top:0;width:4000px;height:1080px;}
+  .dots{position:absolute;inset:-100px;background-image:radial-gradient(#cfc5b2 1.6px,transparent 1.7px);background-size:36px 36px;opacity:.55;}
+  .h{font-family:"Bahnschrift",sans-serif;font-weight:700;letter-spacing:-1px;}
+  .card{position:absolute;background:var(--card);border:2px solid var(--line);border-radius:22px;box-shadow:0 18px 40px rgba(80,60,30,.10);}
+  .tag{font-family:"Consolas",monospace;font-size:30px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+  svg.m{position:absolute;overflow:visible;}
+  .ln{stroke:#16191c;stroke-width:7;stroke-linejoin:round;stroke-linecap:round;}
+  /* cena 1: grade de vídeos */
+  .vid{position:absolute;width:300px;height:220px;}
+  .vid .th{position:absolute;left:14px;top:14px;right:14px;height:130px;border-radius:12px;background:#ece5d6;}
+  .vid .th:after{content:"";position:absolute;left:50%;top:50%;margin:-14px 0 0 -8px;border-left:24px solid #b9ae98;border-top:14px solid transparent;border-bottom:14px solid transparent;}
+  .vid .b1{position:absolute;left:14px;top:162px;width:170px;height:12px;border-radius:6px;background:#e4dccb;}
+  .vid .b2{position:absolute;left:14px;top:186px;width:110px;height:12px;border-radius:6px;background:#e4dccb;}
+  .vid .x{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Bahnschrift";font-weight:700;font-size:120px;color:var(--red);opacity:0;}
+  #big{left:1000px;top:600px;width:700px;height:230px;display:flex;align-items:center;justify-content:center;flex-direction:column;}
+  #big .n{font-size:130px;line-height:1;}
+  #big .s{font-size:40px;color:var(--muted);margin-top:6px;}
+  #stamp{position:absolute;left:1450px;top:555px;padding:10px 30px;border:7px solid var(--red);border-radius:14px;color:var(--red);
+    font-family:"Bahnschrift";font-weight:700;font-size:64px;letter-spacing:4px;transform:rotate(-10deg);opacity:0;background:rgba(255,253,248,.85);}
+  /* cena 2: números */
+  .stat{width:340px;height:330px;top:280px;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+  .stat .n{font-family:"Bahnschrift";font-weight:700;font-size:112px;line-height:1;}
+  .stat .s{font-size:44px;color:var(--muted);margin-top:14px;}
+  .stat .ic{width:70px;height:70px;margin-bottom:14px;}
+  #fonte{position:absolute;left:2725px;top:650px;}
+  #legenda{position:absolute;left:760px;right:60px;bottom:40px;text-align:center;font-family:"Bahnschrift";font-weight:700;font-size:46px;}
+  #legenda span{display:inline-block;opacity:0;margin:0 8px;}
+  #legenda .g{color:var(--acc);}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="root" data-width="1920" data-height="1080" data-start="0" data-duration="12.4">
+  <div id="world">
+    <div class="dots"></div>
+
+    <!-- CENA 1: canais derrubados -->
+    <div id="grid"></div>
+    <div id="big" class="card"><div class="n h">4,7 bi</div><div class="s">de visualizações</div></div>
+    <div id="stamp">REMOVIDO</div>
+
+    <!-- CENA 2: os números -->
+    <div id="st1" class="card stat" style="left:2720px"><svg class="ic" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4" fill="#149a55"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg><div class="n">16</div><div class="s">canais</div></div>
+    <div id="st2" class="card stat" style="left:3095px"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="4" fill="#149a55"/><path d="M1 21c0-5 4-7 8-7s8 2 8 7z" fill="#149a55"/><circle cx="18" cy="9" r="3" fill="#8fcfa9"/></svg><div class="n">35 mi</div><div class="s">de inscritos</div></div>
+    <div id="st3" class="card stat" style="left:3470px"><svg class="ic" viewBox="0 0 24 24"><path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" fill="#149a55"/><circle cx="12" cy="12" r="4" fill="#fff"/></svg><div class="n">~5 bi</div><div class="s">de views</div></div>
+    <div id="fonte" class="tag">segundo reportagens · início de 2026</div>
+  </div>
+
+  <!-- MASCOTE (fora do mundo; posição animada) -->
+  <svg id="masc" class="m" width="1920" height="1080" viewBox="0 0 1920 1080" style="left:0;top:0">
+    <g id="guyWrap" transform="translate(-380 30) scale(0.92)">
+    <ellipse cx="760" cy="905" rx="190" ry="22" fill="#e2d9c7"/>
+    <g id="guy">
+      <path d="M668 700 L660 880 L716 880 L728 700 Z" fill="#3a5f8f" class="ln"/>
+      <path d="M782 700 L796 880 L852 880 L840 700 Z" fill="#3a5f8f" class="ln"/>
+      <path d="M640 880 h86 q16 0 16 18 v8 h-110 v-8 q0-18 8-18z" fill="#fff" class="ln"/>
+      <path d="M786 880 h86 q16 0 16 18 v8 h-110 v-8 q0-18 8-18z" fill="#fff" class="ln"/>
+      <path d="M640 470 Q650 430 700 420 L820 420 Q870 430 880 470 L880 720 L640 720 Z" fill="#2c3238" class="ln"/>
+      <path d="M690 640 h140 v60 h-140z" fill="#262b30" class="ln" style="stroke-width:5"/>
+      <path d="M735 440 L728 520 M785 440 L792 520" stroke="#149a55" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="728" cy="524" r="7" fill="#149a55"/><circle cx="792" cy="524" r="7" fill="#149a55"/>
+      <path d="M650 480 Q600 560 640 640" fill="none" stroke="#16191c" stroke-width="62" stroke-linecap="round"/>
+      <path d="M650 480 Q600 560 640 640" fill="none" stroke="#2c3238" stroke-width="48" stroke-linecap="round"/>
+      <g id="head">
+        <path d="M640 330 Q640 170 760 160 Q880 170 880 330 Q880 440 760 450 Q640 440 640 330 Z" fill="#2c3238" class="ln"/>
+        <ellipse cx="760" cy="335" rx="92" ry="100" fill="#f2c9a0" class="ln"/>
+        <path d="M672 290 Q700 225 760 232 Q820 225 848 290 Q812 262 780 272 Q760 252 735 272 Q700 262 672 290 Z" fill="#2a1d14" class="ln" style="stroke-width:5"/>
+        <path d="M660 330 Q655 215 760 205 Q865 215 860 330" fill="none" stroke="#16191c" stroke-width="7"/>
+        <g id="eyes">
+          <ellipse cx="725" cy="330" rx="15" ry="19" fill="#16191c"/>
+          <ellipse cx="795" cy="330" rx="15" ry="19" fill="#16191c"/>
+          <circle cx="730" cy="323" r="5" fill="#fff"/><circle cx="800" cy="323" r="5" fill="#fff"/>
+        </g>
+        <path id="sobr" d="M705 298 Q725 288 745 296 M775 296 Q795 288 815 298" fill="none" stroke="#16191c" stroke-width="7" stroke-linecap="round"/>
+        <ellipse cx="700" cy="368" rx="14" ry="8" fill="#ec9f86" opacity=".7"/>
+        <ellipse cx="820" cy="368" rx="14" ry="8" fill="#ec9f86" opacity=".7"/>
+        <path id="m0" d="M735 382 Q760 402 785 382" fill="none" stroke="#16191c" stroke-width="7" stroke-linecap="round"/>
+        <path id="m1" d="M738 378 Q760 412 782 378 Z" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+        <path id="m2" d="M742 380 Q760 398 778 380 Z" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+        <ellipse id="m3" cx="760" cy="392" rx="15" ry="20" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+      </g>
+      <g id="arm">
+        <path d="M865 485 Q930 520 985 470" fill="none" stroke="#16191c" stroke-width="62" stroke-linecap="round"/>
+        <path d="M865 485 Q930 520 985 470" fill="none" stroke="#2c3238" stroke-width="48" stroke-linecap="round"/>
+        <g id="hand">
+          <circle cx="1000" cy="458" r="26" fill="#f2c9a0" class="ln" style="stroke-width:6"/>
+          <path d="M1015 448 L1062 432" stroke="#16191c" stroke-width="24" stroke-linecap="round"/>
+          <path d="M1015 448 L1062 432" stroke="#f2c9a0" stroke-width="12" stroke-linecap="round"/>
+        </g>
+      </g>
+    </g>
+    <g id="sweat" opacity="0"><path d="M880 250 q-14 22 0 30 q14 -8 0 -30z" fill="#7cc4e8" class="ln" style="stroke-width:4"/></g>
+    </g>
+  </svg>
+
+  <div id="legenda"></div>
+</div>
+
+<script>
+  // palavras e tempos vindos de motion/v04/palavras.json (bloco 1)
+  const W=[["No",0.17],["começo",0.30],["de",0.68],["2026,",0.81],["o",1.07],["YouTube",1.20],["derrubou",1.65],["de",2.33],["uma",2.46],["vez",2.65],["canais",2.85],["que",3.23],["somavam",3.43],["bilhões",3.88],["de",4.33],["visualizações.",4.46],
+           ["Segundo",5.29],["as",5.75],["reportagens,",5.88],["foram",6.74],["16",7.21],["canais,",7.79],["35",8.19],["milhões",9.03],["de",9.75],["inscritos",9.88],["e",10.47],["quase",10.60],["5",10.92],["bilhões",11.25],["de",11.71],["views.",11.84]];
+  const verdes=new Set(["bilhões","16","35","5","milhões","inscritos","views.","visualizações.","canais,"]);
+  const leg=document.getElementById('legenda');
+  // legenda em 2 linhas por frase: frase 1 = 0..15, frase 2 = 16..
+  W.forEach(([w],i)=>{const s=document.createElement('span');s.id='w'+i;s.textContent=w;if(verdes.has(w))s.className='g';leg.appendChild(s);});
+
+  // grade de 6 vídeos (cena 1)
+  const grid=document.getElementById('grid');
+  const pos=[[840,110],[1170,110],[1500,110],[840,360],[1170,360],[1500,360]];
+  pos.forEach(([x,y],i)=>{const d=document.createElement('div');d.className='card vid';d.id='v'+i;d.style.left=x+'px';d.style.top=y+'px';
+    d.innerHTML='<div class="th"></div><div class="b1"></div><div class="b2"></div><div class="x">✕</div>';grid.appendChild(d);});
+
+  const tl=gsap.timeline({paused:true});
+  const E='power3.inOut';
+
+  // legenda: mostra a frase atual, some a anterior
+  W.forEach(([w,t],i)=>tl.fromTo('#w'+i,{opacity:0,y:16},{opacity:1,y:0,duration:0.2,ease:'power3.out'},t));
+  tl.set(W.slice(16).map((_,i)=>'#w'+(i+16)),{display:'none'},0);
+  tl.set(W.slice(0,16).map((_,i)=>'#w'+i),{display:'none'},5.25);
+  tl.set(W.slice(16).map((_,i)=>'#w'+(i+16)),{display:'inline-block'},5.25);
+
+  // câmera
+  tl.fromTo('#world',{x:0},{x:-30,duration:5,ease:'none'},0);
+  tl.to('#world',{x:-1930,duration:0.9,ease:E},5.0);
+  tl.to('#world',{x:-1990,duration:6.4,ease:'none'},5.9);
+  // mascote: fica na esquerda o tempo todo, desliza junto um pouco
+
+  // respiração
+  tl.to('#guy',{y:-6,duration:0.9,ease:'sine.inOut',yoyo:true,repeat:13},0);
+  // piscadas
+  [0.9,4.0,7.0,10.2].forEach(t=>{tl.to('#eyes',{scaleY:0.1,svgOrigin:'760 330',duration:0.07},t);tl.to('#eyes',{scaleY:1,svgOrigin:'760 330',duration:0.09},t+0.08);});
+  // braço: abaixado, aponta para os vídeos em "derrubou"
+  tl.set('#arm',{rotation:55,svgOrigin:'865 485'},0);
+  tl.to('#arm',{rotation:-8,svgOrigin:'865 485',duration:0.5,ease:'back.out(1.8)'},1.5);
+  tl.to('#arm',{rotation:55,svgOrigin:'865 485',duration:0.5,ease:E},4.6);
+  // espanto em "bilhões" (cena 1) e nos números (cena 2)
+  tl.to('#sobr',{y:-12,duration:0.18},3.85).to('#sobr',{y:0,duration:0.3},4.9);
+  tl.to('#head',{rotation:-5,svgOrigin:'760 440',duration:0.4,ease:'sine.inOut'},3.9).to('#head',{rotation:0,svgOrigin:'760 440',duration:0.5},4.8);
+  tl.to('#arm',{rotation:-8,svgOrigin:'865 485',duration:0.5,ease:'back.out(1.8)'},7.1);
+  tl.to('#hand',{x:10,duration:0.12,yoyo:true,repeat:3},7.7);
+  tl.to('#hand',{x:10,duration:0.12,yoyo:true,repeat:3},8.6);
+  tl.to('#sobr',{y:-12,duration:0.18},10.9);
+  tl.fromTo('#sweat',{opacity:0,y:-10},{opacity:1,y:10,duration:0.6},11.0);
+
+  // boca: abre/fecha enquanto fala; "O" de espanto em "bilhões"
+  const fala=[[0.15,4.95],[5.25,12.2]];
+  fala.forEach(([a,b])=>{let k=0;for(let t=a;t<b;t+=0.13,k++){const m=['m1','m2','m1','m0'][k%4];['m0','m1','m2','m3'].forEach(x=>tl.set('#'+x,{opacity:x===m?1:0},t));}
+    ['m1','m2','m3'].forEach(x=>tl.set('#'+x,{opacity:0},b));tl.set('#m0',{opacity:1},b);});
+  [[3.88,4.3],[11.25,11.7]].forEach(([a,b])=>{['m0','m1','m2'].forEach(x=>tl.set('#'+x,{opacity:0},a+0.001));tl.set('#m3',{opacity:1},a+0.001);});
+
+  // CENA 1: vídeos aparecem, depois são derrubados um a um
+  tl.from(['#v0','#v1','#v2','#v3','#v4','#v5'],{y:30,opacity:0,duration:0.4,stagger:0.08,ease:'power3.out'},0.2);
+  [0,4,2,3,1,5].forEach((n,i)=>{const t=1.75+i*0.32;tl.to('#v'+n+' .x',{opacity:1,duration:0.1},t);tl.to('#v'+n,{rotation:(i%2?6:-6),y:18,opacity:0.45,duration:0.35,ease:'power2.in'},t+0.05);});
+  tl.from('#big',{scale:0.85,opacity:0,duration:0.45,ease:'back.out(1.8)'},3.85);
+  tl.fromTo('#stamp',{scale:2,opacity:0},{scale:1,opacity:1,duration:0.22,ease:'power4.in'},4.45);
+  tl.to('#big',{x:-6,duration:0.05,yoyo:true,repeat:3},4.67);
+
+  // CENA 2: números no tempo da fala
+  tl.from('#fonte',{opacity:0,y:10,duration:0.4},5.85);
+  tl.from('#st1',{y:60,opacity:0,duration:0.45,ease:'back.out(1.6)'},7.15);
+  tl.from('#st2',{y:60,opacity:0,duration:0.45,ease:'back.out(1.6)'},8.15);
+  tl.from('#st3',{y:60,opacity:0,duration:0.45,ease:'back.out(1.6)'},10.85);
+  tl.to(['#st1 .n','#st2 .n','#st3 .n'],{color:'#d14343',duration:0.3,stagger:0.08},11.9);
+  tl.to('#root',{opacity:1,duration:0.01},12.39);
+
+  window.__timelines=window.__timelines||{};window.__timelines['root']=tl;
+  window.seek=(t)=>{tl.seek(t,false);};
+</script>
+</body>
+</html>

@@ -1,0 +1,671 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Video 5 - Quanto o YouTube paga</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script src="../../v05/tempos.js"></script>
+<script src="../../v05/palavras.js"></script>
+<style>
+  @font-face{font-family:"Bahnschrift";src:local("Bahnschrift");font-weight:100 900;}
+  :root{--bg:#f3eee4;--ink:#16191c;--muted:#5c574e;--line:#d8cfbe;--card:#fffdf8;--acc:#149a55;--soft:#dff3e6;--red:#d14343;--redsoft:#fbe3e0;--gold:#e9b949;}
+  html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:var(--bg);}
+  #root{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--bg);font-family:"Segoe UI",sans-serif;color:var(--ink);}
+  #dots{position:absolute;inset:0;background-image:radial-gradient(#cfc5b2 1.6px,transparent 1.7px);background-size:36px 36px;opacity:.55;}
+  #world{position:absolute;left:0;top:0;height:1080px;}
+  .panel{position:absolute;top:0;width:1920px;height:1080px;}
+  .h{font-family:"Bahnschrift",sans-serif;font-weight:700;letter-spacing:-1px;line-height:1.05;}
+  .card{background:var(--card);border:2px solid var(--line);border-radius:22px;box-shadow:0 18px 40px rgba(80,60,30,.10);box-sizing:border-box;}
+  .tag{font-family:"Consolas",monospace;font-size:28px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+  .fonte{font-family:"Consolas",monospace;font-size:24px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:10px;white-space:nowrap;}
+  .fonte b{display:inline-flex;width:30px;height:30px;border-radius:50%;border:2px solid var(--muted);align-items:center;justify-content:center;font-size:20px;}
+  .chip{display:inline-flex;align-items:center;gap:12px;padding:14px 26px;border-radius:999px;background:var(--card);border:2px solid var(--line);
+        font-family:"Bahnschrift";font-weight:700;font-size:40px;box-shadow:0 10px 24px rgba(80,60,30,.08);white-space:nowrap;}
+  .chip.g{background:var(--soft);border-color:#9fd6b5;color:#0f7a43;}
+  .chip.r{background:var(--redsoft);border-color:#eeb4ad;color:#a52f2f;}
+  .chip.k{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .stamp{padding:8px 28px;border:7px solid var(--red);border-radius:14px;color:var(--red);font-family:"Bahnschrift";font-weight:700;
+         font-size:60px;letter-spacing:4px;background:rgba(255,253,248,.92);white-space:nowrap;}
+  .stamp.g{border-color:var(--acc);color:var(--acc);}
+  .stamp.k{border-color:#8a8f96;color:#6b6f75;}
+  .ico{width:100%;height:100%;display:block;}
+  .row{display:flex;align-items:center;gap:22px;font-size:44px;}
+  .mk{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Bahnschrift";font-weight:700;font-size:40px;color:#fff;flex:none;}
+  .mk.ok{background:var(--acc);} .mk.no{background:#9a948a;} .mk.q{background:var(--ink);}
+  .bar{height:14px;border-radius:7px;background:#e4dccb;}
+  .win{overflow:hidden;}
+  .win .top{height:56px;border-bottom:2px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 22px;font-size:26px;color:var(--muted);}
+  .win .top i{width:16px;height:16px;border-radius:50%;background:#e4dccb;display:inline-block;}
+  .cc{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;}
+  .pc{position:absolute;top:95px;width:220px;height:170px;border-radius:18px;background:#ece5d6;border:2px dashed #c8bda7;box-sizing:border-box;}
+  .pc .q,.pc .v{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Bahnschrift";font-weight:700;}
+  .pc .q{font-size:110px;color:#b9ae98;}
+  .pc .v{font-size:70px;opacity:0;}
+  .op{position:absolute;top:105px;width:60px;text-align:center;font-family:"Bahnschrift";font-weight:700;font-size:100px;color:var(--muted);}
+  .coin{position:absolute;width:44px;height:44px;}
+  .lt{font-family:"Bahnschrift";font-weight:700;font-size:180px;line-height:1;color:var(--acc);}
+  .tbl{font-size:40px;}
+  .tbl .r{display:flex;align-items:center;height:76px;border-bottom:2px solid #ece5d6;}
+  .tbl .r>div{flex:1;text-align:center;} .tbl .r>div:first-child{flex:1.1;text-align:left;padding-left:34px;font-family:Consolas;font-size:28px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  #legenda{position:absolute;left:760px;right:60px;bottom:40px;text-align:center;font-family:"Bahnschrift";font-weight:700;font-size:46px;line-height:1.25;}
+  #legenda .ph{display:none;}
+  #legenda span{display:inline-block;margin:0 7px;opacity:0;}
+  #legenda .g{color:var(--acc);}
+  #legenda .r{color:var(--red);}
+  svg.m{position:absolute;left:0;top:0;overflow:visible;}
+  .ln{stroke:#16191c;stroke-width:7;stroke-linejoin:round;stroke-linecap:round;}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="root" data-width="1920" data-height="1080" data-start="0" data-duration="384">
+  <div id="dots"></div>
+  <div id="world"></div>
+
+  <svg id="masc" class="m" width="1920" height="1080" viewBox="0 0 1920 1080">
+    <g transform="translate(-380 30) scale(0.92)">
+    <ellipse cx="760" cy="905" rx="190" ry="22" fill="#e2d9c7"/>
+    <g id="guy">
+      <path d="M668 700 L660 880 L716 880 L728 700 Z" fill="#3a5f8f" class="ln"/>
+      <path d="M782 700 L796 880 L852 880 L840 700 Z" fill="#3a5f8f" class="ln"/>
+      <path d="M640 880 h86 q16 0 16 18 v8 h-110 v-8 q0-18 8-18z" fill="#fff" class="ln"/>
+      <path d="M786 880 h86 q16 0 16 18 v8 h-110 v-8 q0-18 8-18z" fill="#fff" class="ln"/>
+      <path d="M640 470 Q650 430 700 420 L820 420 Q870 430 880 470 L880 720 L640 720 Z" fill="#2c3238" class="ln"/>
+      <path d="M690 640 h140 v60 h-140z" fill="#262b30" class="ln" style="stroke-width:5"/>
+      <path d="M735 440 L728 520 M785 440 L792 520" stroke="#149a55" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="728" cy="524" r="7" fill="#149a55"/><circle cx="792" cy="524" r="7" fill="#149a55"/>
+      <g id="armL">
+        <path d="M650 480 Q600 560 640 640" fill="none" stroke="#16191c" stroke-width="62" stroke-linecap="round"/>
+        <path d="M650 480 Q600 560 640 640" fill="none" stroke="#2c3238" stroke-width="48" stroke-linecap="round"/>
+      </g>
+      <g id="head">
+        <path d="M640 330 Q640 170 760 160 Q880 170 880 330 Q880 440 760 450 Q640 440 640 330 Z" fill="#2c3238" class="ln"/>
+        <ellipse cx="760" cy="335" rx="92" ry="100" fill="#f2c9a0" class="ln"/>
+        <path d="M672 290 Q700 225 760 232 Q820 225 848 290 Q812 262 780 272 Q760 252 735 272 Q700 262 672 290 Z" fill="#2a1d14" class="ln" style="stroke-width:5"/>
+        <path d="M660 330 Q655 215 760 205 Q865 215 860 330" fill="none" stroke="#16191c" stroke-width="7"/>
+        <g id="eyes">
+          <ellipse cx="725" cy="330" rx="15" ry="19" fill="#16191c"/>
+          <ellipse cx="795" cy="330" rx="15" ry="19" fill="#16191c"/>
+          <circle cx="730" cy="323" r="5" fill="#fff"/><circle cx="800" cy="323" r="5" fill="#fff"/>
+        </g>
+        <path id="sobr" d="M705 298 Q725 288 745 296 M775 296 Q795 288 815 298" fill="none" stroke="#16191c" stroke-width="7" stroke-linecap="round"/>
+        <ellipse cx="700" cy="368" rx="14" ry="8" fill="#ec9f86" opacity=".7"/>
+        <ellipse cx="820" cy="368" rx="14" ry="8" fill="#ec9f86" opacity=".7"/>
+        <path id="m0" d="M735 382 Q760 402 785 382" fill="none" stroke="#16191c" stroke-width="7" stroke-linecap="round"/>
+        <path id="m1" d="M738 378 Q760 412 782 378 Z" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+        <path id="m2" d="M742 380 Q760 398 778 380 Z" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+        <ellipse id="m3" cx="760" cy="392" rx="15" ry="20" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+      </g>
+      <g id="arm">
+        <path d="M865 485 Q930 520 985 470" fill="none" stroke="#16191c" stroke-width="62" stroke-linecap="round"/>
+        <path d="M865 485 Q930 520 985 470" fill="none" stroke="#2c3238" stroke-width="48" stroke-linecap="round"/>
+        <g id="hand">
+          <!-- objetos na mão (aparecem um por vez) -->
+          <g id="pLupa" opacity="0">
+            <path d="M1008 446 L1046 400" stroke="#16191c" stroke-width="20" stroke-linecap="round"/>
+            <path d="M1008 446 L1046 400" stroke="#8a5a32" stroke-width="10" stroke-linecap="round"/>
+            <circle cx="1070" cy="370" r="40" fill="#e6f5ec" stroke="#16191c" stroke-width="9"/>
+            <path d="M1052 356 Q1060 344 1074 342" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
+          </g>
+          <g id="pCart" opacity="0">
+            <rect x="992" y="392" width="104" height="72" rx="12" fill="#149a55" class="ln" style="stroke-width:6"/>
+            <path d="M992 412 h104" stroke="#0f7a43" stroke-width="8"/>
+            <rect x="1060" y="420" width="44" height="28" rx="7" fill="#e9b949" class="ln" style="stroke-width:5"/>
+            <circle cx="1072" cy="434" r="4" fill="#16191c"/>
+          </g>
+          <g id="pMart" opacity="0">
+            <path d="M1004 452 L1050 360" stroke="#16191c" stroke-width="20" stroke-linecap="round"/>
+            <path d="M1004 452 L1050 360" stroke="#a87545" stroke-width="10" stroke-linecap="round"/>
+            <g transform="rotate(27 1056 346)"><rect x="1012" y="318" width="88" height="54" rx="10" fill="#8a5a32" class="ln" style="stroke-width:6"/><path d="M1030 318 v54 M1082 318 v54" stroke="#16191c" stroke-width="5"/></g>
+          </g>
+          <circle cx="1000" cy="458" r="26" fill="#f2c9a0" class="ln" style="stroke-width:6"/>
+          <g id="finger">
+            <path d="M1015 448 L1062 432" stroke="#16191c" stroke-width="24" stroke-linecap="round"/>
+            <path d="M1015 448 L1062 432" stroke="#f2c9a0" stroke-width="12" stroke-linecap="round"/>
+          </g>
+          <g id="thumb" opacity="0">
+            <path d="M1000 440 L1000 395" stroke="#16191c" stroke-width="24" stroke-linecap="round"/>
+            <path d="M1000 440 L1000 395" stroke="#f2c9a0" stroke-width="12" stroke-linecap="round"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="sweat" opacity="0"><path d="M880 250 q-14 22 0 30 q14 -8 0 -30z" fill="#7cc4e8" class="ln" style="stroke-width:4"/></g>
+    <g id="bubble" opacity="0">
+      <path d="M560 60 h330 q24 0 24 24 v90 q0 24 -24 24 h-250 l-40 40 l6 -40 h-46 q-24 0 -24 -24 v-90 q0 -24 24 -24z" fill="#fffdf8" class="ln" style="stroke-width:5"/>
+      <text id="bubbleTxt" x="725" y="146" text-anchor="middle" font-family="Bahnschrift" font-weight="700" font-size="54" fill="#16191c">?</text>
+      <path id="bubX" d="M612 130 L840 118" stroke="#d14343" stroke-width="10" stroke-linecap="round" opacity="0"/>
+    </g>
+    </g>
+  </svg>
+
+  <div id="legenda"></div>
+</div>
+
+<script>
+/* ---------- dados de tempo ---------- */
+const TP=window.TEMPOS, PAL=window.PAL.palavras;
+const DUR=+(TP.total+1.6).toFixed(2);
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'');
+function T(b,f){const B=TP.blocos.find(x=>x.n===b);return B.inicio_global+B.frases[f].ini;}
+function TF(b,f){const B=TP.blocos.find(x=>x.n===b);return B.inicio_global+B.frases[f].fim;}
+function W(b,f,word,nth=0){const ws=PAL.filter(p=>p.b===b&&p.f===f);const n=norm(word);let c=0;
+  for(const p of ws){if(norm(p.w).startsWith(n)){if(c===nth)return p.ini;c++;}}
+  console.log('palavra nao achada',b,f,word);return T(b,f)+0.3;}
+
+/* ---------- ícones (genéricos, sem marcas) ---------- */
+const G='#149a55',K='#16191c',GR='#8a8f96',R='#d14343',Y='#e9b949';
+const I={
+ play:`<svg class="ico" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4" fill="${G}"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg>`,
+ pessoa:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.2" fill="${G}"/><path d="M3.5 21c0-5 3.8-7.5 8.5-7.5s8.5 2.5 8.5 7.5z" fill="${G}"/></svg>`,
+ pessoaC:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.2" fill="#b4ada1"/><path d="M3.5 21c0-5 3.8-7.5 8.5-7.5s8.5 2.5 8.5 7.5z" fill="#b4ada1"/></svg>`,
+ alerta:`<svg class="ico" viewBox="0 0 24 24"><path d="M12 2L1 21h22z" fill="${Y}" stroke="${K}" stroke-width="1.2" stroke-linejoin="round"/><path d="M12 9v5" stroke="${K}" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1.4" fill="${K}"/></svg>`,
+ celular:`<svg class="ico" viewBox="0 0 24 24"><rect x="6" y="1.5" width="12" height="21" rx="2.5" fill="#fffdf8" stroke="${K}" stroke-width="1.5"/><path d="M10.5 9.5l4 2.5-4 2.5z" fill="${G}"/></svg>`,
+ tv:`<svg class="ico" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5" fill="${K}"/><rect x="3.5" y="5.5" width="17" height="10" rx="1.5" fill="#5d6670"/><path d="M10.5 8l4 2.5-4 2.5z" fill="#fff"/><path d="M8 20.5h8" stroke="${K}" stroke-width="2" stroke-linecap="round"/></svg>`,
+ cifrao:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="${G}"/><text x="12" y="17" text-anchor="middle" font-family="Bahnschrift" font-weight="700" font-size="14" fill="#fff">$</text></svg>`,
+ moeda:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="${Y}" stroke="${K}" stroke-width="1.6"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#c99a2e" stroke-width="1.2"/><text x="12" y="16" text-anchor="middle" font-family="Bahnschrift" font-weight="700" font-size="11" fill="${K}">$</text></svg>`,
+ megafone:`<svg class="ico" viewBox="0 0 24 24"><path d="M3 9.5v5h3.2l7.8 4.5V5L6.2 9.5z" fill="${Y}" stroke="${K}" stroke-width="1.3" stroke-linejoin="round"/><path d="M6.5 14.5l1.4 5h2.4l-1-4.4" fill="#fffdf8" stroke="${K}" stroke-width="1.2" stroke-linejoin="round"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11" stroke="${K}" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`,
+ carteira:`<svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="3" fill="${G}" stroke="${K}" stroke-width="1.2"/><path d="M4.5 6l10-3 1.2 3" fill="#9fd6b5" stroke="${K}" stroke-width="1.1" stroke-linejoin="round"/><rect x="14.5" y="10.5" width="8" height="5" rx="1.5" fill="${Y}" stroke="${K}" stroke-width="1.1"/><circle cx="17" cy="13" r="1" fill="${K}"/></svg>`,
+ calc:`<svg class="ico" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="3" fill="${G}"/><rect x="6.5" y="4.5" width="11" height="4.5" rx="1" fill="#e6f5ec"/><g fill="#fff"><rect x="6.5" y="11" width="3" height="3" rx=".6"/><rect x="10.5" y="11" width="3" height="3" rx=".6"/><rect x="14.5" y="11" width="3" height="3" rx=".6"/><rect x="6.5" y="15.5" width="3" height="3" rx=".6"/><rect x="10.5" y="15.5" width="3" height="3" rx=".6"/><rect x="14.5" y="15.5" width="3" height="3" rx=".6"/></g></svg>`,
+ dado:`<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="#fffdf8" stroke="${K}" stroke-width="1.8"/><circle cx="8" cy="8" r="1.7" fill="${K}"/><circle cx="16" cy="16" r="1.7" fill="${K}"/><circle cx="12" cy="12" r="1.7" fill="${K}"/><circle cx="16" cy="8" r="1.7" fill="${K}"/><circle cx="8" cy="16" r="1.7" fill="${K}"/></svg>`,
+ engrenagem:`<svg class="ico" viewBox="0 0 24 24"><path d="M12 2l2 3 3.5-.8.6 3.5 3 2-1.9 3 1.9 3-3 2-.6 3.5L14 19l-2 3-2-3-3.5.8-.6-3.5-3-2 1.9-3-1.9-3 3-2 .6-3.5L10 5z" fill="#8a8172"/><circle cx="12" cy="12" r="3.6" fill="#fffdf8"/></svg>`,
+ pecas:`<svg class="ico" viewBox="0 0 24 24"><rect x="2.5" y="2.5" width="8.5" height="8.5" rx="2" fill="${G}"/><rect x="13" y="2.5" width="8.5" height="8.5" rx="2" fill="${Y}" stroke="${K}" stroke-width="1"/><rect x="2.5" y="13" width="8.5" height="8.5" rx="2" fill="#5d6670"/><rect x="13" y="13" width="8.5" height="8.5" rx="2" fill="${R}"/></svg>`,
+ cal:`<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3" fill="#fffdf8" stroke="${K}" stroke-width="1.5"/><path d="M3 9.5h18" stroke="${K}" stroke-width="1.5"/><rect x="3" y="4" width="18" height="5.5" rx="2.5" fill="${R}"/><path d="M8 2v4M16 2v4" stroke="${K}" stroke-width="1.8" stroke-linecap="round"/><g fill="${GR}"><rect x="6" y="12" width="3" height="2.5" rx=".6"/><rect x="10.5" y="12" width="3" height="2.5" rx=".6"/><rect x="15" y="12" width="3" height="2.5" rx=".6"/><rect x="6" y="16" width="3" height="2.5" rx=".6"/><rect x="10.5" y="16" width="3" height="2.5" rx=".6"/></g></svg>`,
+ cadeado:`<svg class="ico" viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/><rect x="4" y="10.5" width="16" height="11.5" rx="2.5" fill="${Y}" stroke="${K}" stroke-width="1.4"/><circle cx="12" cy="15.3" r="1.6" fill="${K}"/><rect x="11.2" y="15.5" width="1.6" height="3.5" rx=".6" fill="${K}"/></svg>`,
+ martelo:`<svg class="ico" viewBox="0 0 24 24"><g transform="rotate(-40 9 7)"><rect x="3" y="4" width="12" height="6.5" rx="1.6" fill="#8a5a32" stroke="${K}" stroke-width="1.2"/></g><path d="M10.5 10.5l8.5 9" stroke="${K}" stroke-width="3" stroke-linecap="round"/><path d="M10.5 10.5l8.5 9" stroke="#a87545" stroke-width="1.4" stroke-linecap="round"/><rect x="2.5" y="19" width="10" height="3" rx="1" fill="${GR}"/></svg>`,
+ cofre:`<svg class="ico" viewBox="0 0 24 24"><ellipse cx="11.5" cy="13" rx="8.5" ry="6.5" fill="#f2a7b5" stroke="${K}" stroke-width="1.2"/><rect x="18.5" y="11" width="3.5" height="4" rx="1.2" fill="#f2a7b5" stroke="${K}" stroke-width="1.1"/><path d="M8 7.5l1-3 2.5 2.3" fill="#f2a7b5" stroke="${K}" stroke-width="1.1" stroke-linejoin="round"/><rect x="9.5" y="7.2" width="5" height="1.4" rx=".7" fill="${K}"/><circle cx="15.5" cy="11.5" r=".9" fill="${K}"/><path d="M6.5 18.5v2.5M15.5 18.5v2.5" stroke="${K}" stroke-width="2" stroke-linecap="round"/></svg>`,
+ grafico:`<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="#fffdf8" stroke="${K}" stroke-width="1.4"/><path d="M6 16l4-4 3 3 5-6" stroke="${G}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 9h3v3" stroke="${G}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+ notebook:`<svg class="ico" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="1.5" fill="#5d6670"/><rect x="5.5" y="6.5" width="13" height="8" fill="#cfe9da"/><path d="M2 17.5h20l-1.5 2.5h-17z" fill="${GR}"/></svg>`,
+ pote:`<svg class="ico" viewBox="0 0 24 24"><path d="M5.5 8h13v11.5a3 3 0 0 1-3 3h-7a3 3 0 0 1-3-3z" fill="#fffdf8" stroke="${K}" stroke-width="1.3"/><rect x="4.5" y="4.5" width="15" height="3.6" rx="1.2" fill="${GR}" stroke="${K}" stroke-width="1"/><circle cx="10" cy="17.5" r="2.3" fill="${Y}" stroke="${K}" stroke-width=".8"/><circle cx="14" cy="18.5" r="2.3" fill="${Y}" stroke="${K}" stroke-width=".8"/><circle cx="12" cy="14.8" r="2.3" fill="${Y}" stroke="${K}" stroke-width=".8"/></svg>`,
+ ampulheta:`<svg class="ico" viewBox="0 0 24 24"><path d="M6 2.5h12M6 21.5h12" stroke="${K}" stroke-width="2" stroke-linecap="round"/><path d="M7 2.5c0 5 4 6 5 9.5-1 3.5-5 4.5-5 9.5h10c0-5-4-6-5-9.5 1-3.5 5-4.5 5-9.5z" fill="#fffdf8" stroke="${K}" stroke-width="1.3"/><path d="M9 20.3c1-2 2-3 3-3s2 1 3 3z" fill="${Y}"/><path d="M9.6 6.5h4.8c-.6 1.4-1.4 2.3-2.4 3.2-1-.9-1.8-1.8-2.4-3.2z" fill="${Y}"/></svg>`,
+ semad:`<svg class="ico" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="3" fill="${Y}" stroke="${K}" stroke-width="1.2"/><text x="12" y="14.8" font-size="7.5" text-anchor="middle" font-family="Bahnschrift" font-weight="700" fill="${K}">AD</text><path d="M3.5 21L20.5 3" stroke="${R}" stroke-width="2.8" stroke-linecap="round"/></svg>`,
+ membro:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="${G}"/><path d="M12 5.5l1.9 4 4.4.5-3.3 3 .9 4.3L12 15.1l-3.9 2.2.9-4.3-3.3-3 4.4-.5z" fill="#fff"/></svg>`,
+ obrigado:`<svg class="ico" viewBox="0 0 24 24"><path d="M12 21s-8.5-5.2-8.5-11.2A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8.5 2.8C20.5 15.8 12 21 12 21z" fill="${R}"/><text x="12" y="15.5" text-anchor="middle" font-family="Bahnschrift" font-weight="700" font-size="8.5" fill="#fff">$</text></svg>`,
+ sacola:`<svg class="ico" viewBox="0 0 24 24"><path d="M4.5 8h15l-1.2 13.5H5.7z" fill="${G}" stroke="${K}" stroke-width="1.1" stroke-linejoin="round"/><path d="M8.5 10V6.5a3.5 3.5 0 0 1 7 0V10" stroke="${K}" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`,
+ etiqueta:`<svg class="ico" viewBox="0 0 24 24"><path d="M3 4v7.5L12.5 21l8.5-8.5L11.5 3H4z" fill="${Y}" stroke="${K}" stroke-width="1.3" stroke-linejoin="round"/><circle cx="7.5" cy="7.5" r="1.7" fill="#fffdf8" stroke="${K}" stroke-width="1"/></svg>`,
+ contrato:`<svg class="ico" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" fill="#fffdf8" stroke="${K}" stroke-width="1.4"/><path d="M8 7h8M8 10h8M8 13h5" stroke="${GR}" stroke-width="1.4" stroke-linecap="round"/><path d="M8 18c1.5-2 2.5 1 4-1s2 1 4 0" stroke="${G}" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`,
+ porta:`<svg class="ico" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="1.5" fill="#a87545" stroke="${K}" stroke-width="1.3"/><circle cx="15.5" cy="12.5" r="1.2" fill="${Y}"/></svg>`,
+ check:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="${G}"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+ sino:`<svg class="ico" viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4z" fill="${Y}" stroke="${K}" stroke-width="1.2"/><circle cx="12" cy="21" r="1.8" fill="${K}"/></svg>`,
+ lupa:`<svg class="ico" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5" fill="#e6f5ec" stroke="${K}" stroke-width="2.4"/><path d="M15 15l6 6" stroke="${K}" stroke-width="2.8" stroke-linecap="round"/></svg>`,
+ relogio:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#fffdf8" stroke="${K}" stroke-width="1.6"/><path d="M12 6v6l4 2.5" stroke="${G}" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`,
+};
+
+/* ---------- construção ---------- */
+const world=document.getElementById('world');
+const tl=gsap.timeline({paused:true});
+const E='power3.inOut';
+let panels=[];
+function panel(){const p=document.createElement('div');p.className='panel';p.style.left=(panels.length*1920)+'px';world.appendChild(p);panels.push(p);return p;}
+let uid=0;
+function add(P,html,css,cls=''){const d=document.createElement('div');d.id='e'+(uid++);d.className=cls;d.style.cssText='position:absolute;'+css;d.innerHTML=html;P.appendChild(d);return '#'+d.id;}
+// sons: cada animação registra um evento; o script de áudio lê window.EVENTOS
+const EVENTOS=[];function EV(t,k,g=1){EVENTOS.push([+t.toFixed(3),k,g]);}
+const A={
+ up:(s,t)=>{EV(t,'up');return tl.from(s,{y:50,opacity:0,duration:0.45,ease:'power3.out'},t);},
+ pop:(s,t)=>{EV(t,'pop');return tl.from(s,{scale:0.6,opacity:0,duration:0.45,ease:'back.out(1.8)'},t);},
+ fade:(s,t)=>tl.from(s,{opacity:0,duration:0.4},t),
+ left:(s,t)=>{EV(t,'up',0.6);return tl.from(s,{x:-60,opacity:0,duration:0.45,ease:'power3.out'},t);},
+ drop:(s,t)=>{EV(t+0.3,'impacto',0.6);return tl.from(s,{y:-160,opacity:0,duration:0.55,ease:'bounce.out'},t);},
+ stamp:(s,t)=>{EV(t+0.2,'impacto');return tl.from(s,{scale:2.2,opacity:0,duration:0.22,ease:'power4.in'},t);},
+};
+const ICON=(k,sz)=>`<div style="width:${sz}px;height:${sz}px;flex:none">${I[k]}</div>`;
+function title(P,txt,t,y=110,size=80){const s=add(P,`<div class="h" style="font-size:${size}px;text-align:center">${txt}</div>`,`left:780px;width:1100px;top:${y}px`);A.up(s,t);return s;}
+function chip(P,txt,x,y,t,cls='',an='pop'){const s=add(P,txt,`left:${x}px;top:${y}px`,'chip '+cls);A[an](s,t);return s;}
+function stamp(P,txt,x,y,t,rot=-8,cls='',fs=60){const s=add(P,txt,`left:${x}px;top:${y}px;transform:rotate(${rot}deg);font-size:${fs}px`,'stamp '+cls);A.stamp(s,t);return s;}
+function card(P,html,x,y,w,h,t,an='up',extra=''){const s=add(P,html,`left:${x}px;top:${y}px;width:${w}px;height:${h}px;${extra}`,'card');A[an](s,t);return s;}
+function fonte(P,txt,t,y=852){const s=add(P,`<b>i</b>${txt}`,`left:800px;top:${y}px`,'fonte');A.fade(s,t);return s;}
+function row(P,mk,txt,x,y,t,cls='ok',fs=44){const s=add(P,`<div class="row" style="font-size:${fs}px"><div class="mk ${cls}">${mk}</div><div>${txt}</div></div>`,`left:${x}px;top:${y}px`);A.left(s,t);return s;}
+// contadores de número (puros no tempo, atualizados em vivo())
+const NUM=[];const fmt=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+function conta(id,t0,t1,a,b,suf=''){NUM.push({id,t0,t1,a,b,suf});for(let k=0;k<8;k++)EV(t0+(t1-t0)*k/8,'tick',0.5);}
+// moedas caindo em loop (fim definido)
+function chuva(P,x,y,t0,t1,dist=150,per=0.6,n=3){for(let k=0;k<n;k++){const c=add(P,I.moeda,`left:${x+(k%2)*14-7}px;top:${y}px;width:44px;height:44px;opacity:0`);
+  const st=t0+k*per/n,rep=Math.max(0,Math.floor((t1-st)/per)-1);
+  tl.fromTo(c,{y:0,opacity:1},{y:dist,opacity:0,duration:per,ease:'power1.in',repeat:rep,immediateRender:false},st);}}
+// fórmula views ÷ 1.000 × RPM = R$
+function formula(P,x,y,t,rev){const k=uid++;
+  const pcs=[['views',''],['1.000',''],['RPM','color:#149a55'],['R$','']];const L=[25,315,605,895],O=[250,540,830],ops=['÷','×','='];
+  let h=`<div class="tag" style="position:absolute;left:30px;top:24px">a conta inteira</div>`;
+  pcs.forEach(([v,c],i)=>h+=`<div class="pc" id="pc${k}_${i}" style="left:${L[i]}px;${i===3?'width:180px':''}"><div class="q">?</div><div class="v" style="${c}">${v}</div></div>`);
+  O.forEach((l,i)=>h+=`<div class="op" style="left:${l}px">${ops[i]}</div>`);
+  const s=card(P,h,x,y,1100,320,t);
+  if(rev)rev.forEach((tt,i)=>{const p='#pc'+k+'_'+i;EV(tt,'clique');
+    tl.to(p,{scaleX:0,duration:0.1,ease:'power2.in'},tt);
+    tl.set(p+' .q',{opacity:0},tt+0.1);tl.set(p+' .v',{opacity:1},tt+0.1);
+    tl.set(p,{background:'#fffdf8',borderStyle:'solid',borderColor:i===2?'#149a55':'#d8cfbe'},tt+0.1);
+    tl.to(p,{scaleX:1,duration:0.14,ease:'back.out(2)'},tt+0.1);});
+  else tl.to(`#pc${k}_0 .q,#pc${k}_1 .q,#pc${k}_2 .q,#pc${k}_3 .q`,{rotation:12,duration:0.12,yoyo:true,repeat:5,stagger:0.05},t+0.6);
+  return {s,k};}
+// calendário 1º fev 2027
+function calendario(P,x,y,w,t,an='pop'){const h=w*1.1;return card(P,`<div style="position:absolute;left:0;right:0;top:0;height:${h*0.25}px;background:${R};border-radius:20px 20px 0 0;display:flex;align-items:center;justify-content:center;color:#fff" class="h"><span style="font-size:${w*0.14}px;letter-spacing:4px">FEV</span></div>
+  <div class="h" style="position:absolute;left:0;right:0;top:${h*0.3}px;text-align:center;font-size:${w*0.45}px">1º</div><div style="position:absolute;left:0;right:0;top:${h*0.76}px;text-align:center;font-family:Consolas;font-size:${w*0.11}px;color:var(--muted)">2027</div>`,x,y,w,h,t,an,'overflow:hidden');}
+
+/* ---------- mascote ---------- */
+function arm(pose,t,d=0.5){const r={down:55,point:-8,up:-45,mid:20,coca:-80}[pose];tl.to('#arm',{rotation:r,svgOrigin:'865 485',duration:d,ease:pose==='down'?E:'back.out(1.8)'},t);}
+function surpresa(t){tl.to('#sobr',{y:-12,duration:0.18},t).to('#sobr',{y:0,duration:0.3},t+1.1);}
+function inclina(t,r=-6){tl.to('#head',{rotation:r,svgOrigin:'760 440',duration:0.4,ease:'sine.inOut'},t).to('#head',{rotation:0,svgOrigin:'760 440',duration:0.5,ease:'sine.inOut'},t+1.4);}
+function suor(t){tl.fromTo('#sweat',{opacity:0,y:-10},{opacity:1,y:10,duration:0.5,immediateRender:false},t);tl.to('#sweat',{opacity:0,duration:0.3},t+1.5);}
+const BUB=[];function balao(t,txt,dur=2.2,cor=K){BUB.push([t,txt,cor]);EV(t,'pop',0.7);tl.fromTo('#bubble',{opacity:0,scale:0.7,svgOrigin:'640 260'},{opacity:1,scale:1,svgOrigin:'640 260',duration:0.3,ease:'back.out(2)',immediateRender:false},t);tl.to('#bubble',{opacity:0,duration:0.25},t+dur);}
+function troca(t,txt,cor=K){BUB.push([t,txt,cor]);tl.to('#bubble',{scale:1.1,svgOrigin:'640 260',duration:0.12,yoyo:true,repeat:1},t);}
+function joinha(t,d=2){tl.set('#finger',{opacity:0},t);tl.set('#thumb',{opacity:1},t);arm('mid',t,0.4);tl.set('#finger',{opacity:1},t+d);tl.set('#thumb',{opacity:0},t+d);arm('down',t+d,0.45);}
+function objeto(id,t,d,pose='mid'){tl.set('#finger',{opacity:0},t);tl.set(id,{opacity:1},t);arm(pose,t,0.45);tl.set(id,{opacity:0},t+d);tl.set('#finger',{opacity:1},t+d);}
+function coca(t,d=2.4){arm('coca',t,0.55);tl.to('#arm',{rotation:-74,svgOrigin:'865 485',duration:0.14,yoyo:true,repeat:Math.floor(d/0.14)|1,ease:'sine.inOut'},t+0.55);
+  tl.to('#head',{rotation:6,svgOrigin:'760 440',duration:0.4,ease:'sine.inOut'},t).to('#head',{rotation:0,svgOrigin:'760 440',duration:0.4},t+d+0.5);arm('down',t+d+0.6);}
+function dedo(t,d=1.6){arm('up',t,0.4);tl.to('#arm',{rotation:-32,svgOrigin:'865 485',duration:0.16,yoyo:true,repeat:Math.floor(d/0.16)|1,ease:'sine.inOut'},t+0.4);arm('down',t+d+0.5);}
+function alerta(t,d=2){arm('up',t,0.4);tl.to('#sobr',{y:-12,duration:0.18},t).to('#sobr',{y:0,duration:0.3},t+d);suor(t+0.2);arm('down',t+d);}
+tl.set('#arm',{rotation:55,svgOrigin:'865 485'},0);
+
+/* ---------- câmera ---------- */
+function go(t){const i=panels.length-1;if(i===0)return;const a=Math.max(0,t-0.45);EV(a,'whoosh');
+  tl.to('#world',{x:-i*1920,duration:0.75,ease:E},a);tl.to('#dots',{backgroundPositionX:-(i*1920*0.35)+'px',duration:0.75,ease:E},a);}
+function nova(t){const P=panel();go(t);return P;}
+
+/* =================== CENAS =================== */
+let P,t;
+/* ---- BLOCO 1: gancho ---- */
+t=T(1,0);P=nova(t);
+{card(P,`<div class="tag" style="position:absolute;left:36px;top:26px">visualizações</div><div style="position:absolute;right:36px;top:24px;width:76px;height:56px">${I.play}</div>
+   <div class="cc"><div id="n1" style="font-family:Consolas;font-weight:700;font-size:170px;letter-spacing:-4px;line-height:1">0</div><div style="font-size:46px;color:var(--muted);margin-top:8px">views</div></div>`,790,190,1080,400,t,'pop');
+ const ty=W(1,0,'youtube');conta('n1',t+0.25,ty,0,1e6);
+ tl.to('#n1',{color:G,scale:1.06,duration:0.15,yoyo:true,repeat:1},ty);EV(ty,'ding');
+ const q=add(P,'= R$ ?',`left:1110px;top:650px;padding:12px 44px;border-radius:999px;background:${G};color:#fff;font-family:Bahnschrift;font-weight:700;font-size:80px;box-shadow:0 14px 30px rgba(20,154,85,.25)`);A.pop(q,W(1,1,'quanto'));
+ tl.to(q,{rotation:-3,duration:0.12,yoyo:true,repeat:3},W(1,1,'paga'));
+ arm('point',t+0.3);arm('down',W(1,1,'paga')+0.4);}
+t=T(1,2);P=nova(t);
+{add(P,`<svg width="1100" height="675" viewBox="0 0 1140 700">
+      <path d="M470 640 L630 640 L590 600 L510 600 Z" fill="#fffdf8" class="ln"/>
+      <rect x="538" y="150" width="24" height="455" fill="#fffdf8" class="ln" style="stroke-width:6"/>
+      <g id="beam"><rect x="130" y="128" width="840" height="26" rx="13" fill="#2c3238" class="ln" style="stroke-width:6"/><circle cx="550" cy="141" r="26" fill="#149a55" class="ln" style="stroke-width:6"/></g>
+      <g id="panL"><path d="M150 141 L70 420 M150 141 L230 420" stroke="#16191c" stroke-width="5"/><path d="M40 420 L260 420 Q250 490 150 490 Q50 490 40 420 Z" fill="#fffdf8" class="ln"/>
+        <g id="coins"><ellipse cx="130" cy="408" rx="34" ry="12" fill="#e9b949" class="ln" style="stroke-width:5"/><ellipse cx="170" cy="396" rx="34" ry="12" fill="#e9b949" class="ln" style="stroke-width:5"/></g>
+        <text id="tL" x="150" y="565" text-anchor="middle" font-family="Bahnschrift" font-weight="700" font-size="80" fill="#149a55" opacity="0">R$ 50</text></g>
+      <g id="panR"><path d="M950 141 L870 420 M950 141 L1030 420" stroke="#16191c" stroke-width="5"/><path d="M840 420 L1060 420 Q1050 490 950 490 Q850 490 840 420 Z" fill="#fffdf8" class="ln"/>
+        <g id="bills"><rect x="880" y="384" width="140" height="34" rx="6" fill="#7fc79b" class="ln" style="stroke-width:5"/><rect x="872" y="350" width="140" height="34" rx="6" fill="#8fcfa9" class="ln" style="stroke-width:5"/><rect x="886" y="316" width="140" height="34" rx="6" fill="#7fc79b" class="ln" style="stroke-width:5"/><rect x="878" y="282" width="140" height="34" rx="6" fill="#8fcfa9" class="ln" style="stroke-width:5"/><rect x="884" y="248" width="140" height="34" rx="6" fill="#7fc79b" class="ln" style="stroke-width:5"/></g>
+        <text id="tR" x="950" y="565" text-anchor="middle" font-family="Bahnschrift" font-weight="700" font-size="80" fill="#149a55" opacity="0">R$ 20.000</text></g>
+    </svg>`,`left:790px;top:120px;width:1100px;height:675px`);A.up('#e'+(uid-1),t);
+ fonte(P,'segundo estimativas de sites · não é número oficial',W(1,2,'estimativas'),60);
+ const c5=W(1,2,'cinquenta'),c2=W(1,3,'vinte');
+ tl.from('#coins',{y:-120,opacity:0,duration:0.4,ease:'bounce.out'},c5);tl.to('#tL',{opacity:1,duration:0.25},c5+0.1);EV(c5,'moeda');
+ tl.from('#bills',{y:-160,opacity:0,duration:0.45,ease:'bounce.out'},c2);tl.to('#tR',{opacity:1,duration:0.25},c2+0.1);EV(c2,'moeda');EV(c2+0.3,'impacto',0.5);
+ const tilt=(a,tt,d,e)=>{const dy=410*Math.sin(a*Math.PI/180);tl.to('#beam',{rotation:a,svgOrigin:'550 141',duration:d,ease:e},tt);tl.to('#panL',{y:-dy,duration:d,ease:e},tt);tl.to('#panR',{y:dy,duration:d,ease:e},tt);};
+ tilt(-3,c5+0.15,0.5,'back.out(2)');tilt(9,c2+0.3,0.7,'back.out(1.6)');
+ const tm=W(1,4,'mesmo');
+ const v1=add(P,'1 mi de views',`left:860px;top:745px;width:300px;text-align:center;font-family:Consolas;font-size:32px;color:var(--muted)`);A.fade(v1,tm);
+ const v2=add(P,'1 mi de views',`left:1630px;top:745px;width:300px;text-align:center;font-family:Consolas;font-size:32px;color:var(--muted)`);A.fade(v2,tm+0.25);
+ tl.to([v1,v2],{color:K,duration:0.2},W(1,4,'views'));
+ const st=stamp(P,'400×',1180,300,W(1,5,'quatrocentas'),-9,'',150);surpresa(W(1,5,'quatrocentas'));
+ arm('point',c5-0.2);arm('down',W(1,4,'mesmo'));}
+t=T(1,6);P=nova(t);
+{coca(t-0.1,1.9);balao(t,'sorte?',TF(1,7)+0.8-t);
+ const s1=card(P,`<div class="cc">${ICON('dado',130)}<div class="h" style="font-size:56px;margin-top:18px">sorte</div></div>`,860,170,420,320,W(1,6,'sorte'),'pop');
+ const s2=card(P,`<div class="cc">${ICON('engrenagem',130)}<div class="h" style="font-size:56px;margin-top:18px">algoritmo</div></div>`,1380,170,420,320,W(1,6,'algoritmo'),'pop');
+ const tc=W(1,7,'conta');
+ [s1,s2].forEach((s,i)=>{const x=add(P,'✕',`left:${i?1380:860}px;top:170px;width:420px;height:320px;display:flex;align-items:center;justify-content:center;font-family:Bahnschrift;font-weight:700;font-size:220px;color:${R}`);
+   tl.from(x,{opacity:0,scale:1.5,duration:0.15},tc-0.45+i*0.12);tl.to([s,x],{rotation:i?5:-5,y:16,opacity:0.45,duration:0.3,ease:'power2.in'},tc-0.35+i*0.12);EV(tc-0.45+i*0.12,'risca');});
+ tl.fromTo('#bubX',{opacity:1,scaleX:0,svgOrigin:'612 130'},{scaleX:1,duration:0.22,immediateRender:false},tc-0.4);tl.set('#bubX',{opacity:0},tc);
+ troca(tc,'conta!',G);EV(tc,'ding');
+ card(P,`<div style="display:flex;align-items:center;justify-content:center;gap:30px;height:100%">${ICON('calc',120)}<div class="h" style="font-size:100px;color:var(--acc)">conta</div></div>`,1030,570,620,230,tc,'pop','border:3px solid var(--acc)');}
+t=T(1,8);P=nova(t);
+{formula(P,790,220,t,null);arm('point',t+0.2);
+ chip(P,'simples',880,620,W(1,8,'simples'),'g');chip(P,'quase ninguém mostra inteira',1110,620,W(1,8,'ninguem'),'r');arm('down',TF(1,8)-0.3);}
+t=T(1,9);P=nova(t);
+{arm('up',t+0.05);surpresa(t+0.1);
+ card(P,`<div style="display:flex;align-items:center;gap:40px;padding:50px 54px">${ICON('alerta',150)}<div><div class="tag">um aviso antes</div><div class="h" style="font-size:78px;margin-top:8px">não é pra <span style="color:var(--red)">copiar</span></div><div class="h" id="av2" style="font-size:66px;color:var(--acc);margin-top:14px">é pra entender a conta</div></div></div>`,800,150,1060,400,W(1,9,'aviso'),'pop');
+ tl.from('#av2',{opacity:0,y:30,duration:0.4},W(1,10,'ensinar'));EV(W(1,10,'ensinar'),'pop');
+ chip(P,'✕ fazer igual a ninguém',820,600,W(1,9,'igual'),'r');
+ chip(P,'✕ esperar esses valores',1350,600,W(1,9,'esperar'),'r');
+ chip(P,'✓ escolher melhor os seus vídeos',990,720,W(1,10,'escolher'),'g');
+ arm('down',T(1,10)+0.3);}
+t=T(1,11);P=nova(t);
+{title(P,'O vídeo em 3 partes',t,90,78);
+ const M=[['a conta','calc',W(1,11,'conta')],['as 4 peças','pecas',W(1,11,'quatro')],['fevereiro','cal',W(1,11,'fevereiro')]];
+ M.forEach(([lab,ic,tt],i)=>{card(P,`<div class="cc"><div class="mk q" style="width:84px;height:84px;font-size:50px;margin-bottom:22px">${i+1}</div>${i<2?ICON(ic,130):`<div style="width:150px;height:130px"></div>`}<div class="h" style="font-size:58px;margin-top:22px">${lab}</div></div>`,840+i*350,240,320,440,tt,'pop');});
+ calendario(P,1555,350,140,W(1,11,'fevereiro'),'fade');
+ const lk=add(P,I.cadeado,`left:1655px;top:300px;width:90px;height:90px`);A.drop(lk,W(1,11,'dificil'));
+ chip(P,'canal pequeno: mais difícil',1240,730,W(1,11,'pequeno'),'r');
+ arm('point',W(1,11,'conta'));arm('down',W(1,11,'mudanca'));}
+
+/* ---- BLOCO 2: CPM e RPM ---- */
+t=T(2,0);P=nova(t);
+{title(P,'Duas siglas',t,100,84);
+ card(P,`<div class="cc">${ICON('megafone',130)}<div class="h" style="font-size:120px;margin-top:10px">CPM</div><div style="font-size:38px;color:var(--muted);margin-top:6px">preço do anúncio</div></div>`,840,240,480,420,W(2,0,'siglas'),'pop');
+ card(P,`<div class="cc">${ICON('carteira',130)}<div class="h" style="font-size:120px;margin-top:10px;color:var(--acc)">RPM</div><div style="font-size:38px;color:var(--muted);margin-top:6px">o que chega pra você</div></div>`,1380,240,480,420,W(2,0,'siglas')+0.3,'pop');
+ chip(P,'todo mundo confunde',1130,720,W(2,0,'confunde'),'r');inclina(W(2,0,'confunde'),5);}
+t=T(2,1);P=nova(t);
+{card(P,`<div class="cc">${ICON('megafone',150)}<div class="h" style="font-size:110px;margin-top:10px">CPM</div><div class="tag" style="margin-top:10px">o anunciante paga</div></div>`,800,170,440,480,t,'pop');
+ const gr=add(P,'',`left:1300px;top:180px;width:560px;height:420px`);
+ const Gd=document.querySelector(gr);for(let i=0;i<12;i++){const d=document.createElement('div');d.className='card';d.id='ad'+i;d.style.cssText=`position:absolute;left:${(i%4)*140}px;top:${Math.floor(i/4)*140}px;width:122px;height:122px;display:flex;align-items:center;justify-content:center;font-family:Bahnschrift;font-weight:700;font-size:30px;background:#fff6dc;border-color:#e6cf8f`;d.textContent='anúncio';d.style.fontSize='24px';Gd.appendChild(d);
+  tl.from('#ad'+i,{scale:0.4,opacity:0,duration:0.25,ease:'back.out(2)'},W(2,1,'anuncios')+i*0.06);}
+ EV(W(2,1,'anuncios'),'pop');
+ chip(P,'por 1.000 anúncios mostrados',1290,620,W(2,1,'mil'),'k');
+ chip(P,'= o preço do anúncio',980,740,W(2,2,'preco'),'g');arm('point',t+0.2);arm('down',TF(2,2)-0.3);}
+t=T(2,3);P=nova(t);
+{const c=card(P,`<div class="tag" style="position:absolute;left:40px;top:34px">dinheiro do anunciante</div><div style="position:absolute;left:40px;top:110px;width:900px;height:110px;border-radius:16px;background:#ece5d6"></div>
+  <div id="din1" style="position:absolute;left:40px;top:110px;width:900px;height:110px;border-radius:16px;background:${G};display:flex;align-items:center;padding-left:30px;box-sizing:border-box;transform-origin:left center"><span class="h" style="font-size:60px;color:#fff">R$ R$ R$ R$</span></div>`,820,250,980,280,t);
+ tl.to('#din1',{scaleX:0.55,duration:0.6,ease:E},W(2,3,'inteiro'));EV(W(2,3,'inteiro'),'risca');
+ stamp(P,'NÃO VAI INTEIRO',1100,600,W(2,3,'inteiro')+0.2,-5);suor(W(2,3,'inteiro'));}
+t=T(2,4);P=nova(t);
+{card(P,`<div class="cc">${ICON('carteira',150)}<div class="h" style="font-size:110px;margin-top:10px;color:var(--acc)">RPM</div><div class="tag" style="margin-top:10px">o que sobra pro criador</div></div>`,800,150,500,500,t,'pop');
+ chip(P,'a cada 1.000 views',840,700,W(2,4,'mil'),'k');
+ const cb=card(P,`<div style="position:absolute;left:70px;bottom:90px;width:150px;height:420px;border-radius:14px;background:#cfc8bb" id="bC"></div><div style="position:absolute;left:290px;bottom:90px;width:150px;height:260px;border-radius:14px;background:${G}" id="bR"></div>
+   <div class="h" style="position:absolute;left:70px;width:150px;bottom:24px;text-align:center;font-size:48px">CPM</div><div class="h" style="position:absolute;left:290px;width:150px;bottom:24px;text-align:center;font-size:48px;color:var(--acc)">RPM</div>`,1360,150,510,620,W(2,5,'menor')-0.2);
+ tl.from('#bC',{scaleY:0,transformOrigin:'50% 100%',duration:0.5,ease:'power3.out'},W(2,5,'menor'));tl.from('#bR',{scaleY:0,transformOrigin:'50% 100%',duration:0.5,ease:'power3.out'},W(2,5,'menor')+0.25);
+ chip(P,'2 motivos',1490,820-40,W(2,5,'dois'),'r');arm('point',W(2,5,'menor'));arm('down',TF(2,5)-0.2);}
+t=T(2,6);P=nova(t);
+{title(P,'<span style="color:var(--muted)">1.</span> o YouTube fica com uma parte',t,90,66);
+ add(P,`<svg width="440" height="440" viewBox="0 0 440 440"><circle cx="220" cy="220" r="200" fill="${G}" stroke="${K}" stroke-width="6"/><circle id="fatia" cx="220" cy="220" r="100" fill="none" stroke="#b9b2a5" stroke-width="200" stroke-dasharray="0 628.3" transform="rotate(-90 220 220)"/><circle cx="220" cy="220" r="200" fill="none" stroke="${K}" stroke-width="6"/></svg>`,`left:860px;top:250px;width:440px;height:440px`);A.pop('#e'+(uid-1),t+0.2);
+ tl.to('#fatia',{attr:{'stroke-dasharray':'282.7 628.3'},duration:0.7,ease:'power2.inOut'},W(2,6,'parte'));EV(W(2,6,'parte'),'whoosh',0.6);
+ chip(P,'45% YouTube',1380,300,W(2,6,'parte')+0.4,'');
+ const c55=W(2,7,'cinquenta');
+ const big=add(P,`<div class="h" style="font-size:150px;color:var(--acc)">55%</div><div class="h" style="font-size:52px">pro criador</div>`,`left:1380px;top:430px`);A.pop(big,c55);
+ chip(P,'vídeos longos',1380,700,W(2,7,'longos'),'g');
+ fonte(P,'fonte: YouTube · programa de parcerias',c55);arm('point',c55);arm('down',TF(2,7)-0.2);}
+t=T(2,8);P=nova(t);
+{title(P,'<span style="color:var(--muted)">2.</span> nem toda view tem anúncio',t,90,66);
+ const DL=[];for(let i=0;i<10;i++){const x=860+(i%5)*200,y=250+Math.floor(i/5)*270;
+   const g=add(P,I.pessoa,`left:${x}px;top:${y}px;width:140px;height:140px`);tl.from(g,{y:30,opacity:0,duration:0.3,ease:'back.out(2)'},W(2,8,'visualizacao')+i*0.05);
+   const c=add(P,I.pessoaC,`left:${x}px;top:${y}px;width:140px;height:140px;opacity:0`);DL.push([c,x,y]);}
+ EV(W(2,8,'visualizacao'),'pop');
+ [[1,6,'Premium','premium'],[3,7,'saiu antes','sai'],[4,9,'sem anúncio','recebe']].forEach(([a,b,lab,w])=>{const tt=W(2,9,w);
+   [a,b].forEach((k,j)=>{const [c,x,y]=DL[k];tl.to(c,{opacity:1,duration:0.2},tt+j*0.1);
+     const l=add(P,lab,`left:${x-30}px;top:${y+150}px;width:200px;text-align:center;font-family:Consolas;font-size:26px;color:#a52f2f;font-weight:700`);A.fade(l,tt+j*0.1);});EV(tt,'pop',0.6);});
+ inclina(W(2,9,'premium'),-5);}
+t=T(2,10);P=nova(t);
+{title(P,'Guarda essa frase',t,100,80);
+ card(P,`<div style="display:flex;align-items:center;gap:36px;padding:40px 50px">${ICON('megafone',120)}<div class="h" style="font-size:62px"><span style="font-size:76px">CPM</span> = o que o anunciante paga</div></div>`,800,260,1060,210,W(2,10,'cpm'),'pop');
+ card(P,`<div style="display:flex;align-items:center;gap:36px;padding:40px 50px">${ICON('carteira',120)}<div class="h" style="font-size:62px"><span style="font-size:76px;color:var(--acc)">RPM</span> = o que chega no seu bolso</div></div>`,800,520,1060,210,W(2,11,'rpm'),'pop','border:3px solid var(--acc)');
+ joinha(W(2,11,'bolso'),1.8);}
+
+/* ---- BLOCO 3: a conta ---- */
+t=T(3,0);P=nova(t);
+{title(P,'A conta',t,110,90);
+ const tr=W(3,0,'rpm',1);formula(P,790,290,t+0.2,[W(3,0,'visualizacoes'),W(3,0,'divide')+0.1,W(3,0,'multiplica')+0.1,tr+0.35]);
+ arm('point',W(3,0,'multiplica'));arm('down',tr+1.2);}
+t=T(3,1);P=nova(t);
+{const tg=add(P,'exemplo 1',`left:940px;top:110px`,'chip k');A.pop(tg,t);
+ const c=card(P,'',940,200,820,600,t+0.1);const C=document.querySelector(c);
+ const L=[['100.000 views no mês',W(3,2,'cem'),48,''],['vídeos longos · RPM de <span style="color:var(--acc)">R$ 5</span>',W(3,2,'cinco'),44,''],['100.000 ÷ 1.000 = <b>100</b>',W(3,3,'dividido'),52,'border-top:2px solid #ece5d6;padding-top:26px'],['100 × R$ 5 =',W(3,4,'vezes'),52,'']];
+ L.forEach(([h,tt,fs,ex],i)=>{const d=document.createElement('div');d.id='ex1_'+i;d.className='h';d.style.cssText=`position:absolute;left:56px;top:${44+i*110}px;font-size:${fs}px;font-weight:${i>1?700:600};${ex}`;d.innerHTML=h;C.appendChild(d);tl.from('#ex1_'+i,{x:-40,opacity:0,duration:0.4,ease:'power3.out'},tt);EV(tt,'up',0.6);});
+ const res=add(P,`<span style="color:var(--acc)">R$ 500</span><span style="font-size:52px;color:var(--muted)"> /mês</span>`,`left:1000px;top:660px;font-size:110px`,'h');A.pop(res,W(3,4,'quinhentos'));EV(W(3,4,'quinhentos'),'moeda');
+ fonte(P,'exemplo · não é resultado de canal real',t+0.4);arm('point',W(3,3,'dividido'));arm('down',TF(3,4)-0.3);}
+t=T(3,5);P=nova(t);
+{card(P,`<div style="padding:34px 40px"><div class="tag">exemplo 1</div><div class="h" style="font-size:46px;margin-top:16px">100 mil views</div><div class="h" style="font-size:46px">RPM R$ 5</div><div class="h" style="font-size:70px;color:var(--acc);margin-top:20px">R$ 500</div></div>`,800,250,420,400,t,'left');
+ const c=card(P,`<div style="padding:40px 50px"><div class="tag">exemplo 2 · mesmo canal</div><div class="h" style="font-size:52px;margin-top:20px">100 mil views</div><div class="h" id="ex2r" style="font-size:52px;margin-top:8px">RPM <span style="color:var(--acc)">R$ 20</span></div></div>`,1270,180,600,560,W(3,5,'mesmo')-0.1,'pop','border:3px solid var(--acc)');
+ tl.from('#ex2r',{opacity:0,x:-30,duration:0.4},W(3,5,'vinte'));EV(W(3,5,'vinte'),'pop');
+ const res=add(P,`<span style="color:var(--acc)">R$ 2.000</span><span style="font-size:48px;color:var(--muted)"> /mês</span>`,`left:1320px;top:470px;font-size:104px`,'h');A.pop(res,W(3,6,'dois'));EV(W(3,6,'dois'),'moeda');
+ stamp(P,'4×',1640,120,W(3,7,'quatro'),10,'g',110);
+ chip(P,'nenhuma view a mais',1340,770,W(3,7,'visualizacao'),'g');
+ fonte(P,'exemplo · não é resultado de canal real',t+0.2,860);surpresa(W(3,7,'quatro'));}
+t=T(3,8);P=nova(t);
+{title(P,'Sobe a escada',t,90,80);
+ const deg=[['R$ 2','R$ 200',W(3,9,'dois'),W(3,9,'duzentos')],['R$ 5','R$ 500',W(3,10,'cinco'),W(3,10,'quinhentos')],['R$ 10','R$ 1.000',W(3,11,'dez'),W(3,11,'mil')],['R$ 20','R$ 2.000',W(3,12,'vinte'),W(3,12,'dois')]];
+ const ST=[];deg.forEach(([rpm,val,t1,t2],i)=>{const h=150+i*130,x=820+i*265,y=820-h;
+   const s=card(P,`<div style="padding:18px 20px"><div class="tag" style="font-size:24px">RPM ${rpm}</div><div class="h" id="dv${i}" style="font-size:${i===3?62:54}px;color:var(--acc);margin-top:6px">${val}</div></div>`,x,y,245,h,Math.min(t1,t+0.4+i*0.15),'up',i===3?'border:3px solid var(--acc);background:#f3fbf6':'');
+   tl.from('#dv'+i,{opacity:0,scale:0.6,duration:0.3,ease:'back.out(2)'},t2);EV(t2,'moeda',0.8);ST.push(s);});
+ arm('point',W(3,9,'dois'));
+ chip(P,'as mesmas 100 mil views',820,260,W(3,13,'mesmas'),'k');
+ tl.to(ST,{y:-14,duration:0.18,yoyo:true,repeat:1,stagger:0.12},W(3,13,'degrau'));arm('down',W(3,13,'degrau'));}
+t=T(3,14);P=nova(t);
+{title(P,'A pergunta certa',t,90,80);
+ const a=card(P,`<div class="cc"><div class="h" style="font-size:66px;color:var(--muted)">"quantas views eu tenho?"</div></div>`,820,240,1040,190,t+0.3,'pop');
+ const ln=add(P,'',`left:870px;top:330px;width:940px;height:12px;border-radius:6px;background:${R};transform-origin:left center`);tl.from(ln,{scaleX:0,duration:0.4,ease:'power2.out'},W(3,15,'quanto')-0.3);EV(W(3,15,'quanto')-0.3,'risca');
+ card(P,`<div class="cc"><div class="h" style="font-size:66px">"quanto vale cada <span style="color:var(--acc)">mil views</span>?"</div></div>`,820,480,1040,190,W(3,15,'quanto'),'pop','border:3px solid var(--acc)');
+ const rp=add(P,'= RPM',`left:1180px;top:720px;font-size:84px`,'h');A.pop(rp,W(3,15,'vale'));tl.to(rp,{color:G,scale:1.3,duration:0.4,ease:'back.out(2)'},W(3,15,'canal'));EV(W(3,15,'canal'),'ding');
+ arm('point',W(3,15,'vale'));arm('down',TF(3,15)+0.3);}
+
+/* ---- BLOCO 4: Shorts x longos ---- */
+t=T(4,0);P=nova(t);
+{title(P,'<span style="color:var(--muted)">peça 1:</span> o formato',t,100,80);
+ card(P,`<div class="cc">${ICON('tv',170)}<div class="h" style="font-size:62px;margin-top:14px">vídeo longo</div></div>`,860,250,440,400,t+0.4,'pop');
+ card(P,`<div class="cc">${ICON('celular',170)}<div class="h" style="font-size:62px;margin-top:14px">Short</div></div>`,1400,250,440,400,t+0.7,'pop');
+ const ne=add(P,'≠',`left:1310px;top:360px;font-size:150px;color:${R}`,'h');A.pop(ne,W(4,0,'igual'));
+ chip(P,'não pagam igual',1150,720,W(4,0,'igual'),'r');}
+t=T(4,1);P=nova(t);
+{card(P,`<div class="tag" style="position:absolute;left:30px;top:22px">vídeo longo</div><div style="position:absolute;left:30px;top:70px;right:30px;height:300px;border-radius:14px;background:#2c3238;display:flex;align-items:center;justify-content:center"><div style="border-left:56px solid #fff;border-top:34px solid transparent;border-bottom:34px solid transparent;margin-left:14px"></div></div>
+  <div style="position:absolute;left:30px;right:30px;top:398px;height:16px;border-radius:8px;background:#e4dccb"></div><div id="tlp" style="position:absolute;left:30px;top:398px;width:560px;height:16px;border-radius:8px;background:${R};transform-origin:left center"></div>
+  <div id="adL" style="position:absolute;left:250px;top:390px;width:80px;height:32px;border-radius:8px;background:${Y};border:3px solid ${K}"></div>
+  <div id="adLt" style="position:absolute;left:30px;top:440px;font-family:Bahnschrift;font-weight:700;font-size:38px">anúncio <span style="color:#b07d0c">dentro</span> do vídeo</div>`,800,150,620,520,t,'pop');
+ tl.fromTo('#tlp',{scaleX:0},{scaleX:1,duration:TF(4,2)-t,ease:'none',immediateRender:false},t+0.3);
+ tl.from('#adL',{scale:0,opacity:0,duration:0.3,ease:'back.out(3)'},W(4,1,'dentro'));tl.from('#adLt',{opacity:0,y:20,duration:0.3},W(4,1,'dentro'));EV(W(4,1,'dentro'),'pop');
+ chip(P,'55% pra você',920,720,W(4,1,'cinquenta'),'g');
+ const ph=card(P,`<div style="position:absolute;left:18px;top:18px;right:18px;bottom:18px;border-radius:26px;overflow:hidden;background:#ece5d6"><div id="feed" style="position:absolute;left:0;right:0;top:0">
+   ${[0,1,2,3,4,5].map(i=>`<div style="height:300px;box-sizing:border-box;padding:14px"><div style="height:100%;border-radius:18px;background:${i===2?'#fff6dc':'#2c3238'};${i===2?'border:4px solid '+Y:''};display:flex;align-items:center;justify-content:center;font-family:Bahnschrift;font-weight:700;font-size:40px;color:${i===2?K:'#fff'}">${i===2?'anúncio':'Short'}</div></div>`).join('')}</div></div>`,1500,120,340,620,T(4,2)-0.2,'pop','border-radius:40px;border:4px solid '+K);
+ tl.fromTo('#feed',{y:0},{y:-300,duration:0.5,ease:E,immediateRender:false},T(4,2)+0.4);tl.to('#feed',{y:-600,duration:0.5,ease:E},W(4,2,'entre'));EV(W(4,2,'entre'),'whoosh',0.5);
+ tl.to('#feed',{y:-900,duration:0.5,ease:E},W(4,2,'outro')+0.3);
+ chip(P,'anúncio entre os Shorts',1290,770,W(4,2,'entre')+0.2,'');}
+t=T(4,3);P=nova(t);
+{title(P,'O dinheiro dos Shorts vai pra um fundo',t,90,62);
+ const fp=card(P,`<div class="cc">${ICON('pote',190)}<div class="h" style="font-size:44px;margin-top:6px">fundo</div></div>`,1080,190,360,330,W(4,3,'fundo'),'pop');
+ chuva(P,1238,150,W(4,3,'fundo'),W(4,3,'divide'),120,0.55,3);EV(W(4,3,'fundo'),'moeda');
+ for(let i=0;i<5;i++){const x=860+i*210;const s=card(P,`<div class="cc" style="padding:10px">${ICON('pote',90)}</div>`,x,600,150,150,W(4,3,'divide')+i*0.1,'pop');}
+ const ln=add(P,`<svg width="1100" height="90" viewBox="0 0 1100 90"><path d="M550 0 L140 85 M550 0 L345 85 M550 0 L550 85 M550 0 L760 85 M550 0 L965 85" stroke="${GR}" stroke-width="5" stroke-dasharray="10 10"/></svg>`,`left:780px;top:515px;width:1100px;height:90px`);A.fade(ln,W(4,3,'divide'));
+ chip(P,'45% pro criador',1530,320,W(4,3,'quarenta'),'g');
+ fonte(P,'fonte: YouTube · divisão da receita dos Shorts',W(4,3,'quarenta'));arm('point',W(4,3,'fundo'));arm('down',W(4,3,'quarenta'));}
+t=T(4,4);P=nova(t);
+{title(P,'Quanto paga a cada mil views',t,90,66);
+ const sc=68; // px por real
+ const bar=(y,lab,a,b,txt,cor,tt)=>{add(P,lab,`left:820px;top:${y}px;font-size:50px;width:220px`,'h');A.left('#e'+(uid-1),tt);
+   add(P,'',`left:1060px;top:${y+4}px;width:${10*sc}px;height:56px;border-radius:12px;background:#ece5d6`);A.fade('#e'+(uid-1),tt);
+   const s=add(P,'',`left:${1060+a*sc}px;top:${y+4}px;width:${Math.max(14,(b-a)*sc)}px;height:56px;border-radius:12px;background:${cor};transform-origin:left center`);tl.from(s,{scaleX:0,duration:0.6,ease:'power3.out'},tt+0.2);
+   const v=add(P,txt,`left:${1060+Math.max(b*sc,a*sc+14)+20}px;top:${y-2}px;font-size:58px;color:${cor}`,'h');if(b>8){document.querySelector(v).style.left=(1060+a*sc)+'px';document.querySelector(v).style.top=(y+70)+'px';}A.pop(v,tt+0.6);};
+ bar(300,'Shorts',0.05,1.5,'R$ 0,05 – 1,50',R,Math.min(t+0.5,W(4,4,'centavos')));
+ bar(520,'longos',2,10,'R$ 2 – 10',G,W(4,5,'dois'));
+ fonte(P,'segundo estimativas de sites · Brasil · não é número oficial',W(4,4,'estimativas'));}
+t=T(4,6);P=nova(t);
+{card(P,`<div style="padding:46px 56px"><div class="tag">1 milhão de views só em Shorts</div><div class="h" style="font-size:66px;margin-top:22px">1.000.000 ÷ 1.000 × <span style="color:var(--red)">R$ 0,05</span></div></div>`,820,180,1040,260,t,'pop');
+ const r=add(P,`= <span style="color:var(--acc)">R$ 50</span>`,`left:1100px;top:500px;font-size:170px`,'h');A.pop(r,W(4,6,'cinquenta'));EV(W(4,6,'cinquenta'),'moeda');
+ fonte(P,'na ponta mais baixa das estimativas',t+0.5);inclina(W(4,6,'cinquenta'));}
+t=T(4,7);P=nova(t);
+{balao(t,'nem vale?',1.8);
+ card(P,`<div class="cc"><div class="h" style="font-size:96px">"Short nem<br>vale a pena?"</div></div>`,880,200,900,380,t,'pop');
+ dedo(W(4,8,'vale'),1.4);chip(P,'vale, mas pra outra coisa',1040,660,W(4,8,'outra'),'g');}
+t=T(4,9);P=nova(t);
+{objeto('#pLupa',t-0.1,TF(4,9)-t+0.05,'mid');
+ card(P,`<div class="cc">${ICON('lupa',140)}<div class="h" style="font-size:54px;margin-top:16px">Short</div><div class="h" style="font-size:46px;color:var(--acc);margin-top:8px">= ser descoberto</div></div>`,840,190,480,440,W(4,9,'descoberto'),'pop');
+ chip(P,'+ gente nova no canal',850,680,W(4,9,'nova'),'g');
+ objeto('#pCart',TF(4,9),TF(4,10)-TF(4,9)+0.3,'mid');
+ card(P,`<div class="cc">${ICON('carteira',140)}<div class="h" style="font-size:54px;margin-top:16px">vídeo longo</div><div class="h" style="font-size:46px;color:var(--acc);margin-top:8px">= paga as contas</div></div>`,1380,190,480,440,W(4,10,'paga'),'pop','border:3px solid var(--acc)');
+ chip(P,'na maioria dos canais',1420,680,W(4,10,'maioria'),'');}
+
+/* ---- BLOCO 5: assunto, país, época ---- */
+t=T(5,0);P=nova(t);
+{card(P,`<div style="display:flex;align-items:center;gap:44px;padding:60px">${ICON('etiqueta',160)}<div><div class="tag">peça 2</div><div class="h" style="font-size:100px">o assunto</div></div></div>`,860,280,960,330,t,'pop');}
+t=T(5,1);P=nova(t);
+{const tL=W(5,1,'leilao');objeto('#pMart',tL-0.4,2.4,'up');tl.to('#arm',{rotation:-10,svgOrigin:'865 485',duration:0.12,yoyo:true,repeat:3,ease:'power2.in'},tL+0.2);EV(tL+0.32,'impacto',0.8);EV(tL+0.56,'impacto',0.6);
+ title(P,'O anúncio é um leilão',t,90,76);
+ card(P,`<div class="cc">${ICON('grafico',130)}<div class="h" style="font-size:46px;margin-top:12px">vídeo sobre<br>investimento</div></div>`,1180,330,340,340,W(5,2,'investimento'),'pop','border:3px solid '+K);
+ [['cofre','banco',820,250,'banco'],['grafico','corretora',1540,250,'corretora'],['notebook','tecnologia',1195,700,'tecnologia']].forEach(([ic,lab,x,y,w])=>{const tt=W(5,2,w);
+   card(P,`<div style="display:flex;align-items:center;gap:18px;padding:18px 24px">${ICON(ic,80)}<div class="h" style="font-size:40px">${lab}</div></div>`,x,y,w==='tecnologia'?310:290,116,tt,'pop');
+   const l=add(P,'R$ ↑',`left:${x+190}px;top:${y-58}px;font-size:44px;color:${G}`,'h');A.pop(l,tt+0.3);});
+ chip(P,'paga caro por cliente',1500,520,W(5,3,'caro'),'g','up');}
+t=T(5,4);P=nova(t);
+{title(P,'RPM por assunto',t,100,80);
+ card(P,`<div style="display:flex;align-items:center;gap:30px;padding:36px 44px">${ICON('grafico',110)}<div><div class="h" style="font-size:52px">finanças e tecnologia</div><div class="h" style="font-size:84px;color:var(--acc)">R$ 15+</div></div></div>`,820,250,1040,220,W(5,4,'financas'),'left');
+ card(P,`<div style="display:flex;align-items:center;gap:30px;padding:36px 44px">${ICON('play',110)}<div><div class="h" style="font-size:52px">entretenimento geral</div><div class="h" style="font-size:84px;color:var(--muted)">R$ 2 – 5</div></div></div>`,820,510,1040,220,W(5,5,'entretenimento'),'left');
+ fonte(P,'segundo estimativas de sites · por mil views',W(5,4,'estimativas'));arm('point',W(5,4,'quinze'));arm('down',TF(5,5)-0.2);}
+t=T(5,6);P=nova(t);
+{title(P,'<span style="color:var(--muted)">peça 3:</span> quem assiste',t,90,76);
+ add(P,`<svg width="1060" height="600" viewBox="0 0 1060 600">
+   <path d="M120 70 Q260 30 420 60 Q520 90 500 170 Q470 240 380 260 Q330 300 300 330 Q250 300 200 250 Q120 200 110 140 Z" fill="#e4dccb" stroke="#c8bda7" stroke-width="4"/>
+   <path d="M330 350 Q420 330 480 380 Q540 430 510 500 Q470 570 420 590 Q390 540 370 480 Q330 420 330 350 Z" fill="#e4dccb" stroke="#c8bda7" stroke-width="4"/>
+   <path d="M600 90 Q700 60 800 90 Q900 120 960 200 Q980 300 900 330 Q800 350 760 300 Q680 260 640 200 Q590 150 600 90 Z" fill="#ece5d6" stroke="#d3c8b3" stroke-width="4"/>
+   <path d="M640 360 Q720 340 780 380 Q820 450 770 520 Q720 560 690 500 Q650 440 640 360 Z" fill="#ece5d6" stroke="#d3c8b3" stroke-width="4"/>
+   </svg>`,`left:820px;top:210px;width:1060px;height:600px`);A.fade('#e'+(uid-1),t+0.2);
+ const tp=W(5,7,'publico');
+
+ [['EUA',1080,250,tp],['Brasil',1220,560,tp+0.3]].forEach(([lab,x,y,tt],i)=>{const p=add(P,`<svg class="ico" viewBox="0 0 24 24"><path d="M12 2a6 6 0 0 1 6 6c0 4.5-6 13-6 13S6 12.5 6 8a6 6 0 0 1 6-6z" fill="${R}" stroke="${K}" stroke-width="1.2"/><circle cx="12" cy="8" r="2.4" fill="#fff"/></svg>`,`left:${x}px;top:${y}px;width:96px;height:96px`);A.drop(p,tt);
+   chip(P,lab,x+100,y+10,tt+0.2,'');});
+ const tc=W(5,7,'caro');for(let k=0;k<3;k++){const c=add(P,I.moeda,`left:${1100+k*58}px;top:${360}px;width:60px;height:60px`);A.drop(c,tc+k*0.12);}
+ const c1=add(P,I.moeda,`left:1240px;top:670px;width:60px;height:60px`);A.drop(c1,tc+0.5);
+ chip(P,'público BR: RPM mais baixo',1180,760,W(5,8,'baixo'),'r');arm('point',tp);arm('down',W(5,8,'baixo'));}
+t=T(5,9);P=nova(t);
+{title(P,'<span style="color:var(--muted)">peça 4:</span> a época do ano',t,90,76);
+ const ms=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+ ms.forEach((m,i)=>{const x=830+(i%6)*175,y=250+Math.floor(i/6)*200;const s=add(P,`<div class="h" style="font-size:44px">${m}</div>`,`left:${x}px;top:${y}px;width:155px;height:170px;display:flex;align-items:center;justify-content:center;box-sizing:border-box`,'card');
+   tl.from(s,{scale:0.6,opacity:0,duration:0.3,ease:'back.out(2)'},t+0.3+i*0.05);
+   if(i>=10)tl.to(s,{backgroundColor:'#dff3e6',borderColor:G,y:-24,duration:0.35,ease:'back.out(2)'},W(5,10,'natal')+(i-10)*0.15);
+   if(i===0)tl.to(s,{backgroundColor:'#fbe3e0',borderColor:R,y:24,duration:0.35,ease:'back.out(2)'},W(5,11,'janeiro'));});
+ EV(t+0.3,'pop',0.6);EV(W(5,10,'natal'),'pop');EV(W(5,11,'janeiro'),'risca',0.7);
+ chip(P,'↑ RPM sobe',1530,690,W(5,10,'subir'),'g');chip(P,'↓ RPM cai',830,690,W(5,11,'cai'),'r');}
+t=T(5,12);P=nova(t);
+{title(P,'Uma palavra: <span style="color:var(--acc)">F·A·T·O</span>',t,90,86);
+ [['F','formato','formato',13],['A','assunto','assunto',14],['T','temporada','temporada',15],['O','origem do<br>público','origem',16]].forEach(([L,w,k,f],i)=>{
+   card(P,`<div class="cc"><div class="lt">${L}</div><div class="h" style="font-size:42px;margin-top:20px">${w}</div></div>`,830+i*262,260,240,420,W(5,f,k)-0.15,'pop');EV(W(5,f,k),'clique');});
+ joinha(W(5,16,'origem')+0.4,2);}
+t=T(5,17);P=nova(t);
+{const tb=W(5,17,'quatro');
+ const rows=[['','canal A','canal B'],['views','100 mil','100 mil'],['formato','longo','Shorts'],['assunto','finanças','entretenimento'],['temporada','dezembro','janeiro'],['origem','EUA','Brasil'],['RPM','<span style="color:#0f7a43">alto ↑</span>','<span style="color:#a52f2f">baixo ↓</span>']];
+ const c=card(P,`<div class="tbl" id="tbl">${rows.map((r,i)=>`<div class="r" id="tr${i}" style="${i===0?'font-family:Bahnschrift;font-weight:700;font-size:44px':''}${i===6?';border:none;font-family:Bahnschrift;font-weight:700;font-size:50px;background:#f7f3ea':''}"><div>${r[0]}</div><div>${r[1]}</div><div>${r[2]}</div></div>`).join('')}</div>`,800,170,1070,560,t,'up','overflow:hidden');
+ rows.forEach((r,i)=>{if(i>0){const tt=i===1?W(5,17,'mesmas'):i===6?W(5,17,'diferentes'):tb+(i-1)*0.5;tl.from('#tr'+i,{opacity:0,x:-40,duration:0.3},tt);EV(tt,'up',0.5);}});
+ fonte(P,'comparação ilustrativa',t+0.4,770);}
+
+/* ---- BLOCO 6: a porta e fevereiro ---- */
+t=T(6,0);P=nova(t);
+{const d=add(P,`<svg width="420" height="620" viewBox="0 0 420 620"><rect x="20" y="20" width="380" height="590" rx="10" fill="#2c3238" stroke="${K}" stroke-width="7"/><rect x="50" y="50" width="320" height="560" fill="#f7f3ea"/><g id="folha"><rect x="50" y="50" width="320" height="560" fill="#a87545" stroke="${K}" stroke-width="6"/><rect x="85" y="90" width="250" height="200" rx="10" fill="none" stroke="#8a5a32" stroke-width="6"/><rect x="85" y="330" width="250" height="230" rx="10" fill="none" stroke="#8a5a32" stroke-width="6"/><circle cx="320" cy="330" r="14" fill="${Y}" stroke="${K}" stroke-width="4"/></g></svg>`,`left:1180px;top:170px;width:420px;height:620px`);A.up(d,t+0.1);
+ const pl=add(P,`<div class="h" style="font-size:40px;text-align:center;line-height:1.1">Programa de<br>Parcerias</div>`,`left:1170px;top:120px;width:440px;padding:16px 0;background:${G};color:#fff;border-radius:16px;border:4px solid ${K};box-sizing:border-box`);A.drop(pl,W(6,0,'porta'));
+ tl.to('#folha',{scaleX:0.35,transformOrigin:'50px 50%',duration:0.6,ease:E},W(6,1,'programa')+0.2);EV(W(6,1,'programa'),'whoosh',0.6);
+ chip(P,'o anúncio só paga quem está aqui',820,820-20,W(6,1,'anuncio'),'k');
+ for(let k=0;k<3;k++){const c=add(P,I.moeda,`left:${880+k*70}px;top:${450+k*60}px;width:70px;height:70px`);A.pop(c,W(6,1,'paga')+k*0.12);}
+ arm('point',W(6,0,'porta'));arm('down',TF(6,1)-0.2);}
+t=T(6,2);P=nova(t);
+{title(P,'A regra de hoje',t,90,78);
+ row(P,'✓','<b>1.000</b> inscritos',840,250,W(6,2,'mil'),'ok',50);
+ row(P,'✓','<b>4.000 h</b> assistidas em 12 meses',840,370,W(6,2,'quatro'),'ok',50);
+ const ou=add(P,'ou',`left:860px;top:480px;font-size:40px;color:var(--muted)`,'tag');A.fade(ou,W(6,2,'dez')-0.3);
+ row(P,'✓','<b>10 mi</b> views de Shorts em 90 dias',840,540,W(6,2,'dez'),'ok',50);
+ fonte(P,'fonte: YouTube · requisitos atuais (mais 1.000 inscritos nos dois casos)',W(6,2,'mil'));
+ stamp(P,'VAI MUDAR',1420,680,W(6,3,'mudar'),-7);surpresa(W(6,3,'mudar'));}
+t=T(6,4);P=nova(t);
+{calendario(P,820,190,360,t+0.1);arm('point',W(6,4,'fevereiro'));
+ const t8=W(6,4,'oito'),t20=W(6,4,'vinte',1);
+ card(P,`<div style="padding:34px 44px"><div class="tag">horas assistidas</div><div class="h" style="font-size:84px;margin-top:10px;white-space:nowrap"><span style="color:var(--muted);font-size:56px">4.000 →</span> <span id="n8" style="color:var(--red)">4.000</span> h</div></div>`,1240,190,630,250,t8-0.4,'pop');conta('n8',t8,t8+0.9,4000,8000);
+ card(P,`<div style="padding:34px 44px"><div class="tag">ou views de Shorts</div><div class="h" style="font-size:84px;margin-top:10px;white-space:nowrap"><span style="color:var(--muted);font-size:56px">10 →</span> <span id="n20" style="color:var(--red)">10</span> mi</div></div>`,1240,480,630,250,t20-0.4,'pop');conta('n20',t20,t20+0.8,10,20);
+ stamp(P,'O DOBRO',1480,90,W(6,5,'dobro'),6,'',72);surpresa(W(6,5,'dobro'));arm('down',W(6,4,'pedir'));
+ fonte(P,'fonte: blog oficial do YouTube · para quem pedir a partir de 1º/fev/2027',W(6,4,'fevereiro'),790);}
+t=T(6,6);P=nova(t);
+{card(P,`<div style="display:flex;align-items:center;gap:40px;padding:56px">${ICON('check',150)}<div><div class="tag">quem já está dentro</div><div class="h" style="font-size:96px;color:var(--acc)">tudo igual</div></div></div>`,860,250,960,320,t,'pop','border:3px solid var(--acc);background:#f3fbf6');
+ chip(P,'não precisa refazer',1100,640,W(6,6,'refazer'),'g');joinha(W(6,6,'refazer'),1.4);}
+t=T(6,7);P=nova(t);
+{title(P,'Mais um detalhe: o dinheiro dos Shorts',t,90,60);
+ const tor=(x,lab,id)=>add(P,`<div class="h" style="font-size:46px;margin-bottom:8px">${lab}</div><svg width="390" height="260" viewBox="0 0 300 200"><rect x="0" y="40" width="190" height="56" rx="8" fill="#9aa1a8" stroke="${K}" stroke-width="6"/><path d="M150 96 v40 h70 v-40" fill="#9aa1a8" stroke="${K}" stroke-width="6" stroke-linejoin="round"/><g id="${id}"><rect x="160" y="0" width="50" height="22" rx="6" fill="${R}" stroke="${K}" stroke-width="5"/><rect x="178" y="18" width="14" height="26" fill="${K}"/></g></svg>`,`left:${x}px;top:190px;width:390px`);
+ const tS=W(6,7,'dez'),tA=W(6,8,'abaixo'),tP=W(6,8,'para'),tC=W(6,9,'continua');
+ A.up(tor(800,'Shorts','hS'),t+0.2);A.up(tor(1460,'vídeos longos','hL'),t+0.4);
+ chuva(P,1037,440,t+0.6,tP,200,0.55,3);chuva(P,1697,440,t+0.8,DUR,200,0.55,3);
+ // medidor de views de Shorts
+ const m=add(P,`<div style="position:absolute;left:0;top:0;width:70px;height:400px;border-radius:16px;background:#ece5d6;border:3px solid ${K};overflow:hidden"><div id="nivel" style="position:absolute;left:0;right:0;bottom:0;height:300px;background:${G}"></div></div>
+   <div style="position:absolute;left:-10px;top:120px;width:90px;height:6px;background:${K}"></div><div style="position:absolute;left:90px;top:96px;font-family:Bahnschrift;font-weight:700;font-size:38px;white-space:nowrap">10 mi<br><span style="font-size:24px;font-family:Consolas;color:var(--muted)">EM 90 DIAS</span></div>`,`left:1230px;top:240px;width:200px;height:400px`);A.fade(m,tS-0.2);
+ tl.fromTo('#nivel',{height:0},{height:330,duration:0.7,ease:'power2.out',immediateRender:false},tS);
+ tl.to('#nivel',{height:170,backgroundColor:R,duration:0.6,ease:E},tA);EV(tA,'risca',0.7);
+ tl.to('#hS',{rotation:90,svgOrigin:'185 22',duration:0.35,ease:'back.out(2)'},tP);EV(tP,'clique');
+ chip(P,'✕ Shorts: para',820,710,tP+0.1,'r');chip(P,'✓ longos: continua',1440,710,tC,'g');
+ fonte(P,'fonte: blog oficial do YouTube · regra a partir de 1º/fev/2027',tS,820);}
+t=T(6,10);P=nova(t);
+{alerta(t,2.4);
+ card(P,`<div style="display:flex;align-items:center;gap:40px;padding:56px">${ICON('ampulheta',170)}<div><div class="tag">se você está perto da meta</div><div class="h" style="font-size:120px">3 meses</div></div></div>`,860,250,960,340,t+0.1,'pop');
+ calendario(P,1660,620,170,W(6,10,'tres'),'pop');
+ chip(P,'valem muito',1150,660,W(6,10,'valem'),'g');}
+
+/* ---- BLOCO 7: dinheiro que não é anúncio ---- */
+t=T(7,0);P=nova(t);
+{const tp=W(7,0,'premium');
+ card(P,`<div style="display:flex;align-items:center;gap:30px;padding:40px">${ICON('semad',130)}<div><div class="tag">assinatura</div><div class="h" style="font-size:80px">Premium</div></div></div>`,800,150,520,260,tp,'pop');
+ chip(P,'não vê anúncio',840,450,W(7,1,'anuncio'),'');
+ card(P,`<div class="tag" style="position:absolute;left:34px;top:30px">tempo assistido</div><div style="position:absolute;left:34px;top:100px;width:430px;height:30px;border-radius:15px;background:#e4dccb"></div><div id="tpo" style="position:absolute;left:34px;top:100px;width:430px;height:30px;border-radius:15px;background:${G};transform-origin:left center"></div>
+   <div style="position:absolute;left:34px;top:150px;width:70px;height:70px">${I.relogio}</div><div id="rc" style="position:absolute;left:120px;top:158px;font-family:Bahnschrift;font-weight:700;font-size:48px;color:var(--acc)">→ receita</div>`,1370,150,500,260,W(7,1,'tempo')-0.2,'pop');
+ tl.fromTo('#tpo',{scaleX:0},{scaleX:1,duration:1.6,ease:'none',immediateRender:false},W(7,1,'tempo'));
+ tl.from('#rc',{opacity:0,x:-20,duration:0.3},W(7,1,'receita'));for(let k=0;k<3;k++){const c=add(P,I.moeda,`left:${1700+k*50}px;top:${330}px;width:56px;height:56px`);A.drop(c,W(7,1,'receita')+k*0.1);}
+ EV(W(7,1,'receita'),'moeda');
+ card(P,`<div style="padding:40px 50px"><div class="tag">o próprio YouTube diz</div><div class="h" style="font-size:54px;margin-top:14px;line-height:1.2">em média, um parceiro ganha <span style="background:var(--soft);color:#0f7a43;padding:0 10px;border-radius:10px">mais com um assinante</span> do que com os anúncios</div></div>`,800,530,1070,280,W(7,2,'parceiro')-0.3,'up');
+ fonte(P,'fonte: YouTube · média entre parceiros',W(7,2,'parceiro'),830);arm('point',W(7,2,'parceiro'));arm('down',TF(7,2)-0.2);}
+t=T(7,3);P=nova(t);
+{title(P,'Fora o anúncio',t,90,76);
+ const L=[['membro','membros',W(7,3,'membros'),830,220],['obrigado','Super Thanks',W(7,3,'super'),1180,220],['sacola','loja',W(7,3,'loja'),1530,220],['etiqueta','indicações',W(7,3,'produtos'),980,470],['contrato','publi com marca',W(7,4,'publicidade'),1330,470]];
+ L.forEach(([ic,lab,tt,x,y],i)=>card(P,`<div class="cc">${ICON(ic,96)}<div class="h" style="font-size:${i===4?40:44}px;margin-top:14px">${lab}</div></div>`,x,y,i===4?380:310,220,tt,'pop',i===4?'border:3px solid var(--acc)':''));
+ chip(P,'às vezes paga mais que 1 mês de anúncio',920,730,W(7,4,'mes'),'g');arm('up',W(7,3,'membros'));arm('down',W(7,4,'marca'));}
+t=T(7,5);P=nova(t);
+{title(P,'Quase nunca só do RPM',t,90,74);
+ const base=card(P,`<div class="cc"><div class="h" style="font-size:56px;color:#0f7a43">anúncios</div></div>`,960,680,760,120,t+0.4,'up','background:var(--soft);border:3px solid var(--acc)');
+ tl.to(base,{scale:1.06,duration:0.2,yoyo:true,repeat:1},W(7,6,'base'));EV(W(7,6,'base'),'impacto',0.6);
+ [['Premium',640],['membros',560],['loja · indicações',480],['publi com marca',400]].forEach(([lab,w],i)=>{const tt=W(7,7,'resto')+i*0.28;
+   const s=card(P,`<div class="cc"><div class="h" style="font-size:44px">${lab}</div></div>`,1340-w/2,570-i*110,w,100,tt,'drop');});
+ chip(P,'✓ a conta fecha',1500,250,W(7,7,'fechar'),'g');joinha(W(7,7,'fechar'),1.6);}
+
+/* ---- BLOCO 8: onde ver e fechamento ---- */
+t=T(8,0);P=nova(t);
+{title(P,'O seu número de verdade',t,80,70);
+ const menu=['Painel','Conteúdo','Análises','Comentários','Ajustes'];
+ card(P,`<div class="win" style="position:relative;height:100%"><div class="top"><i></i><i></i><i></i>&nbsp; painel do canal</div>
+  <div style="position:absolute;left:0;top:58px;bottom:0;width:250px;border-right:2px solid var(--line);padding-top:20px">${menu.map((m,i)=>`<div id="mn${i}" style="margin:6px 14px;padding:12px 18px;border-radius:12px;font-size:32px;font-weight:600">${m}</div>`).join('')}</div>
+  <div style="position:absolute;left:280px;top:84px;display:flex;gap:16px">${['Visão geral','Conteúdo','Público','Receita'].map((m,i)=>`<div id="tb${i}" style="padding:10px 20px;border-radius:10px;font-size:28px;font-weight:600;color:var(--muted);border-bottom:4px solid transparent">${m}</div>`).join('')}</div>
+  <div id="rpmc" style="position:absolute;left:280px;top:170px;width:330px;height:190px;border-radius:16px;border:3px solid var(--line);background:#faf7f0;padding:22px;box-sizing:border-box"><div class="tag" style="font-size:24px">RPM</div><div class="h" style="font-size:72px;margin-top:10px">R$ <span style="color:var(--muted)">—</span></div></div>
+  <div style="position:absolute;left:640px;top:170px;width:360px;height:190px;border-radius:16px;border:2px solid var(--line);padding:22px;box-sizing:border-box"><div class="bar" style="width:60%"></div><div class="bar" style="width:40%;margin-top:14px"></div><div style="display:flex;gap:10px;align-items:flex-end;height:90px;margin-top:20px">${[40,60,50,80,70,90].map(h=>`<div style="width:36px;height:${h}px;border-radius:6px;background:#e4dccb"></div>`).join('')}</div></div>
+  <div style="position:absolute;left:280px;top:390px;width:720px"><div class="bar" style="width:80%"></div><div class="bar" style="width:65%;margin-top:16px"></div><div class="bar" style="width:72%;margin-top:16px"></div></div></div>`,800,190,1060,560,t+0.4,'pop');
+ const cur=add(P,`<svg width="44" height="56" viewBox="0 0 22 28"><path d="M2 2v21l5.5-5 4 8.5 3.6-1.6-4-8.4h7.4z" fill="#fff" stroke="${K}" stroke-width="2" stroke-linejoin="round"/></svg>`,`left:1500px;top:700px;width:44px;height:56px`);A.fade(cur,T(8,1));
+ const ta=W(8,1,'analises'),tr=W(8,1,'receita');
+ tl.to(cur,{left:'1000px',top:'440px',duration:0.6,ease:E},ta-0.6);tl.to('#mn2',{backgroundColor:'#dff3e6',color:'#0f7a43',duration:0.2},ta);EV(ta,'clique');
+ tl.to(cur,{left:'1710px',top:'310px',duration:0.6,ease:E},tr-0.6);tl.to('#tb3',{color:'#0f7a43',borderBottomColor:G,duration:0.2},tr);EV(tr,'clique');
+ tl.to(cur,{left:'1300px',top:'470px',duration:0.6,ease:E},W(8,2,'rpm')-0.6);
+ tl.to('#rpmc',{borderColor:G,backgroundColor:'#dff3e6',scale:1.06,duration:0.3,ease:'back.out(2)'},W(8,2,'rpm'));EV(W(8,2,'rpm'),'ding');
+ chip(P,'o único número que vale pro seu canal',960,790,W(8,3,'unico'),'g');arm('point',W(8,2,'rpm'));arm('down',TF(8,3)-0.2);}
+t=T(8,4);P=nova(t);
+{const tab=(x,y,rot,linhas)=>card(P,`<div style="padding:30px 36px"><div class="tag" style="font-size:22px">tabela da internet</div>${linhas.map(l=>`<div style="display:flex;justify-content:space-between;font-size:36px;font-weight:600;border-bottom:2px solid #ece5d6;padding:12px 0"><span>${l[0]}</span><span>${l[1]}</span></div>`).join('')}</div>`,x,y,480,380,t+0.1+(x>1200?0.25:0),'pop','transform:rotate('+rot+'deg)');
+ tab(830,220,-3,[['longos','R$ 2–10'],['Shorts','R$ 0,05–1,50'],['finanças','R$ 15+'],['entreten.','R$ 2–5']]);
+ tab(1360,250,3,[['dezembro','↑'],['janeiro','↓'],['EUA','↑'],['Brasil','↓']]);
+ stamp(P,'SÓ ESTIMATIVA',1040,380,W(8,4,'estimativa'),-10,'k',96);inclina(W(8,4,'tabela'),5);}
+t=T(8,5);P=nova(t);
+{const tf=t+0.2;formula(P,790,330,tf,[tf+0.2,W(8,5,'mil'),W(8,5,'rpm')-0.1,W(8,5,'rpm')+0.3]);
+ add(P,'resumindo',`left:800px;top:110px`,'chip k');A.pop('#e'+(uid-1),t);
+ [['F','formato',830,200],['A','assunto',1370,200],['T','temporada',830,690],['O','origem do público',1370,690]].forEach(([L,w,x,y],i)=>{const tt=W(8,6,w.split(' ')[0]);
+   const s=add(P,`<span style="color:var(--acc);font-size:64px">${L}</span>&nbsp;${w}`,`left:${x}px;top:${y}px;font-size:46px`,'chip');A.pop(s,tt);});
+ arm('point',W(8,6,'formato'));arm('down',TF(8,6)-0.2);}
+t=T(8,7);P=nova(t);
+{card(P,`<div style="padding:70px 80px"><div class="h" id="mo1" style="font-size:96px">Não é pra copiar.</div><div class="h" id="mo2" style="font-size:96px;color:var(--acc);margin-top:24px">É pra entender a conta.</div></div>`,810,260,1060,420,t,'pop');
+ tl.from('#mo1',{opacity:0,y:30,duration:0.4},t+0.2);tl.from('#mo2',{opacity:0,y:30,duration:0.4},W(8,8,'entender'));EV(W(8,8,'entender'),'ding');
+ chip(P,'e escolher melhor os seus vídeos',1000,730,W(8,8,'escolher'),'g');dedo(W(8,7,'copiar'),1.2);}
+t=T(8,9);P=nova(t);
+{title(P,'No próximo vídeo',t,80,70);
+ const tq=W(8,9,'quatro');
+ [0,1,2,3].forEach(i=>{const h=110+i*95,x=830+i*175;card(P,i===3?`<div class="cc"><div class="h" id="d4k" style="font-size:44px;color:var(--acc)">4.000 h</div></div>`:'',x,650-h,160,h,t+0.4+i*0.15,'up',i===3?'border:3px solid var(--acc);background:#f3fbf6':'');});
+ tl.to('#d4k',{opacity:0.25,duration:0.25,yoyo:true,repeat:7,ease:'sine.inOut'},tq+0.3);EV(tq,'ding');
+ calendario(P,1580,180,260,W(8,9,'fevereiro'),'pop');
+ const tI=T(8,10);
+ const b=card(P,`<div style="display:flex;align-items:center;gap:30px;padding:30px 54px;background:${R};border-radius:20px">${ICON('sino',80)}<div class="h" style="font-size:72px;color:#fff">Inscreva-se</div></div>`,1180,680,600,150,tI,'pop','border:none;background:transparent;box-shadow:none');
+ tl.to(b,{scale:1.06,duration:0.35,yoyo:true,repeat:5,ease:'sine.inOut'},tI+0.5);joinha(tI+0.2,3.2);}
+
+/* ---------- legenda (por frase, palavra por palavra) ---------- */
+const VERDE=new Set(['conta','rpm','fato','formato','assunto','temporada','origem','entender','descoberto','base','55','cinquenta','dentro','premium','longo']);
+const VERM=new Set(['quatrocentas','fevereiro','dificil','dobro','cai','copiar']);
+const leg=document.getElementById('legenda');
+const FR=[];TP.blocos.forEach(B=>B.frases.forEach((F,fi)=>{const all=PAL.filter(p=>p.b===B.n&&p.f===fi);if(!all.length)return;
+  const n=Math.ceil(all.length/9),per=Math.ceil(all.length/n);
+  for(let c=0;c<n;c++){const ws=all.slice(c*per,(c+1)*per);if(!ws.length)continue;
+  const d=document.createElement('div');d.className='ph';ws.forEach(p=>{const s=document.createElement('span');s.textContent=p.w.replace(/^"|"$/g,'');const k=norm(p.w);if(VERDE.has(k))s.className='g';if(VERM.has(k))s.className='r';d.appendChild(s);});
+  const nx=all[(c+1)*per];leg.appendChild(d);FR.push({el:d,ini:c===0?B.inicio_global+F.ini:ws[0].ini,fim:nx?nx.ini-0.26:B.inicio_global+F.fim,ws,spans:[...d.children]});}}));
+
+/* ---------- respiração / piscar / números (função do tempo) ---------- */
+const BLINK=[];for(let b=1.3;b<DUR;b+=3.1+((b*7)%1.7))BLINK.push(b);
+const MO=['m0','m1','m2','m3'].map(id=>document.getElementById(id));
+const guy=document.getElementById('guy'),eyes=document.getElementById('eyes');
+const bubT=document.getElementById('bubbleTxt');
+const NUME=NUM.map(n=>({...n,el:document.getElementById(n.id)}));
+function vivo(t){
+  let bt='?',bc=K;for(const [a,x,c] of BUB){if(t>=a){bt=x;bc=c;}}if(bubT.textContent!==bt)bubT.textContent=bt;bubT.setAttribute('fill',bc);
+  for(const n of NUME){const p=Math.min(1,Math.max(0,(t-n.t0)/(n.t1-n.t0)));const v=n.a+(n.b-n.a)*p*p;n.el.textContent=fmt(v)+n.suf;}
+  let cur=null;for(const f of FR){const on=t>=f.ini-0.05&&t<f.fim+0.25&&!(cur);if(on)cur=f;f.el.style.display=on?'block':'none';}
+  if(cur)cur.ws.forEach((p,i)=>{cur.spans[i].style.opacity=t>=p.ini?1:0;});
+  let w=null;for(const p of PAL){if(t>=p.ini&&t<p.fim){w=p;break;}}
+  let m=0;if(w){const k=Math.floor((t-w.ini)/0.11);m=[1,2,1,0][k%4];if(w.fim-w.ini<0.12)m=2;}
+  MO.forEach((e,i)=>e.setAttribute('opacity',i===m?1:0));
+  guy.setAttribute('transform',`translate(0 ${(-3-3*Math.sin(t*2*Math.PI/1.8)).toFixed(2)})`);
+  let sy=1;for(const b of BLINK){if(t>=b&&t<b+0.16){sy=0.12;break;}}
+  eyes.setAttribute('transform',`translate(0 ${330*(1-sy)}) scale(1 ${sy})`);
+}
+tl.to('#root',{opacity:1,duration:0.01},DUR-0.01);
+window.EVENTOS=EVENTOS.sort((a,b)=>a[0]-b[0]);window.DURACAO=DUR;
+window.__timelines=window.__timelines||{};window.__timelines['root']=tl;
+window.seek=(t)=>{tl.seek(t,false);vivo(t);};
+window.seek(0);
+console.log('paineis',panels.length,'dur',DUR);
+</script>
+</body>
+</html>

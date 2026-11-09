@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Teste mascote desenhado</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<style>
+  @font-face{font-family:"Bahnschrift";src:local("Bahnschrift");font-weight:100 900;}
+  html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:#f3eee4;}
+  #root{position:relative;width:1920px;height:1080px;overflow:hidden;background:#f3eee4;font-family:"Bahnschrift",sans-serif;}
+  .dots{position:absolute;inset:0;background-image:radial-gradient(#cfc5b2 1.6px,transparent 1.7px);background-size:36px 36px;opacity:.55;}
+  #stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:960px 600px;}
+  svg{position:absolute;left:0;top:0;overflow:visible;}
+  .ln{stroke:#16191c;stroke-width:7;stroke-linejoin:round;stroke-linecap:round;}
+  #legenda{position:absolute;left:100px;right:100px;bottom:60px;text-align:center;font-size:54px;font-weight:700;color:#16191c;}
+  #legenda span{display:inline-block;opacity:0;margin:0 9px;}
+  #legenda .g{color:#149a55;}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="root" data-width="1920" data-height="1080" data-start="0" data-duration="5.5">
+  <div class="dots"></div>
+  <div id="stage">
+  <svg width="1920" height="1080" viewBox="0 0 1920 1080">
+    <!-- sombra no chão -->
+    <ellipse cx="760" cy="905" rx="190" ry="22" fill="#e2d9c7"/>
+    <ellipse cx="1240" cy="905" rx="230" ry="20" fill="#e2d9c7"/>
+
+    <!-- CELULAR -->
+    <g id="phone">
+      <rect x="1060" y="250" width="360" height="650" rx="46" fill="#fffdf8" class="ln"/>
+      <rect x="1088" y="300" width="304" height="200" rx="16" fill="#dff3e6" class="ln" style="stroke-width:5"/>
+      <g id="play"><circle cx="1240" cy="400" r="46" fill="#149a55" class="ln" style="stroke-width:5"/>
+        <path d="M1226 378 L1262 400 L1226 422 Z" fill="#fff"/></g>
+      <rect x="1300" y="314" width="78" height="36" rx="9" fill="#fffdf8" class="ln" style="stroke-width:4"/>
+      <text x="1339" y="341" text-anchor="middle" font-family="Consolas,monospace" font-size="24" font-weight="700" fill="#16191c">0:30</text>
+      <rect x="1088" y="530" width="230" height="18" rx="9" fill="#e4dccb"/>
+      <rect x="1088" y="565" width="170" height="18" rx="9" fill="#e4dccb"/>
+      <rect x="1088" y="620" width="304" height="120" rx="14" fill="#ece5d6"/>
+      <rect x="1088" y="760" width="304" height="100" rx="14" fill="#ece5d6"/>
+      <rect x="1200" y="268" width="80" height="12" rx="6" fill="#16191c"/>
+    </g>
+
+    <!-- PERSONAGEM -->
+    <g id="guy">
+      <!-- pernas -->
+      <path d="M700 700 L690 880" class="ln" stroke-width="44" style="stroke:#3a5f8f;stroke-width:44"/>
+      <path d="M810 700 L825 880" style="stroke:#3a5f8f;stroke-width:44;stroke-linecap:round"/>
+      <path d="M700 700 L690 880 M810 700 L825 880" fill="none" stroke="#16191c" stroke-width="58" stroke-linecap="round" opacity="0"/>
+      <path d="M668 700 L660 880 L716 880 L728 700 Z" fill="#3a5f8f" class="ln"/>
+      <path d="M782 700 L796 880 L852 880 L840 700 Z" fill="#3a5f8f" class="ln"/>
+      <!-- tênis -->
+      <path d="M640 880 h86 q16 0 16 18 v8 h-110 v-8 q0-18 8-18z" fill="#fff" class="ln"/>
+      <path d="M786 880 h86 q16 0 16 18 v8 h-110 v-8 q0-18 8-18z" fill="#fff" class="ln"/>
+      <!-- tronco (moletom) -->
+      <path d="M640 470 Q650 430 700 420 L820 420 Q870 430 880 470 L880 720 L640 720 Z" fill="#2c3238" class="ln"/>
+      <path d="M690 640 h140 v60 h-140z" fill="#262b30" class="ln" style="stroke-width:5"/>
+      <!-- cordões verdes -->
+      <path d="M735 440 L728 520 M785 440 L792 520" stroke="#149a55" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="728" cy="524" r="7" fill="#149a55"/><circle cx="792" cy="524" r="7" fill="#149a55"/>
+      <!-- braço esquerdo (parado, na cintura) -->
+      <path d="M650 480 Q600 560 640 640" fill="none" stroke="#16191c" stroke-width="62" stroke-linecap="round"/>
+      <path d="M650 480 Q600 560 640 640" fill="none" stroke="#2c3238" stroke-width="48" stroke-linecap="round"/>
+
+      <!-- CABEÇA -->
+      <g id="head">
+        <!-- capuz atrás -->
+        <path d="M640 330 Q640 170 760 160 Q880 170 880 330 Q880 440 760 450 Q640 440 640 330 Z" fill="#2c3238" class="ln"/>
+        <!-- rosto -->
+        <ellipse cx="760" cy="335" rx="92" ry="100" fill="#f2c9a0" class="ln"/>
+        <!-- cabelo saindo do capuz -->
+        <path d="M672 290 Q700 225 760 232 Q820 225 848 290 Q812 262 780 272 Q760 252 735 272 Q700 262 672 290 Z" fill="#2a1d14" class="ln" style="stroke-width:5"/>
+        <!-- borda do capuz na frente -->
+        <path d="M660 330 Q655 215 760 205 Q865 215 860 330" fill="none" stroke="#16191c" stroke-width="7"/>
+        <!-- olhos -->
+        <g id="eyes">
+          <ellipse cx="725" cy="330" rx="15" ry="19" fill="#16191c"/>
+          <ellipse cx="795" cy="330" rx="15" ry="19" fill="#16191c"/>
+          <circle cx="730" cy="323" r="5" fill="#fff"/><circle cx="800" cy="323" r="5" fill="#fff"/>
+        </g>
+        <!-- sobrancelhas -->
+        <path id="sobr" d="M705 298 Q725 288 745 296 M775 296 Q795 288 815 298" fill="none" stroke="#16191c" stroke-width="7" stroke-linecap="round"/>
+        <!-- bochechas -->
+        <ellipse cx="700" cy="368" rx="14" ry="8" fill="#ec9f86" opacity=".7"/>
+        <ellipse cx="820" cy="368" rx="14" ry="8" fill="#ec9f86" opacity=".7"/>
+        <!-- bocas (troca por opacidade) -->
+        <path id="m0" d="M735 382 Q760 402 785 382" fill="none" stroke="#16191c" stroke-width="7" stroke-linecap="round"/>
+        <path id="m1" d="M738 378 Q760 412 782 378 Z" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+        <path id="m2" d="M742 380 Q760 398 778 380 Z" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+      </g>
+
+      <!-- braço direito (aponta pro celular) -->
+      <g id="arm">
+        <path d="M865 485 Q930 520 985 470" fill="none" stroke="#16191c" stroke-width="62" stroke-linecap="round"/>
+        <path d="M865 485 Q930 520 985 470" fill="none" stroke="#2c3238" stroke-width="48" stroke-linecap="round"/>
+        <!-- mão apontando -->
+        <g id="hand">
+          <circle cx="1000" cy="458" r="26" fill="#f2c9a0" class="ln" style="stroke-width:6"/>
+          <path d="M1015 448 L1062 432" stroke="#16191c" stroke-width="24" stroke-linecap="round"/>
+          <path d="M1015 448 L1062 432" stroke="#f2c9a0" stroke-width="12" stroke-linecap="round"/>
+        </g>
+      </g>
+    </g>
+
+    <!-- brilhos -->
+    <g id="spark" stroke="#e8b923" stroke-width="7" stroke-linecap="round" opacity="0">
+      <path d="M1440 300 l40 -20 M1445 360 l48 0 M1440 420 l40 20"/>
+    </g>
+  </svg>
+  </div>
+  <div id="legenda"><span id="l0">Hoje</span><span id="l1">é</span><span id="l2">a</span><span id="l3">parte</span><span id="l4">que</span><span id="l5">decide</span><span id="l6">se</span><span id="l7">ela</span><span id="l8">fica:</span><span id="l9">os</span><span id="l10" class="g">primeiros</span><span id="l11" class="g">30</span><span id="l12" class="g">segundos.</span></div>
+</div>
+<script>
+  const tl=gsap.timeline({paused:true});
+  // a cena já existe no quadro 0; câmera aproxima devagar
+  tl.fromTo('#stage',{scale:1},{scale:1.07,duration:5.5,ease:'none'},0);
+  // respiração: corpo sobe/desce
+  tl.to('#guy',{y:-6,duration:0.9,ease:'sine.inOut',yoyo:true,repeat:5},0);
+  // cabeça inclina um pouco
+  tl.to('#head',{rotation:-4,svgOrigin:'760 440',duration:0.6,ease:'sine.inOut'},0.3);
+  tl.to('#head',{rotation:3,svgOrigin:'760 440',duration:0.8,ease:'sine.inOut'},2.0);
+  tl.to('#head',{rotation:0,svgOrigin:'760 440',duration:0.6,ease:'sine.inOut'},3.8);
+  // braço: começa abaixado e sobe apontando
+  tl.set('#arm',{rotation:55,svgOrigin:'865 485'},0);
+  tl.to('#arm',{rotation:0,svgOrigin:'865 485',duration:0.55,ease:'back.out(1.8)'},0.8);
+  // mão dá "toquinhos" no ar
+  tl.to('#hand',{x:10,duration:0.12,yoyo:true,repeat:3,ease:'sine.inOut'},1.5);
+  tl.to('#hand',{x:10,duration:0.12,yoyo:true,repeat:3,ease:'sine.inOut'},3.2);
+  // piscadas
+  [1.2,3.6].forEach(t=>{tl.to('#eyes',{scaleY:0.1,svgOrigin:'760 330',duration:0.07},t);tl.to('#eyes',{scaleY:1,svgOrigin:'760 330',duration:0.09},t+0.08);});
+  // sobrancelha sobe na hora do "30"
+  tl.to('#sobr',{y:-8,duration:0.2,yoyo:true,repeat:1},2.2);
+  // play pulsa e brilhos
+  tl.to('#play',{scale:1.15,svgOrigin:'1240 400',duration:0.18,yoyo:true,repeat:1,ease:'sine.out'},1.4);
+  tl.to('#play',{scale:1.15,svgOrigin:'1240 400',duration:0.18,yoyo:true,repeat:1,ease:'sine.out'},2.4);
+  tl.fromTo('#spark',{opacity:0,x:-10},{opacity:1,x:0,duration:0.2},1.45);
+  tl.to('#spark',{opacity:0,duration:0.3},2.0);
+  tl.fromTo('#spark',{opacity:0,x:-10},{opacity:1,x:0,duration:0.2,immediateRender:false},2.45);
+  tl.to('#spark',{opacity:0,duration:0.3},3.0);
+  // boca falando (troca de formas, determinística)
+  const bocas=['m1','m2','m1','m0','m2','m1','m2','m0','m1','m2','m1','m0','m2','m1','m2','m1','m0'];
+  bocas.forEach((b,i)=>{const t=0.55+i*0.24;['m0','m1','m2'].forEach(m=>tl.set('#'+m,{opacity:m===b?1:0},t));});
+  tl.set('#m0',{opacity:1},4.75);tl.set(['#m1','#m2'],{opacity:0},4.75);
+  // legenda palavra por palavra
+  const tw=[0.5,0.75,0.85,0.95,1.25,1.45,1.95,2.1,2.3,2.95,3.2,3.75,4.1];tw.forEach((t,i)=>tl.fromTo('#l'+i,{opacity:0,y:20},{opacity:1,y:0,duration:0.22,ease:'power3.out'},t));
+  tl.to('#root',{opacity:1,duration:0.01},5.49);
+  window.__timelines=window.__timelines||{};window.__timelines['root']=tl;
+  window.seek=(t)=>{tl.seek(t,false);};
+</script>
+</body>
+</html>

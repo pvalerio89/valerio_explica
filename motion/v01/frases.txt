@@ -1,0 +1,140 @@
+== B 1 dur 54.64
+ 0   0.0 Você posta um vídeo.
+ 1   1.2 Passou dias nele.
+ 2   2.5 Roteiro, edição, thumbnail...
+ 3   4.1 Vai dormir ansioso, acorda, abre o YouTube Studio...
+ 4   7.5 e ele está lá.
+ 5   9.2 Parado.
+ 6   9.5 Setenta visualizações.
+ 7  11.6 E a sensação é de que o algoritmo está rindo da sua cara.
+ 8  15.0 Só que eu vou te contar uma coisa que quase ninguém fala: o problema, na maioria das vezes, não
+ 9  22.2 É que você está jogando com as regras de um YouTube que não existe mais.
+10  26.7 Nesse vídeo eu vou te mostrar quatro coisas.
+11  29.4 Primeiro: como o YouTube decide quem vê o seu vídeo hoje.
+12  33.2 Segundo: por que ter inscritos já não garante quase nada.
+13  37.1 Terceiro: o erro que trava a maioria dos canais pequenos logo nos primeiros segundos.
+14  42.5 E quarto, o mais importante: como transformar o seu vídeo num videogame que ninguém consegue la
+15  49.2 Fica até o final, porque a última parte muda completamente o jeito de escrever um roteiro.
+== B 2 dur 62.84
+ 0   0.2 Pra entender o que mudou, você precisa saber como era antes.
+ 1   3.5 Durante muitos anos, o YouTube funcionava mais ou menos assim: você conquistava inscritos, post
+ 2  13.0 Quanto mais inscritos, mais views garantidas.
+ 3  16.0 Simples.
+ 4  16.3 Era por isso que todo mundo falava: "o importante é crescer o número de inscritos".
+ 5  21.3 Um canal grande podia postar qualquer coisa que as visualizações vinham.
+ 6  25.8 Só que isso criou um problema pra plataforma.
+ 7  27.9 Pensa comigo: se um canal enorme posta um vídeo fraco, milhões de pessoas recebem a notificação
+ 8  36.2 e fecham o YouTube.
+ 9  37.6 E fechar o YouTube é exatamente o que a plataforma não quer que você faça.
+10  42.6 Porque o negócio do YouTube é um só: manter as pessoas assistindo o máximo de tempo possível.
+11  47.4 Mais tempo assistindo significa mais anúncios.
+12  50.9 E mais anúncios significa mais dinheiro, pra eles e pros criadores.
+13  55.4 Então o YouTube começou a mudar a pergunta.
+14  57.9 , ele passou a perguntar: "esse vídeo, especificamente, faz as pessoas continuarem aqui?"
+== B 3 dur 71.08
+ 0   0.0 E é aqui que entra a primeira missão: como o YouTube decide quem vê o seu vídeo hoje.
+ 1   4.8 O próprio pessoal do YouTube costuma repetir uma frase: o algoritmo não presta atenção nos víde
+ 2  13.0 Ele tenta adivinhar o que cada pessoa vai querer assistir e ficar satisfeita.
+ 3  17.7 Na prática, os grandes criadores descrevem o processo assim: quando você posta, o YouTube mostr
+ 4  26.7 Ele observa duas coisas: quantas clicaram, e o quanto elas assistiram e gostaram.
+ 5  32.2 Se o resultado for bom, ele mostra pra um grupo maior.
+ 6  35.3 Se for bom de novo, maior ainda.
+ 7  38.2 É uma escada.
+ 8  38.5 Se o grupo não clica, ou clica e sai logo, a escada para.
+ 9  42.1 E é aí que nasce o famoso vídeo travado em setenta views.
+10  45.8 Não é castigo.
+11  46.1 É o YouTube dizendo: "testei, e as pessoas não ficaram".
+12  50.7 Isso explica uma coisa que deixa muita gente confusa: por que, no mesmo canal, um vídeo tem duz
+13  58.6 Porque cada vídeo sobe a escada sozinho.
+14  61.5 É muito parecido com o que o TikTok faz.
+15  63.8 E isso tem um lado ótimo: um canal com zero inscritos pode viralizar com o primeiro vídeo, se e
+== B 4 dur 59.52
+ 0   0.2 Missão dois: por que ter inscritos já não garante quase nada.
+ 1   4.4 Lembra da escada?
+ 2   5.7 Pois é, o primeiro degrau costuma ser justamente os seus inscritos, as pessoas que já conhecem 
+ 3  11.4 Elas te dão uma vantagem no começo, porque confiam no seu canal.
+ 4  15.4 Mas quando o vídeo sobe pros próximos degraus, ele chega em gente que nunca ouviu falar de você
+ 5  22.2 E essa pessoa não está nem aí pro seu número de inscritos.
+ 6  26.1 Ela só vê duas coisas: o título e a thumbnail.
+ 7  29.0 E decide em menos de um segundo se clica ou não.
+ 8  32.3 Depois que ela clica, só existe uma coisa que importa: o vídeo segurar ela.
+ 9  37.9 Então a conta é essa: o título e a thumbnail trazem a pessoa.
+10  40.6 O vídeo mantém a pessoa.
+11  42.8 Se uma dessas duas partes falha, a escada para.
+12  46.1 E aqui vem a parte que dói: tem um monte de gente gastando horas com tags, descrição perfeita, 
+13  53.6 e quase nada no vídeo em si.
+14  55.0 Mas o vídeo é o produto.
+15  56.2 É ele que as pessoas vieram assistir.
+== B 5 dur 56.68
+ 0   0.3 Missão três: o erro que trava a maioria dos canais pequenos.
+ 1   3.5 Pensa num videogame.
+ 2   5.9 Quando você começa um jogo bom, o tutorial é rápido: ele te diz quem você é, qual é o objetivo 
+ 3  12.4 Em poucos segundos você sabe por que vale a pena continuar.
+ 4  15.7 Agora imagina um jogo em que você passa quinze minutos vendo instrução antes de poder jogar.
+ 5  19.9 Você desiste, né?
+ 6  21.5 Todo mundo desiste.
+ 7  22.4 A introdução do seu vídeo é o tutorial do jogo.
+ 8  25.1 E é exatamente aí que a maioria trava.
+ 9  26.9 Fala galera, tudo bem?
+10  29.1 Antes de começar, deixa o like, se inscreve, ativa o sininho, hoje o vídeo é sobre..."
+11  32.9 Enquanto isso, a pessoa já foi embora.
+12  34.7 Uma boa introdução faz três coisas, rápido.
+13  38.0 Primeiro: mostra a promessa, o que a pessoa vai ganhar assistindo.
+14  41.6 Segundo: dá um motivo pra ficar até o final.
+15  44.1 E terceiro: entra no assunto sem enrolar.
+16  47.0 Repara que foi isso que eu fiz no começo desse vídeo: eu te falei que iam ser quatro missões, e
+17  55.4 Você está aqui até agora, né?
+== B 6 dur 52.96
+ 0   0.0 E agora, a missão mais importante: como transformar seu vídeo num videogame.
+ 1   5.3 Me responde uma coisa: você jogaria um jogo que tem uma missão só?
+ 2   9.7 Você liga o jogo, ele fala "vai lá no final e derrota o chefão", e acabou?
+ 3  13.8 Ninguém joga isso.
+ 4  15.5 O que prende num jogo é a sequência: mata dez zumbis, missão cumprida, ganha uma recompensa.
+ 5  20.6 Aí aparece outra missão.
+ 6  23.6 Depois outra.
+ 7  23.9 E quando você vê, passaram três horas.
+ 8  26.8 E aqui está o erro que quase todo mundo comete: o vídeo faz uma promessa no começo e só entrega
+ 9  33.5 Uma missão só.
+10  35.0 Entre o começo e o fim, não tem nada puxando a pessoa pra frente.
+11  39.1 Aí ela sai no meio.
+12  40.6 No vídeo-videogame, os papéis se invertem.
+13  43.4 O espectador é o jogador.
+14  45.2 E você é o personagem que entrega as missões.
+15  47.9 O seu trabalho é ir dando pequenas missões e recompensas ao longo do vídeo inteiro.
+== B 7 dur 61.84
+ 0   0.3 Na prática, uma missão dentro do vídeo é só um problema seguido de uma solução.
+ 1   4.4 Uma pergunta e uma resposta.
+ 2   5.9 Uma curiosidade e a revelação.
+ 3   7.6 Exemplo: um vídeo de receita de macarrão.
+ 4  10.2 O objetivo final é o prato pronto, esse é o chefão.
+ 5  13.5 Mas no caminho você pode ter várias missões.
+ 6  16.0 Por que a massa sempre gruda?
+ 7  17.8 Já te conto."
+ 8  18.1 Resolveu.
+ 9  19.4 Tem um ingrediente que quase ninguém usa e que muda tudo."
+10  23.2 Revelou.
+11  24.3 E o erro na hora de escorrer, que estraga o molho."
+12  26.8 Mais uma missão cumprida.
+13  28.0 Cada vez que você abre uma pergunta, a pessoa quer a resposta.
+14  32.9 Cada vez que você responde, ela sente que ganhou alguma coisa.
+15  36.6 E logo em seguida você já abre a próxima.
+16  38.8 E olha só: esse vídeo inteiro foi montado assim.
+17  41.9 Quatro missões, cada uma com a sua resposta, e a lista ali na tela indo se completando.
+18  47.1 Foi isso que te trouxe até aqui.
+19  48.6 Então, da próxima vez que for escrever um roteiro, antes de gravar, faz um teste simples: lista
+20  56.6 Se só tiver uma, o seu vídeo é um jogo com uma missão só.
+21  60.2 E ninguém fica num jogo assim.
+== B 8 dur 46.84
+ 0   0.2 Recapitulando rapidinho.
+ 1   1.7 O YouTube não empurra mais o seu canal.
+ 2   4.1 Ele testa cada vídeo, um degrau de cada vez.
+ 3   7.2 Inscritos te ajudam no primeiro degrau, mas quem sobe a escada é o vídeo.
+ 4  11.8 O título e a thumbnail trazem a pessoa, e o vídeo precisa segurar.
+ 5  15.3 A introdução é o tutorial: rápida, com promessa e motivo pra ficar.
+ 6  19.8 E o vídeo precisa de várias missões, não de uma só.
+ 7  22.9 Se o seu último vídeo travou em setenta views, não desiste.
+ 8  26.6 Ele não foi um fracasso.
+ 9  28.3 Foi um teste.
+10  28.6 E agora você sabe o que o YouTube estava medindo.
+11  32.2 No próximo vídeo eu vou mostrar como os maiores canais escolhem títulos e thumbnails, a outra m
+12  38.4 Se você quer entender o que o YouTube não te conta, se inscreve no canal, que toda semana tem v

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<title>Demo metricas</title>
+<!-- Demonstração dos componentes de métrica e ícones novos (dados de exemplo). seek(t) puro. -->
+<script>
+  window.BEATS = { bpm: 96, beats: [], cues: {} };
+  window.TEMPOS = { total: 37.5, blocos: [] };
+</script>
+<link rel="stylesheet" href="../lib/estilo.css">
+</head>
+<body>
+<div id="stage"><div id="cam"></div></div>
+<script src="../lib/motor.js"></script>
+<script src="../lib/metricas.js"></script>
+<script>
+const S = 4.375; // 7 batidas por cena
+montar([
+  { tipo: "icones", em: 0, titulo: "O QUE O YOUTUBE ENXERGA",
+    itens: [{ icone: "clique", rotulo: "cliques", valor: 840 }, { icone: "like", rotulo: "curtidas", valor: 96 },
+            { icone: "comentario", rotulo: "comentários", valor: 23 }, { icone: "compartilhar", rotulo: "compart.", valor: 11, ac: true }] },
+  { tipo: "kpi", em: S, titulo: "O PAINEL DO SEU VÍDEO", nota: "dados de exemplo",
+    cards: [{ icone: "olho", rotulo: "Impressões", ate: 12400, f: "mil", delta: "18%" },
+            { icone: "clique", rotulo: "CTR", ate: 6.2, f: "pct", casas: 1, delta: "1,4 p.p." },
+            { icone: "cronometro", rotulo: "Retenção média", ate: 48, f: "pct", delta: "6%", deltaRuim: true },
+            { icone: "inscrever", rotulo: "Inscritos", de: 0, ate: 37, delta: "37" }] },
+  { tipo: "medidor", em: 2 * S, valor: 7.5, max: 15, f: "pct", casas: 1, rotulo: "CTR do vídeo", zona: [0.4, 1],
+    linhas: [["SEU CTR"], ["TÁ BOM?", 1]], nota: "dados de exemplo" },
+  { tipo: "barras", em: 3 * S, titulo: "TESTE A/B DE THUMBNAIL", f: "pct", casas: 1, vencedorEm: 3 * S + 2.6, nota: "dados de exemplo",
+    itens: [{ txt: "THUMB A", valor: 4.1 }, { txt: "THUMB B", valor: 6.8 }, { txt: "THUMB C", valor: 5.2 }] },
+  { tipo: "grafico", em: 4 * S, titulo: "VIEWS POR DIA", nota: "dados de exemplo",
+    pontos: [120, 180, 90, 70, 260, 640, 980], pontos2: [120, 100, 70, 60, 50, 45, 40],
+    rotulosX: ["seg", "ter", "qua", "qui", "sex", "sáb", "dom"],
+    anotacoes: [{ i: 0, txt: "publicou" }, { i: 4, txt: "thumb nova" }, { i: 6, txt: "+716%", ac: true }] },
+  { tipo: "aneis", em: 5 * S, titulo: "QUANTOS FICAM?", nota: "dados de exemplo",
+    itens: [{ rotulo: "aos 30 s", valor: 72 }, { rotulo: "aos 2 min", valor: 54 }, { rotulo: "até o fim", valor: 31, ac: false }] },
+  { tipo: "titulo", em: 6 * S, linhas: [["QUANDO PEGA,"], ["VAI LONGE.", 1]], tam: 200, icone: "foguete" },
+  { tipo: "titulo", em: 7 * S, linhas: [["O VÍDEO"], ["PEGOU FOGO.", 1]], tam: 200, icone: "fogo" },
+]);
+// a última cena vai até o fim da demo
+window.seek(0);
+</script>
+</body></html>

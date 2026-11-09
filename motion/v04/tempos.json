@@ -1,0 +1,401 @@
+{
+ "total": 278.67,
+ "blocos": [
+  {
+   "n": 1,
+   "inicio_global": 0.0,
+   "dur": 37.8,
+   "frases": [
+    {
+     "txt": "No começo de 2026, o YouTube derrubou de uma vez canais que somavam bilhões de visualizações.",
+     "ini": 0.0,
+     "fim": 5.291
+    },
+    {
+     "txt": "Segundo as reportagens, foram dezesseis canais, trinta e cinco milhões de inscritos e quase cinco bilhões de views.",
+     "ini": 5.291,
+     "fim": 12.163
+    },
+    {
+     "txt": "Quase tudo feito com inteligência artificial.",
+     "ini": 12.163,
+     "fim": 15.221
+    },
+    {
+     "txt": "Aí vem a pergunta que muita gente está fazendo: então usar IA no YouTube dá problema? Não.",
+     "ini": 15.221,
+     "fim": 21.272
+    },
+    {
+     "txt": "E esse vídeo é a prova, porque ele usa IA.",
+     "ini": 21.272,
+     "fim": 23.845
+    },
+    {
+     "txt": "A voz, o desenho e até a thumbnail.",
+     "ini": 23.845,
+     "fim": 26.191
+    },
+    {
+     "txt": "O que derruba um canal não é a ferramenta.",
+     "ini": 26.191,
+     "fim": 28.695
+    },
+    {
+     "txt": "É um jeito específico de usar a ferramenta.",
+     "ini": 28.695,
+     "fim": 32.272
+    },
+    {
+     "txt": "Hoje eu vou te mostrar qual é, e as três perguntas pra fazer antes de publicar qualquer vídeo com IA.",
+     "ini": 32.272,
+     "fim": 37.8
+    }
+   ]
+  },
+  {
+   "n": 2,
+   "inicio_global": 38.25,
+   "dur": 39.76,
+   "frases": [
+    {
+     "txt": "Primeiro, entende o que esses canais faziam.",
+     "ini": 0.0,
+     "fim": 2.777
+    },
+    {
+     "txt": "Era vídeo em linha de montagem.",
+     "ini": 2.777,
+     "fim": 4.497
+    },
+    {
+     "txt": "O mesmo modelo, a mesma narração robótica, só trocando o assunto.",
+     "ini": 4.497,
+     "fim": 8.887
+    },
+    {
+     "txt": "Trailer falso de filme que não existe.",
+     "ini": 8.887,
+     "fim": 11.107
+    },
+    {
+     "txt": "Historinha gerada em série, dezenas por semana.",
+     "ini": 11.107,
+     "fim": 14.175
+    },
+    {
+     "txt": "Em julho de 2025, o YouTube mudou o nome de uma regra.",
+     "ini": 14.175,
+     "fim": 18.113
+    },
+    {
+     "txt": "O que antes se chamava \"conteúdo repetitivo\" virou \"conteúdo inautêntico\".",
+     "ini": 18.113,
+     "fim": 22.922
+    },
+    {
+     "txt": "E a definição é clara: conteúdo que parece feito com um molde, produzido em massa, com pouca variação de um vídeo pro outro.",
+     "ini": 22.922,
+     "fim": 30.376
+    },
+    {
+     "txt": "Repara que a regra não fala de IA.",
+     "ini": 30.376,
+     "fim": 32.558
+    },
+    {
+     "txt": "Fala de molde.",
+     "ini": 32.558,
+     "fim": 32.858
+    },
+    {
+     "txt": "Um canal feito todo à mão também pode cair nisso.",
+     "ini": 32.858,
+     "fim": 36.634
+    },
+    {
+     "txt": "A IA só deixou muito mais fácil fabricar mil vídeos iguais.",
+     "ini": 36.634,
+     "fim": 39.76
+    }
+   ]
+  },
+  {
+   "n": 3,
+   "inicio_global": 78.46,
+   "dur": 35.28,
+   "frases": [
+    {
+     "txt": "Primeira pergunta: tem uma ideia sua nesse vídeo?",
+     "ini": 0.327,
+     "fim": 3.87
+    },
+    {
+     "txt": "O próprio YouTube dá exemplos.",
+     "ini": 3.87,
+     "fim": 5.926
+    },
+    {
+     "txt": "Usar IA pra dar vida a um personagem e a uma história que você inventou: pode.",
+     "ini": 5.926,
+     "fim": 10.49
+    },
+    {
+     "txt": "Usar IA pra editar o roteiro ou gerar um fundo: pode.",
+     "ini": 10.49,
+     "fim": 14.202
+    },
+    {
+     "txt": "Agora, usar IA com um modelo genérico, que dá a impressão de produção em massa: aí não.",
+     "ini": 14.202,
+     "fim": 19.756
+    },
+    {
+     "txt": "O teste é simples.",
+     "ini": 19.756,
+     "fim": 20.967
+    },
+    {
+     "txt": "Se você trocar o assunto do vídeo e o resto continuar igualzinho, o vídeo não tem uma ideia.",
+     "ini": 20.967,
+     "fim": 27.474
+    },
+    {
+     "txt": "Tem um molde.",
+     "ini": 27.474,
+     "fim": 28.358
+    },
+    {
+     "txt": "A IA pode fazer o trabalho braçal.",
+     "ini": 28.358,
+     "fim": 30.749
+    },
+    {
+     "txt": "A decisão do que dizer, em que ordem, e por quê, tem que ser sua.",
+     "ini": 30.749,
+     "fim": 35.28
+    }
+   ]
+  },
+  {
+   "n": 4,
+   "inicio_global": 114.19,
+   "dur": 36.08,
+   "frases": [
+    {
+     "txt": "Segunda pergunta: você mesmo assistiria esse vídeo até o final?",
+     "ini": 0.193,
+     "fim": 4.329
+    },
+    {
+     "txt": "Desde julho de 2026, o YouTube deixa ainda mais claro o que não ganha dinheiro: conteúdo genérico ou repetitivo, conteúdo que deixa a pessoa insatisfeita, e personagens de IA falando de assunto sensível.",
+     "ini": 4.329,
+     "fim": 16.393
+    },
+    {
+     "txt": "Lembra da escada do primeiro vídeo?",
+     "ini": 16.393,
+     "fim": 19.112
+    },
+    {
+     "txt": "O YouTube mostra seu vídeo pra um grupo pequeno e olha se as pessoas ficaram.",
+     "ini": 19.112,
+     "fim": 23.208
+    },
+    {
+     "txt": "Vídeo de molde perde nas duas pontas: a pessoa sai cedo, e a regra corta o dinheiro.",
+     "ini": 23.208,
+     "fim": 28.868
+    },
+    {
+     "txt": "Então antes de publicar, assiste do começo ao fim.",
+     "ini": 28.868,
+     "fim": 32.554
+    },
+    {
+     "txt": "Se você pularia algum pedaço, o espectador também vai pular.",
+     "ini": 32.554,
+     "fim": 36.08
+    }
+   ]
+  },
+  {
+   "n": 5,
+   "inicio_global": 150.72,
+   "dur": 29.96,
+   "frases": [
+    {
+     "txt": "E aqui tem um cuidado que pouca gente conhece.",
+     "ini": 0.0,
+     "fim": 2.759
+    },
+    {
+     "txt": "Personagem de IA falando de saúde, de lei, de dinheiro.",
+     "ini": 2.759,
+     "fim": 6.493
+    },
+    {
+     "txt": "Um \"médico\" de IA dando diagnóstico.",
+     "ini": 6.493,
+     "fim": 9.304
+    },
+    {
+     "txt": "Um \"advogado\" de IA interpretando lei.",
+     "ini": 9.304,
+     "fim": 11.652
+    },
+    {
+     "txt": "Isso o YouTube coloca direto na lista do que não pode ganhar dinheiro.",
+     "ini": 11.652,
+     "fim": 16.114
+    },
+    {
+     "txt": "Não importa se o vídeo é bem feito.",
+     "ini": 16.114,
+     "fim": 18.991
+    },
+    {
+     "txt": "Se o seu canal fala desses assuntos, a voz pode até ser de IA, mas quem responde pelo conteúdo tem que ser uma pessoa de verdade, com fonte, e de preferência aparecendo.",
+     "ini": 18.991,
+     "fim": 29.96
+    }
+   ]
+  },
+  {
+   "n": 6,
+   "inicio_global": 181.13,
+   "dur": 40.24,
+   "frases": [
+    {
+     "txt": "Terceira pergunta: isso parece real?",
+     "ini": 0.0,
+     "fim": 2.942
+    },
+    {
+     "txt": "Se o seu vídeo mostra uma pessoa de verdade dizendo algo que ela nunca disse, um lugar ou acontecimento real alterado, ou uma cena realista que nunca aconteceu, o YouTube pede que você marque.",
+     "ini": 2.942,
+     "fim": 15.158
+    },
+    {
+     "txt": "Na hora de enviar, no YouTube Studio, tem uma opção chamada \"uso de IA\".",
+     "ini": 15.158,
+     "fim": 19.323
+    },
+    {
+     "txt": "É só marcar.",
+     "ini": 19.323,
+     "fim": 20.453
+    },
+    {
+     "txt": "E o que não precisa marcar?",
+     "ini": 20.453,
+     "fim": 22.266
+    },
+    {
+     "txt": "Desenho animado, cena claramente de fantasia, filtro de cor, legenda, e ajuda de IA no roteiro, no título ou na thumbnail.",
+     "ini": 22.266,
+     "fim": 30.874
+    },
+    {
+     "txt": "Marcar não diminui o seu alcance.",
+     "ini": 30.874,
+     "fim": 33.308
+    },
+    {
+     "txt": "Esconder é que dá problema: quem esquece repetidas vezes pode ter o vídeo removido ou sair do programa de parcerias.",
+     "ini": 33.308,
+     "fim": 40.24
+    }
+   ]
+  },
+  {
+   "n": 7,
+   "inicio_global": 221.82,
+   "dur": 20.8,
+   "frases": [
+    {
+     "txt": "Um detalhe sobre Shorts.",
+     "ini": 0.0,
+     "fim": 1.81
+    },
+    {
+     "txt": "Desde o começo de outubro, Short reenviado de outro criador, sem nada novo, passou a ter alcance limitado.",
+     "ini": 1.81,
+     "fim": 7.774
+    },
+    {
+     "txt": "Ou seja, pegar o corte de outra pessoa e postar de novo virou o caminho mais curto pra ninguém ver.",
+     "ini": 7.774,
+     "fim": 14.551
+    },
+    {
+     "txt": "Se for usar o trecho de alguém, acrescenta alguma coisa: um comentário, uma explicação, a sua opinião.",
+     "ini": 14.551,
+     "fim": 20.8
+    }
+   ]
+  },
+  {
+   "n": 8,
+   "inicio_global": 243.07,
+   "dur": 35.6,
+   "frases": [
+    {
+     "txt": "Lembra que eu falei que esse vídeo usa IA?",
+     "ini": 0.187,
+     "fim": 2.882
+    },
+    {
+     "txt": "Passa ele pelas três perguntas.",
+     "ini": 2.882,
+     "fim": 4.876
+    },
+    {
+     "txt": "Tem uma ideia minha?",
+     "ini": 4.876,
+     "fim": 6.62
+    },
+    {
+     "txt": "Tem: o roteiro, a ordem e os exemplos foram decididos por uma pessoa.",
+     "ini": 6.62,
+     "fim": 10.576
+    },
+    {
+     "txt": "Eu assistiria até o fim?",
+     "ini": 10.576,
+     "fim": 12.419
+    },
+    {
+     "txt": "Assisti, e cortei o que ficou chato.",
+     "ini": 12.419,
+     "fim": 14.81
+    },
+    {
+     "txt": "Parece real?",
+     "ini": 14.81,
+     "fim": 15.906
+    },
+    {
+     "txt": "Não: é um desenho, numa voz que não finge ser ninguém.",
+     "ini": 15.906,
+     "fim": 19.67
+    },
+    {
+     "txt": "Esse é o jeito de usar IA sem medo: a ferramenta faz o braçal, você faz as escolhas.",
+     "ini": 19.67,
+     "fim": 24.484
+    },
+    {
+     "txt": "No próximo vídeo, eu vou te mostrar quanto o YouTube paga de verdade, e por que dois canais com as mesmas views ganham valores tão diferentes.",
+     "ini": 24.484,
+     "fim": 34.174
+    },
+    {
+     "txt": "Se inscreve pra não perder.",
+     "ini": 34.174,
+     "fim": 35.6
+    }
+   ]
+  }
+ ]
+}

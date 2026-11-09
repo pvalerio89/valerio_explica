@@ -1,0 +1,958 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<title>Valerio Explica v01</title>
+<!--
+  Vídeo 1 a partir de 11,9 s (a abertura vem de abertura.html).
+  Função pura do tempo: window.seek(t), t em segundos do vídeo inteiro.
+  Sem transitions, timers ou rAF. Ruído só com semente (mulberry32).
+  Cenas em cenas.js; tempos das frases em tempos.js; grade em beats.js.
+  window.EVENTOS lista os efeitos sonoros (usado pelo audio_full.py).
+-->
+<script src="beats.js"></script>
+<script src="tempos.js"></script>
+<style>
+  :root { --bg:#0e1114; --surface:#171b21; --surface2:#20262e; --line:#2a3038; --text:#f2f4f6; --muted:#8a939e; --accent:#22e07a; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+  #cam { position: absolute; inset: 0; transform-origin: 0 0; }
+  .cena { position: absolute; inset: 0; display: none; }
+  .abs { position: absolute; }
+  .disp { font-family: "Bahnschrift", sans-serif; font-weight: 700; font-stretch: condensed;
+          font-variation-settings: "wght" 700, "wdth" 75; letter-spacing: -0.01em; line-height: 0.92; color: var(--text); white-space: nowrap; }
+  .ui { font-family: "Segoe UI", sans-serif; color: var(--muted); font-weight: 700; white-space: nowrap; }
+  .mask { position: absolute; overflow: clip; overflow-clip-margin: 34px; }
+  .mask > span { display: block; }
+  .ac { color: var(--accent); }
+  .mut { color: var(--muted); }
+  .card { position: absolute; background: var(--surface); border-radius: 28px; overflow: hidden; }
+  .pill { position: absolute; border-radius: 999px; padding: 10px 28px; background: var(--surface2); }
+</style>
+</head>
+<body>
+<div id="stage"><div id="cam"></div></div>
+<script>
+// ================= utilidades puras =================
+const clamp = (x, a = 0, z = 1) => Math.max(a, Math.min(z, x));
+const prog = (t, a, z) => clamp((t - a) / (z - a));
+const lerp = (a, z, x) => a + (z - a) * x;
+const outCubic = (x) => 1 - (1 - x) ** 3;
+const inCubic = (x) => x ** 3;
+const inOut = (x) => (x < 0.5 ? 4 * x ** 3 : 1 - (-2 * x + 2) ** 3 / 2);
+const outExpo = (x) => (x >= 1 ? 1 : 1 - 2 ** (-10 * x));
+const outBack = (x, s = 1.6) => { x -= 1; return 1 + x * x * ((s + 1) * x + s); };
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const FPS = 30, BEAT = 60 / window.BEATS.bpm;
+const snap = (t) => Math.round(t / BEAT) * BEAT;
+const fmt = (n) => Math.round(n).toLocaleString("pt-BR");
+// tempo global de uma frase: F(bloco, índice) já encaixado na grade
+const F = (b, i) => snap(TEMPOS.blocos[b - 1].inicio_global + TEMPOS.blocos[b - 1].frases[i].ini);
+// cria elemento a partir de HTML, sem nós de texto vazios (firstChild sempre é elemento)
+const el = (html) => {
+  const d = document.createElement("div");
+  d.innerHTML = html.trim().replace(/>\s+</g, "><");
+  return d.firstChild;
+};
+
+// linha mascarada: entra de baixo em tIn, sai para cima em tOut (tempos locais)
+function linha(e, lt, tIn, tOut = Infinity, dur = 0.42) {
+  const a = outBack(prog(lt, tIn, tIn + dur), 1.2);
+  const s = Number.isFinite(tOut) ? inCubic(prog(lt, tOut, tOut + 0.28)) : 0;
+  e.style.transform = `translateY(${(1 - a) * 160 - s * 160}%)`;
+}
+// pop de escala
+const pop = (lt, t0, d = 0.35, s = 1.8) => Math.max(0, outBack(prog(lt, t0, t0 + d), s));
+
+// ================= ícones grandes (lado direito) =================
+// traços brancos se desenham (pathLength=1); detalhes verdes entram com pop
+const ICONES = {
+  olho: `<path d="M30 200 Q200 40 370 200 Q200 360 30 200Z"/><circle class="a" cx="200" cy="200" r="62"/>`,
+  relogio: `<circle cx="200" cy="200" r="160"/><path d="M200 200 V100"/><path class="a2" d="M200 200 L280 250"/>`,
+  escada: `<path d="M30 370 H130 V270 H230 V170 H330 V70 H370"/><rect class="a" x="270" y="20" width="60" height="40" rx="10"/>`,
+  controle: `<rect x="30" y="120" width="340" height="190" rx="90"/><path d="M110 180 V250 M75 215 H145"/><circle class="a" cx="270" cy="190" r="20"/><circle class="a" cx="310" cy="235" r="20"/>`,
+  alvo: `<circle cx="200" cy="200" r="160"/><circle cx="200" cy="200" r="100"/><circle class="a" cx="200" cy="200" r="42"/>`,
+  seta: `<path d="M40 330 L150 220 L220 270 L360 110"/><path d="M270 110 H360 V200"/>`,
+  play: `<rect x="30" y="80" width="340" height="240" rx="50"/><path class="a2" d="M170 150 L250 200 L170 250Z"/>`,
+  sino: `<path d="M120 280 V180 Q120 90 200 90 Q280 90 280 180 V280 H330 H70Z"/><circle class="a" cx="200" cy="320" r="26"/>`,
+  pessoa: `<circle cx="200" cy="130" r="70"/><path d="M70 360 Q70 230 200 230 Q330 230 330 360"/>`,
+  check: `<rect x="40" y="40" width="320" height="320" rx="70"/><path class="a2" d="M110 205 L175 270 L295 135"/>`,
+  interrogacao: `<path d="M120 140 Q120 60 200 60 Q290 60 290 140 Q290 200 200 230 V270"/><circle class="a" cx="200" cy="340" r="26"/>`,
+  dinheiro: `<circle cx="200" cy="200" r="160"/><path class="a2" d="M250 140 Q200 110 160 140 Q130 170 200 200 Q270 230 240 260 Q200 290 150 260 M200 100 V300"/>`,
+};
+
+function iconeBuild(c, d) {
+  d._ic = el(`<svg class="abs" style="left:${d.icX ?? 1260}px;top:${d.icY ?? 250}px;overflow:visible" width="480" height="480" viewBox="0 0 400 400">
+    <g fill="none" stroke="#f2f4f6" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">${ICONES[d.icone]}</g></svg>`);
+  d._ic.querySelectorAll("path, circle, rect").forEach((p) => {
+    if (p.classList.contains("a")) { p.setAttribute("fill", "#22e07a"); p.setAttribute("stroke", "none"); }
+    else { if (p.classList.contains("a2")) p.setAttribute("stroke", "#22e07a"); p.setAttribute("pathLength", 1); p.setAttribute("stroke-dasharray", 1); }
+  });
+  c.appendChild(d._ic);
+}
+function iconeUpdate(lt, dur, d) {
+  const sai = dur - 0.3, sa = 1 - inCubic(prog(lt, sai, sai + 0.25));
+  d._ic.querySelectorAll("[pathLength]").forEach((p, k) => p.setAttribute("stroke-dashoffset", 1 - outCubic(prog(lt, 0.15 + k * 0.12, 0.85 + k * 0.12)) * sa));
+  // a cada 2,5 s o ícone dá um pulso (algo novo acontece na tela)
+  const ciclo = 2.5, k = Math.floor((lt - 0.9) / ciclo), fase = lt - 0.9 - k * ciclo;
+  const pulso = lt > 0.9 + ciclo ? Math.sin(Math.PI * clamp(fase / 0.35)) : 0;
+  d._ic.querySelectorAll(".a").forEach((p) => { p.style.transformBox = "fill-box"; p.style.transformOrigin = "50% 50%"; p.style.transform = `scale(${pop(lt, 0.7, 0.4, 2.4) * sa * (1 + 0.35 * pulso)})`; });
+  d._ic.style.transform = `translateY(${Math.sin(lt * 1.7) * 10}px) rotate(${pulso * (k % 2 ? 5 : -5)}deg) scale(${1 + 0.06 * pulso})`;
+}
+const iconeEventos = (dur) => { const ev = [{ t: 0.7, tipo: "pop" }]; for (let t = 0.9 + 2.5; t < dur - 0.5; t += 2.5) ev.push({ t, tipo: "tick" }); return ev; };
+
+// ================= modelos de cena =================
+// cada modelo: build(c, d) monta o DOM uma vez; update(c, lt, dur, d) pinta o quadro (puro);
+// eventos(d, t0, dur) devolve os efeitos sonoros [{t (local), tipo}].
+const M = {};
+
+// ---------- título cinético ----------
+M.titulo = {
+  build(c, d) {
+    const tam = d.tam || 150, n = d.linhas.length;
+    const h = n * tam * 1.02 + (d.sub ? 110 : 0);
+    const top = d.top ?? Math.round((1080 - h) / 2 - 20);
+    d._ls = d.linhas.map(([txt, ac], i) => {
+      const m = el(`<div class="mask" style="left:${d.left || 140}px;top:${top + i * tam * 1.02}px;width:1700px;height:${tam}px">
+        <span class="disp ${ac ? "ac" : ""}" style="font-size:${tam}px">${txt}</span></div>`);
+      c.appendChild(m); return m.firstChild;
+    });
+    const ult = d._ls[n - 1];
+    d._sub = d.sub ? el(`<div class="mask" style="left:${(d.left || 140) + 4}px;top:${top + n * tam * 1.02 + 40}px;width:1600px;height:80px">
+      <span class="ui" style="font-size:54px">${d.sub}</span></div>`) : null;
+    if (d._sub) c.appendChild(d._sub);
+    d._bar = el(`<div class="abs" style="left:${(d.left || 140) + 4}px;top:${top + n * tam * 1.02 + 6}px;height:14px;width:${d.barra || 420}px;background:var(--accent);transform-origin:0 50%"></div>`);
+    c.appendChild(d._bar);
+    if (d.lado === "x") {
+      d._x = el(`<svg class="abs" style="left:1300px;top:290px" width="460" height="460" viewBox="0 0 460 460">
+        <path d="M60 60 L400 400" stroke="#f2f4f6" stroke-width="56" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+        <path d="M400 60 L60 400" stroke="#22e07a" stroke-width="56" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>`);
+      c.appendChild(d._x);
+    }
+    if (d.lado === "ha") {
+      d._ha = [];
+      for (let k = 0; k < 6; k++) {
+        const h2 = el(`<div class="abs disp ${k === 5 ? "ac" : "mut"}" style="left:${1320 + (k % 2) * 160}px;top:${130 + k * 135}px;font-size:150px">HA</div>`);
+        c.appendChild(h2); d._ha.push(h2);
+      }
+    }
+    if (d.lado === "num") {
+      d._num = el(`<div class="abs disp ac" style="right:140px;top:200px;font-size:620px;line-height:1">${d.num}</div>`);
+      c.appendChild(d._num);
+    }
+    if (d.icone) iconeBuild(c, d);
+    if (d.lado === "barra") {
+      d._barraV = el(`<div class="abs" style="left:1060px;top:470px;width:720px">
+        <div style="position:relative;height:22px;border-radius:11px;background:var(--line)"><div class="f" style="height:100%;width:0;border-radius:11px;background:var(--accent)"></div>
+        <div class="ph" style="position:absolute;top:-19px;left:0;width:60px;height:60px;border-radius:50%;background:var(--text);margin-left:-30px"></div></div>
+        <div class="ui" style="display:flex;justify-content:space-between;margin-top:30px;font-size:40px"><span>0:00</span><span class="ac">FINAL</span></div></div>`);
+      c.appendChild(d._barraV);
+    }
+  },
+  update(c, lt, dur, d) {
+    const n = d._ls.length, sai = dur - 0.3;
+    const passo = d.passo ?? Math.min(0.5, Math.max(0.16, (dur * 0.4) / n));
+    d._ls.forEach((s, i) => linha(s, lt, 0.02 + i * passo, sai + i * 0.03));
+    const tb = Math.min(dur * 0.45, 0.2 + n * passo + 0.3);
+    d._bar.style.transform = `scaleX(${outExpo(prog(lt, tb, tb + 0.5)) * (1 - inCubic(prog(lt, sai, sai + 0.25)))})`;
+    if (d._sub) linha(d._sub.firstChild, lt, Math.min(dur * 0.55, tb + 0.6), sai);
+    if (d._x) d._x.querySelectorAll("path").forEach((p, k) =>
+      p.setAttribute("stroke-dashoffset", 1 - outCubic(prog(lt, 0.35 + k * 0.2, 0.6 + k * 0.2)) * (1 - prog(lt, sai, sai + 0.2))));
+    if (d._ha) d._ha.forEach((h, k) => {
+      const e = pop(lt, 0.25 + k * Math.min(0.35, dur / 10));
+      h.style.transform = `scale(${e * (1 - prog(lt, sai, sai + 0.2))}) rotate(${(k % 2 ? 6 : -6) * Math.sin(lt * 9 + k)}deg)`;
+    });
+    if (d._num) { const e = outExpo(prog(lt, 0.15, 0.7)); d._num.style.transform = `translateX(${(1 - e) * 500}px)`; d._num.style.clipPath = `inset(0 0 0 ${(1 - e) * 100}%)`; }
+    if (d._ic) iconeUpdate(lt, dur, d);
+    if (d._barraV) {
+      const e = outExpo(prog(lt, 0.2, 0.7)), sa = 1 - inCubic(prog(lt, sai, sai + 0.25));
+      d._barraV.style.clipPath = `inset(0 ${(1 - e * sa) * 100}% 0 0)`;
+      const p = inOut(prog(lt, 0.6, dur - 0.5));
+      d._barraV.querySelector(".f").style.width = p * 100 + "%";
+      d._barraV.querySelector(".ph").style.left = p * 100 + "%";
+    }
+  },
+  eventos(d, t0, dur) {
+    const ev = [{ t: 0, tipo: "whoosh" }];
+    if (d.lado === "x") ev.push({ t: 0.35, tipo: "impacto" });
+    if (d.lado === "ha") for (let k = 0; k < 6; k++) ev.push({ t: 0.25 + k * Math.min(0.35, dur / 10), tipo: "pop" });
+    if (d.impacto) ev.push({ t: 0.02, tipo: "impacto" });
+    if (d.icone) ev.push(...iconeEventos(dur));
+    return ev;
+  },
+};
+
+// ---------- linhas (listas: missões, checklist, equação, resumo, riscar) ----------
+M.linhas = {
+  build(c, d) {
+    const tam = d.tam || 110, gap = d.gap || tam * 1.32;
+    const n = d.itens.length;
+    const top0 = d.top ?? Math.round((1080 - (n * gap + (d.titulo ? 120 : 0))) / 2 + (d.titulo ? 120 : 0));
+    if (d.titulo) {
+      d._tit = el(`<div class="mask" style="left:144px;top:${top0 - 130}px;width:1600px;height:80px"><span class="ui" style="font-size:52px">${d.titulo}</span></div>`);
+      c.appendChild(d._tit);
+    }
+    d._rows = d.itens.map((it, i) => {
+      const y = top0 + i * gap;
+      const r = el(`<div class="mask" style="left:130px;top:${y}px;width:1680px;height:${tam + 20}px"><span style="position:relative;height:${tam + 20}px"></span></div>`);
+      const s = r.firstChild;
+      const xTxt = it.marca === "none" ? 10 : tam + 50;
+      if (it.marca === "check") s.insertAdjacentHTML("beforeend",
+        `<div class="abs box" style="left:10px;top:${tam * 0.1}px;width:${tam * 0.8}px;height:${tam * 0.8}px;border-radius:${tam * 0.18}px;border:${Math.max(5, tam * 0.06)}px solid var(--text)"></div>
+         <svg class="abs" style="left:10px;top:${tam * 0.1}px" width="${tam * 0.8}" height="${tam * 0.8}" viewBox="0 0 96 96">
+         <path class="ck" d="M24 50 L42 67 L74 30" fill="none" stroke="#0e1114" stroke-width="12" stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/></svg>`);
+      if (it.marca === "num") s.insertAdjacentHTML("beforeend",
+        `<div class="abs disp box" style="left:10px;top:${tam * 0.06}px;width:${tam * 0.88}px;height:${tam * 0.88}px;border-radius:50%;background:var(--surface2);font-size:${tam * 0.62}px;display:flex;align-items:center;justify-content:center">${i + 1}</div>`);
+      if (it.marca === "seta") s.insertAdjacentHTML("beforeend",
+        `<div class="abs disp ac" style="left:10px;top:0;font-size:${tam}px">→</div>`);
+      s.insertAdjacentHTML("beforeend", `<span class="abs disp txt ${it.ac ? "ac" : ""}" style="left:${xTxt}px;top:${tam * 0.04}px;font-size:${tam}px">${it.txt}</span>`);
+      if (it.tag) s.insertAdjacentHTML("beforeend", `<span class="abs ui tag" style="top:${tam * 0.3}px;font-size:${tam * 0.32}px;color:var(--bg);background:var(--accent);border-radius:999px;padding:4px 18px">${it.tag}</span>`);
+      c.appendChild(r);
+      // risco e círculo (posição definida depois de medir o texto)
+      const tx = s.querySelector(".txt");
+      it._s = s; it._tx = tx; it._xTxt = xTxt; it._y = y;
+      return r;
+    });
+    d._medido = false;
+    if (d.numLado) {
+      d._nl = el(`<div class="abs disp ac" style="right:120px;top:${d.numTop ?? 170}px;font-size:${d.numTam || 700}px;line-height:1;text-align:right">1</div>`);
+      c.appendChild(d._nl);
+    }
+    if (d.icone) iconeBuild(c, d);
+  },
+  medir(c, d) {
+    const tam = d.tam || 110;
+    d.itens.forEach((it) => {
+      const w = it._tx.offsetWidth; // largura sem transformações
+      it._w = w;
+      if (it.tag) it._s.querySelector(".tag").style.left = it._xTxt + w + 30 + "px";
+      if (it.riscaEm != null) {
+        it._risca = el(`<div class="abs" style="left:${it._xTxt - 10}px;top:${tam * 0.5}px;height:${Math.max(8, tam * 0.1)}px;width:${w + 20}px;background:var(--text);transform-origin:0 50%"></div>`);
+        it._s.appendChild(it._risca);
+      }
+      if (it.circuloEm != null) {
+        it._circ = el(`<svg class="abs" style="left:${it._xTxt - 40}px;top:${-tam * 0.15}px;overflow:visible" width="${w + 80}" height="${tam * 1.35}">
+          <ellipse cx="${(w + 80) / 2}" cy="${tam * 0.68}" rx="${(w + 70) / 2}" ry="${tam * 0.66}" fill="none" stroke="#22e07a" stroke-width="10" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" transform="rotate(-3 ${(w + 80) / 2} ${tam * 0.68})"/></svg>`);
+        it._s.appendChild(it._circ);
+      }
+    });
+    d._medido = true;
+  },
+  update(c, lt, dur, d, t0) {
+    if (!d._medido) M.linhas.medir(c, d);
+    const sai = dur - 0.3, L = (x) => (x == null ? null : x - t0);
+    if (d._tit) linha(d._tit.firstChild, lt, 0, sai);
+    d.itens.forEach((it, i) => {
+      const em = L(it.em) ?? 0.05 + i * 0.18;
+      const e = outExpo(prog(lt, em - 0.1, em + 0.35));
+      const s2 = inCubic(prog(lt, sai + i * 0.02, sai + 0.25 + i * 0.02));
+      it._s.style.transform = `translateX(${(1 - e) * -105 - s2 * 110}%)`;
+      if (it.marca === "check") {
+        const ce = L(it.checkEm);
+        const pc = ce == null ? 0 : outCubic(prog(lt, ce, ce + 0.22));
+        const box = it._s.querySelector(".box");
+        box.style.background = pc > 0 ? "var(--accent)" : "transparent";
+        box.style.borderColor = pc > 0 ? "var(--accent)" : (it.apagado ? "var(--line)" : "var(--text)");
+        box.style.transform = `scale(${1 + 0.18 * Math.sin(Math.PI * pc)})`;
+        it._s.querySelector(".ck").setAttribute("stroke-dashoffset", 1 - pc);
+      }
+      if (it.apagado) it._tx.style.color = "var(--muted)";
+      if (it._risca) {
+        const r = outExpo(prog(lt, L(it.riscaEm), L(it.riscaEm) + 0.35));
+        it._risca.style.transform = `scaleX(${r})`;
+        it._tx.style.color = r > 0.5 ? "var(--muted)" : "";
+      }
+      if (it._circ) it._circ.firstElementChild.setAttribute("stroke-dashoffset", 1 - outCubic(prog(lt, L(it.circuloEm), L(it.circuloEm) + 0.45)));
+      if (it.marca === "num") it._s.querySelector(".box").style.transform = `scale(${pop(lt, em, 0.35)})`;
+    });
+    if (d._nl) {
+      let n = 0, tk = 0;
+      d.itens.forEach((it, i) => { const em = L(it.em) ?? 0.05 + i * 0.18; if (lt >= em) { n = i + 1; tk = em; } });
+      d._nl.textContent = n ? n : (d.numIni ?? 1);
+      const e = n ? pop(lt, tk, 0.4, 1.4) : d.numIni != null ? pop(lt, 0.3, 0.5, 1.4) : 0;
+      d._nl.style.transform = `scale(${e * (1 - inCubic(prog(lt, sai, sai + 0.25)))}) translateY(${Math.sin(lt * 1.5) * 8}px)`;
+      d._nl.style.transformOrigin = "100% 50%";
+    }
+    if (d._ic) iconeUpdate(lt, dur, d);
+  },
+  eventos(d, t0, dur) {
+    const ev = [];
+    d.itens.forEach((it, i) => {
+      const em = it.em == null ? 0.05 + i * 0.18 : it.em - t0;
+      ev.push({ t: em - 0.05, tipo: i === 0 ? "whoosh" : "tick" });
+      if (it.checkEm != null && it.checkEm - t0 > 0.05) ev.push({ t: it.checkEm - t0, tipo: "check" });
+      if (it.riscaEm != null) ev.push({ t: it.riscaEm - t0, tipo: "risca" });
+      if (it.circuloEm != null) ev.push({ t: it.circuloEm - t0, tipo: "pop" });
+    });
+    if (d.icone) ev.push(...iconeEventos(dur));
+    return ev;
+  },
+};
+
+// ---------- contador gigante ----------
+M.contador = {
+  build(c, d) {
+    d._rot = el(`<div class="mask" style="left:144px;top:250px;width:1600px;height:80px"><span class="ui" style="font-size:56px">${d.rotulo || ""}</span></div>`);
+    d._num = el(`<div class="mask" style="left:130px;top:330px;width:1700px;height:${d.tam || 380}px"><span class="disp ${d.ac ? "ac" : ""}" style="font-size:${d.tam || 380}px;font-variant-numeric:tabular-nums">0</span></div>`);
+    d._leg = el(`<div class="mask" style="left:140px;top:${330 + (d.tam || 380) + 10}px;width:1600px;height:140px"><span class="disp ${d.ac ? "" : "ac"}" style="font-size:130px">${d.legenda || ""}</span></div>`);
+    [d._rot, d._num, d._leg].forEach((x) => c.appendChild(x));
+    if (d.barras) {
+      d._bars = [];
+      for (let k = 0; k < 12; k++) {
+        const b = el(`<div class="abs" style="left:${1200 + k * 50}px;bottom:200px;width:36px;height:${60 + k * 30}px;border-radius:8px;background:${k === 11 ? "var(--accent)" : "var(--surface2)"};transform-origin:50% 100%"></div>`);
+        c.appendChild(b); d._bars.push(b);
+      }
+    }
+  },
+  update(c, lt, dur, d, t0) {
+    const sai = dur - 0.3;
+    linha(d._rot.firstChild, lt, 0, sai);
+    linha(d._num.firstChild, lt, 0.08, sai, 0.5);
+    const ce = (d.contaEm != null ? d.contaEm - t0 : 0.15), cd = d.durConta || 1.2;
+    const v = lerp(d.de || 0, d.ate, outExpo(prog(lt, ce, ce + cd)));
+    d._num.firstChild.textContent = (d.prefixo || "") + (d.texto ? (lt >= ce + cd * 0.6 ? d.texto : fmt(v)) : fmt(v)) + (d.sufixo || "");
+    linha(d._leg.firstChild, lt, d.legEm != null ? d.legEm - t0 : ce + cd * 0.7, sai);
+    if (d._bars) d._bars.forEach((b, k) => b.style.transform = `scaleY(${outBack(prog(lt, ce + k * 0.05, ce + 0.4 + k * 0.05), 1.3) * (1 - prog(lt, sai, sai + 0.25))})`);
+  },
+  eventos(d, t0, dur) {
+    const ce = d.contaEm != null ? d.contaEm - t0 : 0.15, cd = d.durConta || 1.2;
+    const ev = [{ t: 0, tipo: "whoosh" }];
+    for (let k = 0; k < 8; k++) ev.push({ t: ce + (k / 8) * cd * 0.6, tipo: "tick" });
+    ev.push({ t: ce + cd * 0.6, tipo: "pop" });
+    return ev;
+  },
+};
+
+// ---------- citação ----------
+M.citacao = {
+  build(c, d) {
+    d._aspas = el(`<div class="abs disp ac" style="left:120px;top:110px;font-size:360px;line-height:1">“</div>`);
+    c.appendChild(d._aspas);
+    const tam = d.tam || 120;
+    d._w = [];
+    d.linhas.forEach((ln, i) => {
+      const m = el(`<div class="mask" style="left:150px;top:${340 + i * tam * 1.05}px;width:1700px;height:${tam}px"><span class="disp" style="font-size:${tam}px"></span></div>`);
+      ln.split(" ").forEach((w) => {
+        const sp = document.createElement("span");
+        sp.textContent = w + " "; sp.dataset.ac = (d.destaque || []).some((x) => w.toUpperCase().startsWith(x)) ? 1 : 0;
+        m.firstChild.appendChild(sp); d._w.push(sp);
+      });
+      c.appendChild(m);
+    });
+    d._ls = [...c.querySelectorAll(".mask > span")];
+    d._autor = el(`<div class="mask" style="left:154px;top:${340 + d.linhas.length * tam * 1.05 + 40}px;width:1600px;height:80px"><span class="ui" style="font-size:50px">— ${d.autor}</span></div>`);
+    c.appendChild(d._autor);
+  },
+  update(c, lt, dur, d) {
+    const sai = dur - 0.3;
+    const a = outBack(prog(lt, 0, 0.4), 2);
+    d._aspas.style.transform = `scale(${Math.max(0, a) * (1 - prog(lt, sai, sai + 0.2))}) rotate(${(1 - a) * -30}deg)`;
+    d._ls.forEach((s, i) => linha(s, lt, 0.1 + i * 0.15, sai));
+    const fim = Math.max(1.2, dur * 0.7), n = d._w.length;
+    d._w.forEach((w, k) => {
+      const on = lt >= 0.4 + (k / n) * (fim - 0.4);
+      w.style.color = !on ? "var(--muted)" : w.dataset.ac === "1" ? "var(--accent)" : "var(--text)";
+    });
+    linha(d._autor.firstChild, lt, Math.min(fim, dur - 0.8), sai);
+  },
+  eventos() { return [{ t: 0, tipo: "whoosh" }, { t: 0.05, tipo: "pop" }]; },
+};
+
+// ---------- escada (grupos de teste) ----------
+// d.passos: [{em, acao}] acao: degrau(n) | medidores | sobe(n) | falha | rotulo(txt) | setenta | inscritos | desconhecidos
+M.escada = {
+  build(c, d) {
+    const NS = ["10", "100", "1.000", "100.000"];
+    d._deg = NS.map((n, k) => {
+      const x = 760 + k * 270, y = 820 - k * 170;
+      const g = el(`<div class="abs" style="left:${x}px;top:${y}px;width:300px;height:${1080 - y}px;background:var(--surface2);border-top:10px solid #4a535e;transform-origin:50% 100%">
+        <div class="ui lbl" style="position:absolute;left:24px;top:20px;font-size:40px;color:var(--text)">${n}</div>
+        <div class="ui sub" style="position:absolute;left:24px;top:72px;font-size:28px">pessoas</div></div>`);
+      c.appendChild(g); return g;
+    });
+    d._vid = el(`<div class="abs" style="left:0;top:0;width:150px;height:96px;border-radius:18px;background:var(--accent)">
+      <div style="position:absolute;left:60px;top:26px;border-left:40px solid var(--bg);border-top:22px solid transparent;border-bottom:22px solid transparent"></div></div>`);
+    c.appendChild(d._vid);
+    d._med = ["CLIQUE", "TEMPO ASSISTIDO"].map((nome, k) => {
+      const m = el(`<div class="abs" style="left:140px;top:${640 + k * 120}px;width:520px">
+        <div class="ui" style="font-size:36px;color:var(--text)">${nome}</div>
+        <div style="margin-top:12px;height:26px;border-radius:13px;background:var(--line);overflow:hidden"><div class="fill" style="height:100%;width:0;background:var(--accent)"></div></div></div>`);
+      c.appendChild(m); return m;
+    });
+    const tr = d.tamRot || 120;
+    d._rot = el(`<div class="mask" style="left:140px;top:200px;width:1150px;height:${tr}px"><span class="disp" style="font-size:${tr}px"></span></div>`);
+    c.appendChild(d._rot);
+    d._rot2 = el(`<div class="mask" style="left:140px;top:${200 + tr * 1.02}px;width:1150px;height:${tr}px"><span class="disp ac" style="font-size:${tr}px"></span></div>`);
+    c.appendChild(d._rot2);
+    d._70 = el(`<div class="abs disp" style="font-size:120px">70</div>`);
+    c.appendChild(d._70);
+    d._pes = [];
+    for (let k = 0; k < 10; k++) {
+      const p = el(`<div class="abs" style="left:${300 + (k % 5) * 76}px;top:${850 + Math.floor(k / 5) * 90}px;width:56px;height:76px">
+        <div style="width:30px;height:30px;border-radius:50%;background:var(--text);margin:0 auto"></div>
+        <div style="width:56px;height:38px;border-radius:28px 28px 6px 6px;background:var(--text);margin-top:6px"></div></div>`);
+      c.appendChild(p); d._pes.push(p);
+    }
+  },
+  update(c, lt, dur, d, t0, rnd) {
+    const sai = dur - 0.3, P = d.passos.map((p) => ({ ...p, t: p.em - t0 }));
+    const quando = (acao) => P.filter((p) => p.acao === acao || p.acao.startsWith?.(acao));
+    // degraus visíveis
+    let nDeg = 1; P.forEach((p) => { if (p.acao.startsWith("degrau") && lt >= p.t) nDeg = Math.max(nDeg, +p.acao.split(":")[1]); });
+    d._deg.forEach((g, k) => {
+      const tk = k === 0 ? 0 : (P.find((p) => p.acao === "degrau:" + (k + 1))?.t ?? 999);
+      const e = outExpo(prog(lt, tk, tk + 0.5));
+      g.style.transform = `translateY(${(1 - e) * 110}%)`;
+      g.style.borderTopColor = "var(--line)";
+      g.querySelector(".lbl").style.color = "var(--text)";
+    });
+    // posição do vídeo (degrau atual)
+    let alvo = 0, tAlvo = 0;
+    P.forEach((p) => { if (p.acao.startsWith("sobe") && lt >= p.t) { alvo = +p.acao.split(":")[1] - 1; tAlvo = p.t; } });
+    const falha = P.find((p) => p.acao === "falha");
+    const kAnt = Math.max(0, alvo - 1), m = outBack(prog(lt, tAlvo, tAlvo + 0.5), 1.4);
+    const pos = (k) => [760 + k * 270 + 75, 820 - k * 170 - 110];
+    let [x, y] = pos(alvo), [x0, y0] = pos(kAnt);
+    if (alvo > 0) { x = lerp(x0, x, m); y = lerp(y0, y, m) - Math.sin(Math.PI * clamp(m)) * 90; }
+    let rot = 0;
+    if (falha && lt >= falha.t) {
+      const f = prog(lt, falha.t, falha.t + 0.6);
+      const sh = (1 - prog(lt, falha.t, falha.t + 0.4)) * 12;
+      x += (rnd() - 0.5) * 2 * sh; rot = -8 * outCubic(f);
+      d._vid.style.background = "var(--muted)";
+    } else d._vid.style.background = "var(--accent)";
+    const vIn = pop(lt, 0.1, 0.4);
+    d._vid.style.transform = `translate(${x}px, ${y}px) rotate(${rot}deg) scale(${vIn})`;
+    // medidores
+    const tm = P.find((p) => p.acao === "medidores")?.t ?? 999;
+    d._med.forEach((m2, k) => {
+      const e = outExpo(prog(lt, tm + k * 0.15, tm + 0.4 + k * 0.15));
+      m2.style.transform = `translateX(${(1 - e) * -700}px)`;
+      let v = outCubic(prog(lt, tm + 0.3 + k * 0.2, tm + 1.6 + k * 0.2)) * (k ? 0.82 : 0.74);
+      if (falha && lt >= falha.t) v *= 1 - 0.8 * outCubic(prog(lt, falha.t, falha.t + 0.5));
+      m2.querySelector(".fill").style.width = v * 100 + "%";
+      m2.querySelector(".fill").style.background = falha && lt >= falha.t ? "var(--muted)" : "var(--accent)";
+    });
+    // rótulos (duas linhas; troca a cada passo "rotulo")
+    const rots = P.filter((p) => p.acao.startsWith("rotulo:"));
+    let atual = null, tR = 0, prox = Infinity;
+    rots.forEach((r, k) => { if (lt >= r.t) { atual = r.acao.slice(7).split("|"); tR = r.t; prox = rots[k + 1]?.t ?? Infinity; } });
+    if (atual) {
+      d._rot.firstChild.textContent = atual[0]; d._rot2.firstChild.textContent = atual[1] || "";
+      linha(d._rot.firstChild, lt, tR, Math.min(prox, sai) - 0.3);
+      linha(d._rot2.firstChild, lt, tR + 0.12, Math.min(prox, sai) - 0.27);
+    } else { d._rot.firstChild.style.transform = "translateY(160%)"; d._rot2.firstChild.style.transform = "translateY(160%)"; }
+    // "70" preso no vídeo
+    const t70 = P.find((p) => p.acao === "setenta")?.t ?? 999;
+    const e70 = pop(lt, t70, 0.4, 2.2);
+    d._70.style.transform = `translate(${x - 10}px, ${y - 150}px) scale(${e70})`;
+    // inscritos x desconhecidos (missão 2)
+    const ti = P.find((p) => p.acao === "inscritos")?.t ?? 999, td = P.find((p) => p.acao === "desconhecidos")?.t ?? 999;
+    d._deg.forEach((g, k) => {
+      if (k === 0 && lt >= ti) { g.style.borderTopColor = "var(--accent)"; g.querySelector(".sub").textContent = "inscritos"; g.querySelector(".lbl").style.color = "var(--accent)"; }
+      if (k > 0 && lt >= td) { g.querySelector(".sub").textContent = "desconhecidos"; }
+    });
+    // pessoas (grupo de teste)
+    const tp = P.find((p) => p.acao === "pessoas")?.t ?? 999;
+    d._pes.forEach((p, k) => {
+      const e = pop(lt, tp + k * 0.09, 0.3, 2);
+      const assistiu = (P.find((q) => q.acao === "medidores")?.t ?? tp) + 0.4 + k * 0.12;
+      p.style.transform = `scale(${e})`;
+      p.style.filter = lt >= assistiu && !(falha && lt >= falha.t && k > 2) ? "none" : "brightness(0.45)";
+    });
+    // saída: tudo desce
+    const s = inCubic(prog(lt, sai, sai + 0.3));
+    c.style.transform = `translateY(${s * 1100}px)`;
+  },
+  eventos(d, t0) {
+    const ev = [{ t: 0, tipo: "whoosh" }, { t: 0.1, tipo: "pop" }];
+    d.passos.forEach((p) => {
+      const t = p.em - t0;
+      if (p.acao.startsWith("degrau")) ev.push({ t, tipo: "subir" });
+      if (p.acao.startsWith("sobe")) ev.push({ t, tipo: "pop" });
+      if (p.acao === "falha") ev.push({ t, tipo: "impacto" });
+      if (p.acao === "medidores") ev.push({ t, tipo: "whoosh" });
+      if (p.acao === "setenta") ev.push({ t, tipo: "pop" });
+      if (p.acao.startsWith("rotulo")) ev.push({ t, tipo: "tick" });
+      if (p.acao === "pessoas") for (let k = 0; k < 10; k++) ev.push({ t: t + k * 0.09, tipo: "tick" });
+    });
+    return ev;
+  },
+};
+
+// ---------- duelo: dois cartões lado a lado ----------
+// d.lados: [{titulo, valor:{de,ate,em,dur,fmt}| texto, sub, barra:{em,dur,ate}, carimbo:{txt,em}}]
+M.duelo = {
+  build(c, d) {
+    if (d.topo) { d._topo = el(`<div class="mask" style="left:140px;top:110px;width:1640px;height:130px"><span class="disp" style="font-size:120px">${d.topo}</span></div>`); c.appendChild(d._topo); }
+    d._cs = d.lados.map((l, k) => {
+      const x = 140 + k * 840;
+      const card = el(`<div class="card" style="left:${x}px;top:${d.topo ? 290 : 200}px;width:800px;height:640px">
+        <div class="ui" style="position:absolute;left:44px;top:40px;font-size:44px;color:var(--text)">${l.titulo}</div>
+        <div class="disp val ${l.ac ? "ac" : ""}" style="position:absolute;left:40px;top:120px;font-size:${l.tam || 240}px;font-variant-numeric:tabular-nums"></div>
+        <div class="ui sub" style="position:absolute;left:44px;top:420px;font-size:40px">${l.sub || ""}</div>
+        <div style="position:absolute;left:44px;right:44px;bottom:60px;height:28px;border-radius:14px;background:var(--line);overflow:hidden"><div class="fill" style="height:100%;width:0;background:var(--accent)"></div></div>
+        <div class="abs disp carimbo" style="right:40px;top:300px;font-size:110px;color:var(--bg);background:var(--text);padding:6px 26px;border-radius:16px">${l.carimbo?.txt || ""}</div></div>`);
+      c.appendChild(card); return card;
+    });
+  },
+  update(c, lt, dur, d, t0) {
+    const sai = dur - 0.3, L = (x) => x - t0;
+    if (d._topo) linha(d._topo.firstChild, lt, 0, sai);
+    d._cs.forEach((card, k) => {
+      const l = d.lados[k], em = l.em != null ? L(l.em) : 0.1 + k * 0.25;
+      const e = outExpo(prog(lt, em, em + 0.5));
+      card.style.clipPath = `inset(${(1 - e) * 100}% 0 0 0 round 28px)`;
+      card.style.transform = `translateY(${(1 - e) * 80 + inCubic(prog(lt, sai, sai + 0.3)) * 1100}px)`;
+      const v = card.querySelector(".val");
+      if (l.valor) {
+        const p = outExpo(prog(lt, L(l.valor.em ?? l.em ?? t0) + 0.2, L(l.valor.em ?? l.em ?? t0) + 0.2 + (l.valor.dur || 1.2)));
+        const x = lerp(l.valor.de, l.valor.ate, l.valor.lin ? prog(lt, L(l.valor.em) , L(l.valor.em) + l.valor.dur) : p);
+        v.textContent = l.valor.fmt === "tempo" ? `${String(Math.floor(x / 60)).padStart(2, "0")}:${String(Math.floor(x % 60)).padStart(2, "0")}` : l.valor.fmt === "mi" ? (x >= 1e6 ? (x / 1e6).toFixed(1).replace(".", ",") + " mi" : fmt(x)) : fmt(x);
+      } else v.textContent = l.texto || "";
+      if (l.barra) card.querySelector(".fill").style.width = (l.barra.lin ? prog(lt, L(l.barra.em), L(l.barra.em) + l.barra.dur) : outCubic(prog(lt, L(l.barra.em), L(l.barra.em) + l.barra.dur))) * (l.barra.ate ?? 1) * 100 + "%";
+      const cb = card.querySelector(".carimbo");
+      if (l.carimbo) { const ce = pop(lt, L(l.carimbo.em), 0.35, 2.4); cb.style.transform = `scale(${ce}) rotate(-8deg)`; } else cb.style.display = "none";
+    });
+  },
+  eventos(d, t0) {
+    const ev = [{ t: 0, tipo: "whoosh" }];
+    d.lados.forEach((l, k) => {
+      ev.push({ t: (l.em != null ? l.em - t0 : 0.1 + k * 0.25), tipo: "pop" });
+      if (l.carimbo) ev.push({ t: l.carimbo.em - t0, tipo: "impacto" });
+    });
+    return ev;
+  },
+};
+
+// ---------- feed no celular (decide em menos de 1 s) ----------
+M.feed = {
+  build(c, d) {
+    d._cel = el(`<div class="abs" style="left:1120px;top:60px;width:470px;height:960px;border-radius:64px;background:#050608;border:6px solid #3a414b;overflow:hidden">
+      <div class="tela" style="position:absolute;inset:14px;border-radius:50px;background:var(--surface);overflow:hidden"><div class="lista" style="position:absolute;left:0;top:0;width:100%"></div></div></div>`);
+    c.appendChild(d._cel);
+    const lista = d._cel.querySelector(".lista");
+    for (let k = 0; k < 14; k++) {
+      const alvo = k === 9;
+      lista.insertAdjacentHTML("beforeend", `<div style="margin:24px;height:230px;border-radius:18px;background:${alvo ? "#1d2a24" : "var(--surface2)"};position:relative;${alvo ? "outline:6px solid var(--accent)" : ""}">
+        <div style="position:absolute;left:20px;bottom:18px;width:${alvo ? 260 : 200}px;height:18px;border-radius:9px;background:${alvo ? "var(--accent)" : "#3a424c"}"></div>
+        <div style="position:absolute;left:20px;bottom:46px;width:150px;height:14px;border-radius:7px;background:#3a424c"></div></div>`);
+    }
+    d._lin = [];
+    (d.linhas || []).forEach(([txt, ac], i) => {
+      const m = el(`<div class="mask" style="left:140px;top:${170 + i * 140}px;width:920px;height:130px"><span class="disp ${ac ? "ac" : ""}" style="font-size:130px">${txt}</span></div>`);
+      c.appendChild(m); d._lin.push(m.firstChild);
+    });
+    d._seg = el(`<div class="mask" style="left:140px;top:640px;width:920px;height:240px" data-x="1"><span class="disp ac" style="font-size:230px;font-variant-numeric:tabular-nums">0,0s</span></div>`);
+    c.appendChild(d._seg);
+  },
+  update(c, lt, dur, d, t0) {
+    const sai = dur - 0.3;
+    const e = outExpo(prog(lt, 0, 0.6));
+    d._cel.style.transform = `translateY(${(1 - e) * 1100 + inCubic(prog(lt, sai, sai + 0.3)) * 1100}px)`;
+    const para = (d.paraEm ?? t0 + 2.5) - t0;
+    const rol = outCubic(prog(lt, 0.3, para)) * (9 * 254 - 300);
+    d._cel.querySelector(".lista").style.transform = `translateY(${-rol}px)`;
+    d._lin.forEach((s, i) => linha(s, lt, 0.1 + i * 0.2, sai));
+    const tSeg = (d.segEm ?? para + t0) - t0;
+    linha(d._seg.firstChild, lt, tSeg, sai);
+    d._seg.firstChild.textContent = (Math.min(0.9, prog(lt, tSeg, tSeg + 0.9) * 0.9)).toFixed(1).replace(".", ",") + "s";
+  },
+  eventos(d, t0) { return [{ t: 0, tipo: "whoosh" }, { t: (d.paraEm ?? t0 + 2.5) - t0, tipo: "pop" }, { t: (d.segEm ?? t0) - t0, tipo: "tick" }]; },
+};
+
+// ---------- bolhas (intro lenta) ----------
+M.bolhas = {
+  build(c, d) {
+    d._bs = d.falas.map((f, k) => {
+      const b = el(`<div class="abs ui" style="left:${140 + (k % 2) * 160}px;top:${170 + k * 118}px;font-size:46px;color:var(--text);background:var(--surface2);padding:20px 34px;border-radius:30px 30px 30px 8px">${f}</div>`);
+      c.appendChild(b); return b;
+    });
+    d._pnl = el(`<div class="card" style="left:1180px;top:220px;width:600px;height:560px">
+      <div class="ui" style="position:absolute;left:44px;top:40px;font-size:40px;color:var(--text)">Espectadores</div>
+      <div class="disp num" style="position:absolute;left:40px;top:110px;font-size:250px;font-variant-numeric:tabular-nums">100%</div>
+      <div style="position:absolute;left:44px;right:44px;bottom:70px;height:28px;border-radius:14px;background:var(--line);overflow:hidden"><div class="fill" style="height:100%;width:100%;background:var(--text)"></div></div></div>`);
+    c.appendChild(d._pnl);
+    d._fimEl = el(`<div class="mask" style="left:140px;top:880px;width:1640px;height:120px"><span class="disp ac" style="font-size:110px">${d.fim}</span></div>`);
+    c.appendChild(d._fimEl);
+  },
+  update(c, lt, dur, d, t0) {
+    const sai = dur - 0.3, n = d._bs.length, tf = (d.fimEm - t0);
+    d._bs.forEach((b, k) => {
+      const tk = 0.1 + k * ((tf - 0.4) / n);
+      b.style.transform = `scale(${pop(lt, tk, 0.3, 1.5)}) translateY(${inCubic(prog(lt, sai, sai + 0.3)) * 1200}px)`;
+      b.style.transformOrigin = "0 100%";
+    });
+    const e = outExpo(prog(lt, 0.1, 0.6));
+    d._pnl.style.clipPath = `inset(${(1 - e) * 100}% 0 0 0 round 28px)`;
+    d._pnl.style.transform = `translateY(${inCubic(prog(lt, sai, sai + 0.3)) * 1100}px)`;
+    const v = lerp(100, 12, inOut(prog(lt, 0.3, tf + 0.3)));
+    d._pnl.querySelector(".num").textContent = Math.round(v) + "%";
+    d._pnl.querySelector(".num").style.color = v < 40 ? "var(--muted)" : "var(--text)";
+    d._pnl.querySelector(".fill").style.width = v + "%";
+    linha(d._fimEl.firstChild, lt, tf, sai);
+  },
+  eventos(d, t0) {
+    const tf = d.fimEm - t0, n = d.falas.length;
+    return [{ t: 0, tipo: "whoosh" }, ...d.falas.map((_, k) => ({ t: 0.1 + k * ((tf - 0.4) / n), tipo: "bolha" })), { t: tf, tipo: "impacto" }];
+  },
+};
+
+// ---------- jogo (registro de missões) ----------
+M.jogo = {
+  build(c, d) {
+    d._hud = el(`<div class="card" style="left:1000px;top:150px;width:780px;height:720px">
+      <div class="ui" style="position:absolute;left:44px;top:36px;font-size:40px;color:var(--text)">${d.cab || "MISSÕES"}</div>
+      <div class="disp moedas ac" style="position:absolute;right:44px;top:26px;font-size:70px"></div>
+      <div class="itens" style="position:absolute;left:44px;right:44px;top:130px"></div>
+      <div class="ui sair" style="position:absolute;left:44px;bottom:44px;font-size:44px;color:var(--bg);background:var(--text);padding:12px 40px;border-radius:14px">SAIR</div></div>`);
+    c.appendChild(d._hud);
+    const it = d._hud.querySelector(".itens");
+    d._it = d.missoes.map((m) => {
+      const x = el(`<div style="position:relative;height:118px;margin-bottom:22px;border-radius:20px;background:var(--surface2)">
+        <div class="disp nome" style="position:absolute;left:30px;top:26px;font-size:64px">${m.txt}</div>
+        <div class="disp rec ac" style="position:absolute;right:30px;top:26px;font-size:62px">${m.rec || ""}</div></div>`);
+      it.appendChild(x); return x;
+    });
+    d._ls = (d.linhas || []).map(([txt, ac], i) => {
+      const m = el(`<div class="mask" style="left:140px;top:${300 + i * 130}px;width:840px;height:120px"><span class="disp ${ac ? "ac" : ""}" style="font-size:118px">${txt}</span></div>`);
+      c.appendChild(m); return m.firstChild;
+    });
+    d._ls2 = (d.linhas2 || []).map(([txt, ac], i) => {
+      const m = el(`<div class="mask" style="left:140px;top:${300 + i * 130}px;width:840px;height:120px"><span class="disp ${ac ? "ac" : ""}" style="font-size:118px">${txt}</span></div>`);
+      c.appendChild(m); return m.firstChild;
+    });
+  },
+  update(c, lt, dur, d, t0) {
+    const sai = dur - 0.3, L = (x) => x - t0;
+    const e = outExpo(prog(lt, 0, 0.6));
+    d._hud.style.clipPath = `inset(0 0 ${(1 - e) * 100}% 0 round 28px)`;
+    d._hud.style.transform = `translateY(${inCubic(prog(lt, sai, sai + 0.3)) * 1100}px)`;
+    let moedas = 0;
+    d._it.forEach((x, k) => {
+      const m = d.missoes[k], em = L(m.em);
+      x.style.transform = `translateX(${(1 - outExpo(prog(lt, em, em + 0.4))) * 120}%)`;
+      const feito = m.ok != null && lt >= L(m.ok);
+      x.style.background = feito ? "#163a2a" : "var(--surface2)";
+      x.querySelector(".nome").style.color = feito ? "var(--accent)" : "var(--text)";
+      x.querySelector(".rec").style.transform = `scale(${m.ok != null ? pop(lt, L(m.ok), 0.35, 2.2) : 0})`;
+      if (feito) moedas += m.moedas || 0;
+    });
+    d._hud.querySelector(".moedas").textContent = d.moedas ? "◆ " + moedas : "";
+    const sr = d.sairEm != null ? L(d.sairEm) : 999;
+    const pis = lt >= sr ? (Math.floor((lt - sr) * 4) % 2 ? 1 : 0.35) : 0;
+    d._hud.querySelector(".sair").style.opacity = d.sairEm != null ? (lt >= sr ? pis : 0) : 0;
+    d._hud.querySelector(".sair").style.transform = `scale(${d.sairEm != null ? pop(lt, sr, 0.3) : 0})`;
+    const troca = d.linhas2Em != null ? L(d.linhas2Em) : Infinity;
+    d._ls.forEach((s, i) => linha(s, lt, 0.1 + i * 0.18, Math.min(troca - 0.3, sai)));
+    d._ls2.forEach((s, i) => linha(s, lt, troca + i * 0.15, sai));
+  },
+  eventos(d, t0) {
+    const ev = [{ t: 0, tipo: "whoosh" }];
+    d.missoes.forEach((m) => { ev.push({ t: m.em - t0, tipo: "tick" }); if (m.ok != null) ev.push({ t: m.ok - t0, tipo: "moeda" }); });
+    if (d.sairEm != null) ev.push({ t: d.sairEm - t0, tipo: "impacto" });
+    if (d.linhas2Em != null) ev.push({ t: d.linhas2Em - t0, tipo: "whoosh" });
+    return ev;
+  },
+};
+
+// ---------- gráfico de retenção ----------
+M.retencao = {
+  build(c, d) {
+    d._g = el(`<svg class="abs" style="left:140px;top:300px" width="1640" height="620" viewBox="0 0 1640 620">
+      <line x1="0" y1="600" x2="1640" y2="600" stroke="#2a3038" stroke-width="6"/>
+      <path class="ruim" d="M0 40 C 200 60, 380 120, 560 300 S 900 540, 1640 560" fill="none" stroke="#8a939e" stroke-width="14" stroke-linecap="round"/>
+      <path class="bom" d="M0 40 L 300 90 L 420 70 L 620 130 L 760 100 L 980 160 L 1120 130 L 1340 190 L 1640 180" fill="none" stroke="#22e07a" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+      <circle class="pt" cx="1640" cy="560" r="26" fill="#f2f4f6"/>
+      <g class="marc"></g></svg>`);
+    c.appendChild(d._g);
+    d._Lr = d._g.querySelector(".ruim").getTotalLength(); d._Lb = d._g.querySelector(".bom").getTotalLength();
+    d._g.querySelector(".ruim").setAttribute("stroke-dasharray", d._Lr);
+    d._g.querySelector(".bom").setAttribute("stroke-dasharray", d._Lb);
+    [[300, 90], [620, 130], [980, 160], [1340, 190]].forEach(([x, y]) => d._g.querySelector(".marc").insertAdjacentHTML("beforeend",
+      `<g transform="translate(${x} ${y - 70})"><rect x="-34" y="-34" width="68" height="68" rx="14" fill="#22e07a"/><text x="0" y="22" text-anchor="middle" font-family="Bahnschrift" font-weight="700" font-size="60" fill="#0e1114">!</text></g>`));
+    d._tit = el(`<div class="mask" style="left:140px;top:120px;width:1640px;height:130px"><span class="disp" style="font-size:120px">${d.titulo}</span></div>`);
+    c.appendChild(d._tit);
+    d._r = el(`<div class="abs ui" style="left:900px;top:760px;font-size:44px;color:var(--text);background:var(--surface2);padding:12px 28px;border-radius:14px">${d.rotuloRuim}</div>`);
+    c.appendChild(d._r);
+    d._mk = (d.marcos || []).map((m) => {
+      const e = el(`<div class="abs ui" style="left:${140 + m.x}px;top:${300 + m.y}px;font-size:44px;color:${m.ac ? "var(--bg)" : "var(--text)"};background:${m.ac ? "var(--accent)" : "var(--surface2)"};padding:12px 28px;border-radius:14px;transform-origin:0 100%">${m.txt}</div>`);
+      c.appendChild(e); return e;
+    });
+    d._fx = d.faixa ? el(`<div class="abs" style="left:${140 + d.faixa.x0}px;top:300px;width:${d.faixa.x1 - d.faixa.x0}px;height:600px;background:rgba(138,147,158,0.12);border-left:4px dashed #8a939e;border-right:4px dashed #8a939e;transform-origin:50% 100%"><div class="ui" style="position:absolute;left:0;right:0;top:20px;text-align:center;font-size:44px;color:var(--text)">${d.faixa.txt}</div></div>`) : null;
+    if (d._fx) c.insertBefore(d._fx, c.firstChild);
+    d._b = el(`<div class="abs ui" style="left:1180px;top:290px;font-size:44px;color:var(--bg);background:var(--accent);padding:12px 28px;border-radius:14px">${d.rotuloBom || ""}</div>`);
+    c.appendChild(d._b);
+  },
+  update(c, lt, dur, d, t0) {
+    const sai = dur - 0.3, L = (x) => x - t0;
+    linha(d._tit.firstChild, lt, 0, sai);
+    const tr = outCubic(prog(lt, 0.3, Math.min(3, dur * 0.4)));
+    d._g.querySelector(".ruim").setAttribute("stroke-dashoffset", d._Lr * (1 - tr));
+    const pt = d._g.querySelector(".pt"); pt.setAttribute("opacity", tr > 0.98 ? 1 : 0);
+    d._r.style.transform = `scale(${d.ruimEm != null ? pop(lt, L(d.ruimEm), 0.35) : 0})`;
+    const tb = d.bomEm != null ? L(d.bomEm) : 999;
+    d._g.querySelector(".bom").setAttribute("stroke-dashoffset", d._Lb * (1 - outCubic(prog(lt, tb, tb + 1.4))));
+    d._g.querySelectorAll(".marc > g").forEach((g, k) => { const e = pop(lt, tb + 0.25 + k * 0.3, 0.3, 2); g.setAttribute("transform", g.getAttribute("transform").replace(/ scale\([^)]*\)/, "") + ` scale(${e})`); });
+    d._b.style.transform = `scale(${pop(lt, tb + 1.4, 0.35)})`;
+    d._mk.forEach((e, k) => { e.style.transform = `scale(${pop(lt, L(d.marcos[k].em), 0.35)})`; });
+    if (d._fx) d._fx.style.transform = `scaleY(${outExpo(prog(lt, L(d.faixa.em), L(d.faixa.em) + 0.5))})`;
+    d._g.style.transform = `translateY(${inCubic(prog(lt, sai, sai + 0.3)) * 1100}px)`;
+  },
+  eventos(d, t0) {
+    const ev = [{ t: 0, tipo: "whoosh" }];
+    if (d.ruimEm != null) ev.push({ t: d.ruimEm - t0, tipo: "impacto" });
+    (d.marcos || []).forEach((m) => ev.push({ t: m.em - t0, tipo: "pop" }));
+    if (d.faixa) ev.push({ t: d.faixa.em - t0, tipo: "whoosh" });
+    if (d.bomEm != null) { const tb = d.bomEm - t0; [0, 1, 2, 3].forEach((k) => ev.push({ t: tb + 0.25 + k * 0.3, tipo: "moeda" })); }
+    return ev;
+  },
+};
+
+// ---------- mapa de fases (macarrão) ----------
+M.mapa = {
+  build(c, d) {
+    d._tit = el(`<div class="mask" style="left:140px;top:110px;width:1640px;height:130px"><span class="disp" style="font-size:120px">${d.titulo}</span></div>`);
+    c.appendChild(d._tit);
+    const xs = [220, 640, 1060, 1560];
+    d._linha = el(`<div class="abs" style="left:220px;top:596px;width:1340px;height:12px;background:var(--line);transform-origin:0 50%"></div>`);
+    c.appendChild(d._linha);
+    d._fs = d.fases.map((f, k) => {
+      const chefe = k === d.fases.length - 1;
+      const n = el(`<div class="abs" style="left:${xs[k] - 70}px;top:532px;width:140px;height:140px;border-radius:${chefe ? 28 : 70}px;background:var(--surface2);border:8px solid var(--line);display:flex;align-items:center;justify-content:center">
+        <span class="disp ico" style="font-size:80px">${chefe ? "★" : k + 1}</span></div>`);
+      const t = el(`<div class="abs disp nome" style="left:${xs[k] - 190}px;top:${k % 2 ? 720 : 330}px;width:380px;text-align:center;font-size:66px;white-space:normal;line-height:1">${f.txt}</div>`);
+      c.appendChild(n); c.appendChild(t); return [n, t];
+    });
+  },
+  update(c, lt, dur, d, t0) {
+    const sai = dur - 0.3, L = (x) => x - t0;
+    linha(d._tit.firstChild, lt, 0, sai);
+    let feitas = 0; d.fases.forEach((f) => { if (f.ok != null && lt >= L(f.ok)) feitas++; });
+    d._linha.style.transform = `scaleX(${outExpo(prog(lt, 0.1, 0.8))})`;
+    d._linha.style.background = `linear-gradient(90deg, var(--accent) ${(feitas / (d.fases.length - 1)) * 100}%, var(--line) 0)`;
+    d._fs.forEach(([n, t], k) => {
+      const f = d.fases[k], em = L(f.em);
+      const pre = d.preEm != null && k < d.fases.length - 1 ? L(d.preEm) + k * 0.25 : em;
+      n.style.transform = `scale(${pop(lt, Math.min(pre, em), 0.4)})`;
+      t.style.transform = `translateY(${(1 - outExpo(prog(lt, em + 0.1, em + 0.5))) * (k % 2 ? 60 : -60)}px)`;
+      t.style.clipPath = `inset(${(1 - outExpo(prog(lt, em + 0.1, em + 0.5))) * 100}% 0 0 0)`;
+      const ok = f.ok != null && lt >= L(f.ok);
+      n.style.background = ok ? "var(--accent)" : "var(--surface2)";
+      n.style.borderColor = ok ? "var(--accent)" : "var(--line)";
+      n.querySelector(".ico").textContent = ok && k < d.fases.length - 1 ? "✓" : k === d.fases.length - 1 ? "★" : lt < em ? "?" : k + 1;
+      n.querySelector(".ico").style.color = ok ? "var(--bg)" : "var(--text)";
+      t.style.color = ok ? "var(--muted)" : "var(--text)";
+    });
+    c.style.transform = `translateY(${inCubic(prog(lt, sai, sai + 0.3)) * 1100}px)`;
+  },
+  eventos(d, t0) {
+    const ev = [{ t: 0, tipo: "whoosh" }];
+    d.fases.forEach((f) => { ev.push({ t: f.em - t0, tipo: "pop" }); if (f.ok != null) ev.push({ t: f.ok - t0, tipo: "check" }); });
+    if (d.preEm != null) [0, 1, 2].forEach((k) => ev.push({ t: d.preEm - t0 + k * 0.25, tipo: "tick" }));
+    return ev;
+  },
+};
+
+// ---------- ciclo ----------
+M.ciclo = {
+  build(c, d) {
+    d._tit = el(`<div class="mask" style="left:140px;top:300px;width:760px;height:${d.tamTit || 130}px"><span class="disp" style="font-size:${d.tamTit || 130}px">${d.titulo[0]}</span></div>`);
+    d._tit2 = el(`<div class="mask" style="left:140px;top:${300 + (d.tamTit || 130) * 1.02}px;width:760px;height:${d.tamTit || 130}px"><span class="disp ac" style="font-size:${d.tamTit || 130}px">${d.titulo[1]}</span></div>`);
+    c.appendChild(d._tit); c.appendChild(d._tit2);
+    const cx = 1340, cy = 540, R = 300;
+    d._circ = el(`<svg class="abs" style="left:${cx - R - 20}px;top:${cy - R - 20}px" width="${2 * R + 40}" height="${2 * R + 40}"><circle cx="${R + 20}" cy="${R + 20}" r="${R}" fill="none" stroke="#2a3038" stroke-width="10" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" transform="rotate(-90 ${R + 20} ${R + 20})"/></svg>`);
+    c.appendChild(d._circ);
+    d._ns = d.nos.map((n, k) => {
+      const a = -Math.PI / 2 + (k * 2 * Math.PI) / d.nos.length;
+      const x = cx + Math.cos(a) * R, y = cy + Math.sin(a) * R;
+      const e = el(`<div class="abs disp" style="left:${x}px;top:${y}px;transform-origin:0 0;font-size:56px;background:var(--surface2);padding:16px 30px;border-radius:20px;white-space:nowrap">${n.txt}</div>`);
+      c.appendChild(e); return e;
+    });
+  },
+  update(c, lt, dur, d, t0) {
+    const sai = dur - 0.3, L = (x) => x - t0;
+    linha(d._tit.firstChild, lt, 0, sai); linha(d._tit2.firstChild, lt, 0.15, sai);
+    d._circ.firstChild.setAttribute("stroke-dashoffset", 1 - outCubic(prog(lt, 0.2, 1.0)));
+    // destaque gira pelos nós: começa em cada "em" e depois segue em loop
+    const tLoop = d.loopEm != null ? L(d.loopEm) : 999;
+    let ativo = -1;
+    d.nos.forEach((n, k) => { if (lt >= L(n.em)) ativo = k; });
+    if (lt >= tLoop) ativo = Math.floor((lt - tLoop) / BEAT) % d.nos.length;
+    d._ns.forEach((e, k) => {
+      const p = pop(lt, L(d.nos[k].em), 0.35);
+      e.style.transform = `scale(${p * (1 - prog(lt, sai, sai + 0.2))}) translate(-50%, -50%)`;
+      e.style.background = k === ativo ? "var(--accent)" : "var(--surface2)";
+      e.style.color = k === ativo ? "var(--bg)" : "var(--text)";
+    });
+  },
+  eventos(d, t0, dur) {
+    const ev = [{ t: 0, tipo: "whoosh" }];
+    d.nos.forEach((n) => ev.push({ t: n.em - t0, tipo: "pop" }));
+    if (d.loopEm != null) for (let t = d.loopEm - t0; t < dur - 0.4; t += BEAT) ev.push({ t, tipo: "tick" });
+    return ev;
+  },
+};
+
+// ---------- papel (teste do roteiro) ----------
+M.papel = {
+  build(c, d) {
+    d._p = el(`<div class="abs" style="left:1060px;top:120px;width:640px;height:840px;border-radius:24px;background:#eceff2;padding:60px">
+      <div class="disp" style="font-size:80px;color:#0e1114">MINHAS MISSÕES:</div>
+      <div class="ls" style="margin-top:40px"></div></div>`);
+    c.appendChild(d._p);
+    d._ls = [0, 1, 2, 3, 4].map((k) => {
+      const l = el(`<div style="position:relative;height:96px;border-bottom:4px solid #c9cfd6">
+        <span class="disp tx" style="position:absolute;left:0;top:20px;font-size:60px;color:#0e1114">${k === 0 ? "1. Fazer o prato" : ""}</span></div>`);
+      d._p.querySelector(".ls").appendChild(l); return l;
+    });
+    d._tag = el(`<div class="abs disp" style="left:1220px;top:720px;font-size:84px;color:#0e1114;background:var(--accent);padding:10px 30px;border-radius:16px">1 MISSÃO SÓ</div>`);
+    c.appendChild(d._tag);
+    d._lin = (d.linhas || []).map(([txt, ac], i) => {
+      const m = el(`<div class="mask" style="left:140px;top:${320 + i * 125}px;width:880px;height:118px"><span class="disp ${ac ? "ac" : ""}" style="font-size:115px">${txt}</span></div>`);
+      c.appendChild(m); return m.firstChild;
+    });
+    d._cur = el(`<div class="abs" style="left:60px;top:28px;width:8px;height:60px;background:var(--accent)"></div>`);
+    d._ls[1].appendChild(d._cur);
+    d._lin2 = (d.linhas2 || []).map(([txt, ac], i) => {
+      const m = el(`<div class="mask" style="left:140px;top:${300 + i * 150}px;width:880px;height:140px"><span class="disp ${ac ? "ac" : ""}" style="font-size:140px">${txt}</span></div>`);
+      c.appendChild(m); return m.firstChild;
+    });
+  },
+  update(c, lt, dur, d, t0) {
+    const sai = dur - 0.3, L = (x) => x - t0;
+    const e = outExpo(prog(lt, 0.1, 0.7));
+    d._p.style.transform = `translateY(${(1 - e) * 1000 + inCubic(prog(lt, sai, sai + 0.3)) * 1100}px) rotate(${(1 - e) * 8 + 2}deg)`;
+    d._ls.forEach((l, k) => { l.querySelector(".tx").style.clipPath = `inset(0 ${(1 - outCubic(prog(lt, 0.8 + k * 0.1, 1.4 + k * 0.1))) * 100}% 0 0)`; });
+    d._cur.style.opacity = lt > 2.0 && lt < L(d.tagEm) ? (Math.floor(lt * 3) % 2 ? 1 : 0) : 0;
+    d._ls[1].querySelector(".tx").textContent = lt > 2.0 ? "2." : "";
+    const tg = L(d.tagEm);
+    d._tag.style.transform = `scale(${pop(lt, tg, 0.35, 2.4)}) rotate(-8deg)`;
+    const tr = d.linhas2Em != null ? L(d.linhas2Em) : Infinity;
+    d._lin.forEach((s, i) => linha(s, lt, 0.1 + i * 0.18, Math.min(tr - 0.3, sai)));
+    d._lin2.forEach((s, i) => linha(s, lt, tr + i * 0.15, sai));
+  },
+  eventos(d, t0) {
+    const ev = [{ t: 0, tipo: "whoosh" }, { t: d.tagEm - t0, tipo: "impacto" }];
+    if (d.linhas2Em != null) ev.push({ t: d.linhas2Em - t0, tipo: "whoosh" });
+    return ev;
+  },
+};
+
+// ---------- tela final ----------
+M.fim = {
+  build(c, d) {
+    d._mas = el(`<img class="abs" src="mascote.png" style="left:1120px;top:170px;width:620px;height:620px;border-radius:50%">`);
+    c.appendChild(d._mas);
+    d._n1 = el(`<div class="mask" style="left:140px;top:250px;width:960px;height:180px"><span class="disp" style="font-size:180px">VALERIO</span></div>`);
+    d._n2 = el(`<div class="mask" style="left:140px;top:434px;width:960px;height:180px"><span class="disp ac" style="font-size:180px">EXPLICA</span></div>`);
+    d._sub = el(`<div class="mask" style="left:144px;top:650px;width:960px;height:80px"><span class="ui" style="font-size:54px">O que o YouTube não te conta.</span></div>`);
+    d._btn = el(`<div class="abs disp" style="left:144px;top:780px;font-size:76px;color:var(--bg);background:var(--accent);padding:14px 46px;border-radius:18px">INSCREVA-SE</div>`);
+    d._sem = el(`<div class="abs ui" style="left:1120px;top:830px;width:620px;text-align:center;font-size:44px">vídeo novo toda semana</div>`);
+    d._prox = el(`<div class="mask" style="left:144px;top:920px;width:960px;height:80px"><span class="ui" style="font-size:48px;color:var(--text)">▶ próximo: títulos e thumbnails</span></div>`);
+    [d._n1, d._n2, d._sub, d._btn, d._sem, d._prox].forEach((x) => c.appendChild(x));
+  },
+  update(c, lt, dur, d, t0) {
+    const L = (x) => x - t0;
+    const m = outExpo(prog(lt, 0.05, 0.7));
+    d._mas.style.clipPath = `circle(${m * 50}% at 50% 50%)`;
+    d._mas.style.transform = `translateY(${Math.sin(lt * 1.6) * 8}px)`;
+    linha(d._n1.firstChild, lt, 0.1); linha(d._n2.firstChild, lt, 0.25); linha(d._sub.firstChild, lt, 0.6);
+    const tb = d.botaoEm != null ? L(d.botaoEm) : 1.0;
+    d._btn.style.transform = `scale(${pop(lt, tb, 0.4, 2.2) * (1 + 0.04 * Math.sin(Math.max(0, lt - tb) * 6))})`;
+    d._btn.style.transformOrigin = "0 50%";
+    d._sem.style.clipPath = `inset(0 ${(1 - outExpo(prog(lt, tb + 0.5, tb + 1))) * 100}% 0 0)`;
+    linha(d._prox.firstChild, lt, tb + 2.5);
+    // fecha no fim
+    const f = prog(lt, dur - 0.5, dur);
+    c.style.clipPath = `inset(${f * 50}% 0 ${f * 50}% 0)`;
+  },
+  eventos(d, t0) { return [{ t: 0, tipo: "whoosh" }, { t: (d.botaoEm != null ? d.botaoEm - t0 : 1.0), tipo: "impacto" }]; },
+};
+
+// ---------- missão (cabeçalho de capítulo) ----------
+M.missao = {
+  build(c, d) {
+    d._num = el(`<div class="abs disp ac" style="left:1240px;top:40px;font-size:900px;line-height:1">${d.n}</div>`);
+    c.appendChild(d._num);
+    d._tag = el(`<div class="mask" style="left:144px;top:250px;width:900px;height:90px"><span class="ui" style="font-size:60px;color:var(--accent)">MISSÃO ${d.n} DE 4</span></div>`);
+    c.appendChild(d._tag);
+    d._ls = d.linhas.map((txt, i) => {
+      const m = el(`<div class="mask" style="left:140px;top:${350 + i * 150}px;width:1000px;height:150px"><span class="disp" style="font-size:150px">${txt}</span></div>`);
+      c.appendChild(m); return m.firstChild;
+    });
+    d._subM = el(`<div class="mask" style="left:144px;top:${370 + d.linhas.length * 150 + 120}px;width:1000px;height:80px"><span class="ui" style="font-size:52px">${d.sub || ""}</span></div>`);
+    c.appendChild(d._subM);
+    d._dots = [1, 2, 3, 4].map((k) => {
+      const x = el(`<div class="abs" style="left:${144 + (k - 1) * 70}px;top:${370 + d.linhas.length * 150 + 40}px;width:48px;height:48px;border-radius:12px;border:6px solid var(--line)"></div>`);
+      c.appendChild(x); return x;
+    });
+  },
+  update(c, lt, dur, d) {
+    const sai = dur - 0.3;
+    const e = outExpo(prog(lt, 0, 0.6));
+    d._num.style.clipPath = `inset(${(1 - e) * 100}% 0 0 0)`;
+    d._num.style.transform = `translateY(${(1 - e) * 200 - inCubic(prog(lt, sai, sai + 0.3)) * 1100}px)`;
+    linha(d._tag.firstChild, lt, 0.05, sai);
+    d._ls.forEach((s, i) => linha(s, lt, 0.15 + i * 0.15, sai + i * 0.03));
+    linha(d._subM.firstChild, lt, Math.min(2.0, dur * 0.45), sai);
+    d._dots.forEach((x, k) => {
+      const feito = k + 1 < d.n, atual = k + 1 === d.n;
+      const p = pop(lt, 0.4 + k * 0.08, 0.3);
+      x.style.transform = `scale(${p * (1 - prog(lt, sai, sai + 0.2))})`;
+      x.style.background = feito ? "var(--accent)" : "transparent";
+      x.style.borderColor = feito || atual ? "var(--accent)" : "var(--line)";
+      if (atual) x.style.transform += ` rotate(${45 * outBack(prog(lt, 0.8, 1.2))}deg)`;
+    });
+  },
+  eventos(d) { return [{ t: 0, tipo: "impacto" }, ...[0, 1, 2, 3].map((k) => ({ t: 0.4 + k * 0.08, tipo: "tick" }))]; },
+};
+
+// ================= motor =================
+window.EVENTOS = [];
+const CENAS = [];
+function montar(lista) {
+  const cam = document.getElementById("cam");
+  lista.forEach((s, i) => {
+    const c = el(`<div class="cena" id="cena${i}"></div>`);
+    cam.appendChild(c);
+    s._c = c;
+    M[s.tipo].build(c, s);
+    CENAS.push(s);
+  });
+  CENAS.forEach((s, i) => { s._fim = i + 1 < CENAS.length ? CENAS[i + 1].em : TEMPOS.total; });
+  CENAS.forEach((s, i) => {
+    const dur = s._fim - s.em;
+    (M[s.tipo].eventos?.(s, s.em, dur) || []).forEach((e) => {
+      const t = s.em + e.t;
+      if (t >= s.em - 0.3 && t < s._fim) window.EVENTOS.push({ t: +t.toFixed(3), tipo: e.tipo, cena: i });
+    });
+  });
+  window.EVENTOS.sort((a, b) => a.t - b.t);
+}
+
+window.seek = function (t) {
+  const f = Math.round(t * FPS), rnd = mulberry32(5000 + f);
+  CENAS.forEach((s) => {
+    const ativa = t >= s.em && t < s._fim;
+    s._c.style.display = ativa ? "block" : "none";
+    if (ativa) {
+      try { M[s.tipo].update(s._c, t - s.em, s._fim - s.em, s, s.em, rnd); }
+      catch (e) { console.log(`ERRO cena ${CENAS.indexOf(s)} (${s.tipo}) t=${t.toFixed(2)}: ${e.stack.split("\n").slice(0, 3).join(" | ")}`); throw e; }
+    }
+  });
+  // câmera: avanço lento dentro de cada cena (a imagem nunca fica parada)
+  const s = CENAS.find((x) => t >= x.em && t < x._fim);
+  const drift = s ? prog(t, s.em, s._fim) : 0;
+  const z = 1 + drift * 0.025;
+  document.getElementById("cam").style.transform = `translate(960px, 540px) scale(${z}) translate(-960px, -540px)`;
+};
+</script>
+<script src="cenas.js"></script>
+</body></html>

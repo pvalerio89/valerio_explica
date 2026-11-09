@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8">
+<title>Valerio Explica v01 abertura</title>
+<!--
+  Abertura do vídeo 1 (0–10 s). Função pura do tempo: window.seek(t) pinta o quadro.
+  Sem transitions, timers ou rAF; ruído só com semente (mulberry32).
+  Tempos vêm de beats.js (batidas medidas na trilha) via cues.
+-->
+<script src="beats.js"></script>
+<style>
+  :root {
+    --bg: #0e1114; --surface: #171b21; --line: #2a3038; --text: #f2f4f6; --muted: #8a939e;
+    --accent: #22e07a; --night: #0a0f24;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { background: var(--bg); }
+  #stage { position: relative; width: 1920px; height: 1080px; overflow: hidden; background: var(--bg); }
+  #cam { position: absolute; inset: 0; transform-origin: 0 0; }
+  .abs { position: absolute; }
+  .disp { font-family: "Bahnschrift", sans-serif; font-weight: 700; font-stretch: condensed;
+          font-variation-settings: "wght" 700, "wdth" 75; letter-spacing: -0.01em; line-height: 0.92; color: var(--text); }
+  .ui { font-family: "Segoe UI", sans-serif; color: var(--muted); }
+  .mask { position: absolute; overflow: clip; overflow-clip-margin: 34px; } /* margem: não corta acentos */
+  .mask > span { display: block; will-change: transform; }
+  .ac { color: var(--accent); }
+
+  /* cartão do vídeo */
+  #card { left: 1060px; top: 250px; width: 700px; height: 470px; background: var(--surface);
+          border-radius: 28px; overflow: hidden; }
+  #thumb { position: absolute; left: 24px; top: 24px; width: 652px; height: 300px; border-radius: 16px;
+           background: #20262e; overflow: hidden; }
+  #play { position: absolute; left: 286px; top: 150px; width: 80px; height: 80px; border-radius: 50%; background: var(--text); }
+  #play::after { content: ""; position: absolute; left: 31px; top: 24px; border-left: 26px solid var(--bg);
+                 border-top: 16px solid transparent; border-bottom: 16px solid transparent; }
+  #barra { position: absolute; left: 24px; top: 356px; width: 652px; height: 14px; border-radius: 7px; background: var(--line); overflow: hidden; }
+  #barraFill { height: 100%; width: 0; background: var(--accent); }
+  #status { position: absolute; left: 24px; top: 386px; font-size: 44px; font-weight: 700; }
+  .linhaTxt { position: absolute; height: 14px; border-radius: 7px; background: #3a424c; }
+  #timeline { position: absolute; left: 24px; bottom: 18px; height: 34px; display: flex; gap: 6px; }
+  #timeline i { display: block; height: 34px; border-radius: 6px; background: #38404a; }
+  #thumbTitulo { position: absolute; left: 34px; top: 44px; font-size: 92px; }
+
+  /* calendário */
+  .dia { position: absolute; width: 74px; height: 74px; border-radius: 14px; border: 4px solid var(--line); }
+
+  /* checklist */
+  .box { position: absolute; width: 96px; height: 96px; border-radius: 20px; border: 6px solid var(--text); }
+
+  /* noite */
+  #night { left: 0; top: 0; width: 1920px; height: 1080px; background: var(--night); }
+
+  /* celular */
+  #cel { left: 1170px; top: 70px; width: 470px; height: 940px; border-radius: 64px; background: #050608;
+         border: 6px solid #3a414b; overflow: hidden; }
+  #tela { position: absolute; inset: 14px; border-radius: 50px; background: var(--surface); overflow: hidden; }
+</style>
+</head>
+<body>
+<div id="stage"><div id="cam">
+
+  <!-- ===== tipografia à esquerda (cenas 1-3) ===== -->
+  <div class="mask" style="left:130px;top:230px;width:900px;height:190px"><span id="l1" class="disp" style="font-size:190px">VOCÊ POSTA</span></div>
+  <div class="mask" style="left:130px;top:425px;width:900px;height:190px"><span id="l2" class="disp ac" style="font-size:190px">UM VÍDEO.</span></div>
+
+  <div class="mask" style="left:130px;top:170px;width:420px;height:330px"><span id="numDias" class="disp" style="font-size:340px">1</span></div>
+  <div class="mask" style="left:420px;top:240px;width:600px;height:130px"><span id="lDias" class="disp" style="font-size:130px">DIAS</span></div>
+  <div class="mask" style="left:420px;top:370px;width:600px;height:130px"><span id="lNele" class="disp ac" style="font-size:130px">NELE.</span></div>
+  <div id="cal"></div>
+
+  <div id="checks"></div>
+
+  <!-- ===== cartão do vídeo (direita) ===== -->
+  <div id="card" class="abs">
+    <div id="thumb">
+      <div id="linhas"></div>
+      <div id="thumbTitulo" class="disp">MEU <span class="ac">VÍDEO</span></div>
+      <div id="timeline"></div>
+      <div id="pct" class="disp" style="position:absolute;right:30px;bottom:6px;font-size:230px;font-variant-numeric:tabular-nums">0%</div>
+      <div id="play"></div>
+    </div>
+    <div id="barra"><div id="barraFill"></div></div>
+    <div id="status" class="ui">Enviando 0%</div>
+  </div>
+
+  <!-- ===== noite ===== -->
+  <div id="night" class="abs">
+    <svg id="relogio" class="abs" style="left:250px;top:200px" width="620" height="620" viewBox="-310 -310 620 620">
+      <circle id="aro" r="260" fill="none" stroke="#f2f4f6" stroke-width="14" stroke-linecap="round"
+              transform="rotate(-90)"/>
+      <g id="marcas"></g>
+      <line id="ph" x1="0" y1="0" x2="0" y2="-130" stroke="#f2f4f6" stroke-width="18" stroke-linecap="round"/>
+      <line id="pm" x1="0" y1="0" x2="0" y2="-205" stroke="#22e07a" stroke-width="10" stroke-linecap="round"/>
+      <circle r="18" fill="#f2f4f6"/>
+    </svg>
+    <div class="mask" style="left:1000px;top:250px;width:800px;height:70px"><span id="lDormir" class="ui" style="font-size:56px;font-weight:600;color:var(--muted)">VAI DORMIR…</span></div>
+    <div class="mask" style="left:990px;top:330px;width:860px;height:280px"><span id="hora" class="disp" style="font-size:290px;font-variant-numeric:tabular-nums">23:00</span></div>
+    <div class="mask" style="left:1000px;top:640px;width:860px;height:170px"><span id="lAnsioso" class="disp ac" style="font-size:170px">ANSIOSO</span></div>
+    <div class="mask" style="left:1000px;top:640px;width:860px;height:170px"><span id="lAcorda" class="disp" style="font-size:170px">ACORDA.</span></div>
+    <div id="alarme" class="abs" style="left:0;top:1060px;height:20px;width:1920px;background:var(--accent);transform-origin:0 0"></div>
+  </div>
+
+  <!-- ===== celular ===== -->
+  <div class="mask" style="left:140px;top:300px;width:900px;height:150px"><span id="lAbre" class="disp" style="font-size:150px">ABRE O</span></div>
+  <div class="mask" style="left:140px;top:450px;width:900px;height:150px"><span id="lStudio" class="disp ac" style="font-size:150px">STUDIO…</span></div>
+  <div class="mask" style="left:130px;top:320px;width:1000px;height:300px"><span id="lParado" class="disp" style="font-size:300px">PARADO<span class="ac">.</span></span></div>
+  <div class="mask" style="left:140px;top:640px;width:900px;height:90px"><span id="lLa" class="ui" style="font-size:66px;font-weight:700">e ele está lá.</span></div>
+
+  <div id="cel" class="abs"><div id="tela">
+    <div class="abs ui" style="left:36px;top:40px;font-size:48px;font-weight:800;color:var(--text)">Studio</div>
+    <div class="abs ui" style="left:36px;top:126px;font-size:30px;font-weight:600">Seu vídeo mais recente</div>
+    <div class="abs" style="left:36px;top:176px;width:370px;height:190px;border-radius:16px;background:#20262e"></div>
+    <div class="abs ui" style="left:36px;top:400px;font-size:38px;font-weight:700">Visualizações</div>
+    <div id="views" class="abs disp" style="left:30px;top:450px;font-size:210px;transform-origin:0 50%">0</div>
+    <svg class="abs" style="left:36px;top:690px" width="370" height="180" viewBox="0 0 370 180">
+      <line x1="0" y1="170" x2="370" y2="170" stroke="#2a3038" stroke-width="4"/>
+      <path id="grafico" d="M0 170 C 40 120, 70 70, 120 50 S 230 34, 370 32" fill="none" stroke="#22e07a" stroke-width="10" stroke-linecap="round"/>
+      <line id="flat" x1="140" y1="32" x2="370" y2="32" stroke="#f2f4f6" stroke-width="4" stroke-dasharray="10 10"/>
+    </svg>
+  </div></div>
+
+</div></div>
+
+<script>
+// ---------- utilidades puras ----------
+const B = window.BEATS.beats, CUE = window.BEATS.cues;
+const b = (nome) => B[CUE[nome]];
+const clamp = (x, a = 0, z = 1) => Math.max(a, Math.min(z, x));
+const prog = (t, a, z) => clamp((t - a) / (z - a));
+const lerp = (a, z, x) => a + (z - a) * x;
+const outCubic = (x) => 1 - (1 - x) ** 3;
+const inCubic = (x) => x ** 3;
+const inOut = (x) => (x < 0.5 ? 4 * x ** 3 : 1 - (-2 * x + 2) ** 3 / 2);
+const outExpo = (x) => (x >= 1 ? 1 : 1 - 2 ** (-10 * x));
+const outBack = (x, s = 1.6) => { x -= 1; return 1 + x * x * ((s + 1) * x + s); };
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6d2b79f5) | 0;
+    let t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+const $ = (id) => document.getElementById(id);
+const FPS = 30;
+
+// linha mascarada: entra de baixo (tIn) e sai para cima (tOut)
+function linha(el, t, tIn, tOut = Infinity, dur = 0.42) {
+  const e = outBack(prog(t, tIn, tIn + dur), 1.2);
+  const s = Number.isFinite(tOut) ? inCubic(prog(t, tOut, tOut + 0.28)) : 0;
+  el.style.transform = `translateY(${(1 - e) * 160 - s * 160}%)`;
+}
+
+// ---------- montagem estática (feita uma vez, sem depender do tempo) ----------
+for (let k = 0; k < 7; k++) {
+  const d = document.createElement("div");
+  d.className = "dia"; d.id = "dia" + k;
+  d.style.left = 140 + k * 92 + "px"; d.style.top = "560px";
+  $("cal").appendChild(d);
+}
+const CHECKS = [["ROTEIRO", "check1"], ["EDIÇÃO", "check2"], ["THUMBNAIL", "check3"]];
+CHECKS.forEach(([nome], k) => {
+  const y = 250 + k * 170;
+  $("checks").insertAdjacentHTML("beforeend", `
+    <div class="mask" style="left:130px;top:${y - 10}px;width:960px;height:140px">
+      <span id="row${k}" style="position:relative;height:140px">
+        <div class="box" id="box${k}" style="left:10px;top:20px"></div>
+        <svg class="abs" style="left:10px;top:20px" width="96" height="96" viewBox="0 0 96 96">
+          <path id="ck${k}" d="M24 50 L42 67 L74 30" fill="none" stroke="#0e1114" stroke-width="12"
+                stroke-linecap="round" stroke-linejoin="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1"/>
+        </svg>
+        <span class="disp" style="position:absolute;left:150px;top:6px;font-size:130px">${nome}</span>
+      </span></div>`);
+});
+for (let k = 0; k < 4; k++) {
+  $("linhas").insertAdjacentHTML("beforeend",
+    `<div class="linhaTxt" id="tx${k}" style="left:34px;top:${44 + k * 34}px;width:${[380, 300, 420, 240][k]}px"></div>`);
+}
+[90, 150, 60, 120, 80].forEach((w, k) => $("timeline").insertAdjacentHTML("beforeend", `<i id="cl${k}" style="width:${w}px"></i>`));
+for (let k = 0; k < 12; k++) {
+  const a = (k * Math.PI) / 6, r0 = k % 3 === 0 ? 205 : 222;
+  $("marcas").insertAdjacentHTML("beforeend",
+    `<line x1="${Math.sin(a) * r0}" y1="${-Math.cos(a) * r0}" x2="${Math.sin(a) * 240}" y2="${-Math.cos(a) * 240}"
+       stroke="#f2f4f6" stroke-width="${k % 3 === 0 ? 10 : 5}" stroke-linecap="round" id="mk${k}"/>`);
+}
+const ARO = 2 * Math.PI * 260;
+$("aro").setAttribute("stroke-dasharray", ARO);
+const GRAF = $("grafico").getTotalLength();
+$("grafico").setAttribute("stroke-dasharray", GRAF);
+
+// ---------- o quadro ----------
+window.seek = function (t) {
+  const f = Math.round(t * FPS);
+  const rnd = mulberry32(1000 + f);
+
+  // --- cena 1: VOCÊ POSTA / UM VÍDEO ---
+  linha($("l1"), t, b("abre") - 0.05, b("dias") - 0.2);
+  linha($("l2"), t, b("linha2") - 0.05, b("dias") - 0.12);
+
+  // --- cena 2: N DIAS NELE + calendário ---
+  const tDias = b("dias"), tSai2 = b("check1") - 0.35;
+  linha($("numDias"), t, tDias - 0.05, tSai2, 0.5);
+  linha($("lDias"), t, tDias + 0.05, tSai2 + 0.04);
+  linha($("lNele"), t, tDias + 0.15, tSai2 + 0.08);
+  const nd = 1 + Math.floor(6 * outCubic(prog(t, tDias + 0.05, b("calendario") + 0.45)));
+  $("numDias").textContent = nd;
+  for (let k = 0; k < 7; k++) {
+    const d = $("dia" + k);
+    const ent = outBack(prog(t, tDias + 0.1 + k * 0.03, tDias + 0.4 + k * 0.03));
+    const sai = inCubic(prog(t, tSai2 + k * 0.02, tSai2 + 0.25 + k * 0.02));
+    const cheio = t >= b("calendario") + k * 0.07;
+    d.style.transform = `translateY(${(1 - ent) * 60 + sai * -40}px) scale(${Math.max(0, ent * (1 - sai))})`;
+    d.style.background = cheio ? "var(--accent)" : "transparent";
+    d.style.borderColor = cheio ? "var(--accent)" : "var(--line)";
+  }
+
+  // --- cena 3: checklist ---
+  const tSai3 = b("wipe_noite");
+  CHECKS.forEach(([_, cue], k) => {
+    const tc = b(cue);
+    const row = $("row" + k);
+    const ent = outExpo(prog(t, tc - 0.32, tc + 0.1));
+    const sai = t >= b("noite") ? 1 : 0; // some atrás da cortina da noite
+    row.style.transform = `translateX(${(1 - ent) * -105 - sai * 120}%)`;
+    const pc = outCubic(prog(t, tc, tc + 0.22));
+    $("box" + k).style.background = pc > 0 ? "var(--accent)" : "transparent";
+    $("box" + k).style.borderColor = pc > 0 ? "var(--accent)" : "var(--text)";
+    $("box" + k).style.transform = `scale(${1 + 0.18 * Math.sin(Math.PI * pc)})`;
+    $("ck" + k).setAttribute("stroke-dashoffset", 1 - pc);
+  });
+
+  // --- cartão do vídeo ---
+  const cIn = outExpo(prog(t, b("abre") - 0.05, b("abre") + 0.55));
+  const card = $("card");
+  card.style.clipPath = `inset(${(1 - cIn) * 100}% 0 0 0 round 28px)`;
+  card.style.transform = `translateY(${(1 - cIn) * 80 + (t >= b("noite") ? 2000 : 0)}px)`;
+  const pe = outCubic(prog(t, 0.1, b("dias") - 0.05));
+  $("barraFill").style.width = pe * 100 + "%";
+  $("status").textContent = pe < 1 ? `Enviando ${Math.round(pe * 100)}%` : "✓ Publicado";
+  $("status").style.color = pe < 1 ? "var(--muted)" : "var(--accent)";
+  // contador gigante de % na miniatura (gancho); sai para cima quando publica
+  const pctSai = outExpo(prog(t, b("dias") - 0.05, b("dias") + 0.3));
+  $("pct").textContent = Math.round(pe * 100) + "%";
+  $("pct").style.transform = `translateY(${-pctSai * 320}px)`;
+  $("pct").style.color = pe < 1 ? "var(--text)" : "var(--accent)";
+  // cada item do checklist aparece no cartão
+  for (let k = 0; k < 4; k++) {
+    const e = outExpo(prog(t, b("check1") + k * 0.06, b("check1") + 0.35 + k * 0.06));
+    $("tx" + k).style.transform = `scaleX(${e})`; $("tx" + k).style.transformOrigin = "0 50%";
+  }
+  for (let k = 0; k < 5; k++) {
+    const e = outBack(prog(t, b("check2") + k * 0.05, b("check2") + 0.3 + k * 0.05));
+    $("cl" + k).style.transform = `scaleY(${Math.max(0, e)})`;
+    $("cl" + k).style.background = k === 2 ? "var(--accent)" : "#38404a";
+  }
+  const tt = outExpo(prog(t, b("check3"), b("check3") + 0.4));
+  $("thumbTitulo").style.clipPath = `inset(-40px ${(1 - tt) * 100}% -20px 0)`;
+  $("linhas").style.transform = `translateY(${-tt * 220}px)`;
+  const pPlay = outBack(prog(t, b("dias"), b("dias") + 0.35), 2.2);
+  $("play").style.transform = `scale(${Math.max(0, pPlay)})`;
+
+  // --- noite (cortina) ---
+  const wIn = inOut(prog(t, b("wipe_noite"), b("noite")));
+  const wOut = inOut(prog(t, b("celular") - 0.35, b("celular") + 0.15));
+  $("night").style.transform = `translate(${(1 - wIn) * 100}%, ${-wOut * 100}%)`;
+  const tn = b("noite");
+  $("aro").setAttribute("stroke-dashoffset", ARO * (1 - outCubic(prog(t, tn - 0.25, tn + 0.35))));
+  for (let k = 0; k < 12; k++) {
+    const e = outBack(prog(t, tn + k * 0.025, tn + 0.25 + k * 0.025));
+    $("mk" + k).style.transform = `scale(${Math.max(0, e)})`;
+  }
+  const giro = inOut(prog(t, tn, b("acorda")));
+  const acorda = t >= b("acorda");
+  const shake = acorda ? (1 - prog(t, b("acorda"), b("acorda") + 0.45)) * 14 : 0;
+  const sx = (rnd() - 0.5) * 2 * shake, sy = (rnd() - 0.5) * 2 * shake;
+  $("relogio").style.transform = `translate(${sx}px, ${sy}px) rotate(${sx * 0.4}deg)`;
+  $("pm").setAttribute("transform", `rotate(${giro * 360 * 8})`);
+  $("ph").setAttribute("transform", `rotate(${(23 % 12) * 30 + giro * 240})`);
+  const horas = 23 + giro * 8;
+  const hh = Math.floor(horas) % 24, mm = Math.floor((horas % 1) * 60);
+  $("hora").textContent = acorda ? "07:00" : `${String(hh).padStart(2, "0")}:${String(mm).padStart(2, "0")}`;
+  $("hora").style.color = acorda ? "var(--accent)" : "var(--text)";
+  linha($("lDormir"), t, tn + 0.05);
+  linha($("hora"), t, tn + 0.1, Infinity, 0.5);
+  // ANSIOSO treme (ruído com semente) e é trocado por ACORDA.
+  const ja = (rnd() - 0.5) * 8 * (t < b("acorda") ? 1 : 0);
+  const eA = outBack(prog(t, b("ansioso"), b("ansioso") + 0.4), 1.2);
+  const sA = inCubic(prog(t, b("acorda") - 0.1, b("acorda") + 0.15));
+  $("lAnsioso").style.transform = `translate(${ja}px, ${(1 - eA) * 160 - sA * 160}%)`;
+  linha($("lAcorda"), t, b("acorda") + 0.05);
+  $("alarme").style.transform = `scaleX(${outExpo(prog(t, b("acorda"), b("acorda") + 0.5))})`;
+
+  // --- celular ---
+  const tc = b("celular");
+  const cel = outExpo(prog(t, tc - 0.05, tc + 0.6));
+  $("cel").style.transform = `translateY(${(1 - cel) * 1100}px)`;
+  linha($("lAbre"), t, tc, b("parado") - 0.25);
+  linha($("lStudio"), t, tc + 0.15, b("parado") - 0.2);
+  linha($("lParado"), t, b("parado") - 0.05, Infinity, 0.35);
+  linha($("lLa"), t, b("parado") + 0.15);
+  const pv = outExpo(prog(t, b("conta"), b("pousa")));
+  $("views").textContent = Math.round(70 * pv);
+  const punch = 1 + 0.16 * Math.sin(Math.PI * prog(t, b("pousa"), b("pousa") + 0.25));
+  $("views").style.transform = `scale(${punch})`;
+  $("grafico").setAttribute("stroke-dashoffset", GRAF * (1 - outCubic(prog(t, b("conta"), b("pousa")))));
+  const fl = outExpo(prog(t, b("parado"), b("parado") + 0.4));
+  $("flat").style.clipPath = `inset(0 ${(1 - fl) * 100}% 0 0)`;
+
+  // --- câmera: empurra no impacto ---
+  const push = outExpo(prog(t, b("parado"), b("parado") + 0.6));
+  const sh = (1 - prog(t, b("parado"), b("parado") + 0.35)) * (t >= b("parado") ? 18 : 0);
+  // avanço lento e contínuo da câmera em cada cena (a imagem nunca fica parada)
+  const cenas = [0, b("wipe_noite"), b("celular") - 0.2, 10];
+  let drift = 0;
+  for (let k = 0; k < 3; k++) if (t >= cenas[k] && t < cenas[k + 1]) drift = prog(t, cenas[k], cenas[k + 1]);
+  const cx = 900, cy = 560, s = 1 + push * 0.045 + drift * 0.02;
+  const jx = (rnd() - 0.5) * 2 * sh, jy = (rnd() - 0.5) * 2 * sh;
+  $("cam").style.transform = `translate(${cx + jx}px, ${cy + jy}px) scale(${s}) translate(${-cx}px, ${-cy}px)`;
+};
+window.seek(0);
+</script>
+</body></html>
