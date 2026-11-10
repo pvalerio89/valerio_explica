@@ -41,9 +41,12 @@ jobs:
           mkdir -p video-teste-ritmo/voz
           gh release download teste-ritmo --dir video-teste-ritmo/voz --pattern 'bloco-1.wav' 2>/dev/null || true
           cd video-teste-ritmo && python gerar_voz.py
+          gh release view teste-ritmo >/dev/null 2>&1 || gh release create teste-ritmo --target "$GITHUB_SHA" --prerelease -t "Teste de ritmo" -n "Prévia do ritmo novo"
+          gh release upload teste-ritmo voz/bloco-1.wav --clobber
       - name: Tempos, cenas, sons e vídeo
         working-directory: motion
         run: |
+          mkdir -p vteste
           python alinhar_whisper.py ../video-teste-ritmo vteste
           python hf/teste-ritmo/montar.py
           node render.mjs hf/teste-ritmo/index.html --eventos vteste/eventos.json
@@ -54,5 +57,4 @@ jobs:
           cp hf/teste-ritmo/out/teste-ritmo.mp4 ../teste-ritmo-1080p.mp4
       - name: Guardar na Release
         run: |
-          gh release view teste-ritmo >/dev/null 2>&1 || gh release create teste-ritmo --target "$GITHUB_SHA" --prerelease -t "Teste de ritmo" -n "Prévia do ritmo novo"
-          gh release upload teste-ritmo teste-ritmo-celular.mp4 teste-ritmo-1080p.mp4 video-teste-ritmo/voz/bloco-1.wav --clobber
+          gh release upload teste-ritmo teste-ritmo-celular.mp4 teste-ritmo-1080p.mp4 motion/vteste/palavras.js motion/vteste/tempos.js --clobber
