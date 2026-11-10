@@ -25,8 +25,18 @@ def chamar(model, prompt):
     return "".join(p.get("text", "") for p in d["candidates"][0]["content"]["parts"])
 
 os.makedirs("saida", exist_ok=True)
+try:
+    with urllib.request.urlopen(f"https://generativelanguage.googleapis.com/v1beta/models?key={KEY}&pageSize=200") as r:
+        nomes = [m["name"].split("/")[1] for m in json.load(r)["models"] if "generateContent" in m.get("supportedGenerationMethods", [])]
+    print("MODELOS:", ", ".join(nomes), flush=True)
+except Exception as e:
+    nomes = []
+flash = [n for n in nomes if "flash" in n and "image" not in n and "tts" not in n and "live" not in n and "audio" not in n]
+ordem = ["gemini-3.8-flash"] + [n for n in flash if n != "gemini-3.8-flash"][:4]
 for nome, prompt in PROMPTS.items():
-    for model in ["gemini-3.1-pro-preview", "gemini-3.8-flash"]:
+    for model in ordem * 4:
+        if os.path.exists(f"saida/{nome}.md"):
+            break
         try:
             txt = chamar(model, prompt)
             open(f"saida/{nome}.md", "w", encoding="utf-8").write(f"<!-- {model} -->\n{txt}")
@@ -35,4 +45,4 @@ for nome, prompt in PROMPTS.items():
         except Exception as e:
             msg = e.read().decode()[:500] if hasattr(e, "read") else str(e)
             print(f"[{nome}] {model} falhou: {msg}", file=sys.stderr, flush=True)
-            time.sleep(5)
+            time.sleep(20)
