@@ -1,0 +1,58 @@
+# Prévia curta do ritmo novo (voz Sadaltager + cenas + sons). Roda a cada push que mexe nos arquivos do teste.
+name: Teste de ritmo
+on:
+  push:
+    branches: [analise-referencia]
+    paths: [video-teste-ritmo/**, motion/hf/teste-ritmo/**, motion/audio_ritmo.py, .github/workflows/teste-ritmo.yml]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  previa:
+    runs-on: windows-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        shell: bash
+    env:
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: utf-8
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: motion/package-lock.json
+      - name: Instalar
+        run: |
+          python -m pip install -q -r requirements.txt
+          (cd motion && npm ci --no-audit --no-fund)
+          choco install ffmpeg -y --no-progress > /dev/null
+      - name: Voz (reaproveita a da Release, se já existir)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          mkdir -p video-teste-ritmo/voz
+          gh release download teste-ritmo --dir video-teste-ritmo/voz --pattern 'bloco-1.wav' 2>/dev/null || true
+          cd video-teste-ritmo && python gerar_voz.py
+      - name: Tempos, cenas, sons e vídeo
+        working-directory: motion
+        run: |
+          python alinhar_whisper.py ../video-teste-ritmo vteste
+          python hf/teste-ritmo/montar.py
+          node render.mjs hf/teste-ritmo/index.html --eventos vteste/eventos.json
+          python audio_ritmo.py vteste/eventos.json vteste/tempos.json ../video-teste-ritmo/voz/narracao.wav hf/teste-ritmo/out
+          DUR=$(python -c "import json;print(json.load(open('vteste/tempos.json'))['total']+1.6)")
+          node render.mjs hf/teste-ritmo/index.html hf/teste-ritmo/out/teste-ritmo.mp4 --dur $DUR --fps 30 --audio hf/teste-ritmo/out/mix.wav
+          ffmpeg -loglevel error -y -i hf/teste-ritmo/out/teste-ritmo.mp4 -vf scale=1280:720 -c:v libx264 -crf 25 -preset slow -c:a aac -b:a 160k -movflags +faststart ../teste-ritmo-celular.mp4
+          cp hf/teste-ritmo/out/teste-ritmo.mp4 ../teste-ritmo-1080p.mp4
+      - name: Guardar na Release
+        run: |
+          gh release view teste-ritmo >/dev/null 2>&1 || gh release create teste-ritmo --target "$GITHUB_SHA" --prerelease -t "Teste de ritmo" -n "Prévia do ritmo novo"
+          gh release upload teste-ritmo teste-ritmo-celular.mp4 teste-ritmo-1080p.mp4 video-teste-ritmo/voz/bloco-1.wav --clobber

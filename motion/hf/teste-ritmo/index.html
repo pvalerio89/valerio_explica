@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8" />
+<title>Teste de ritmo</title>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+<script src="../../vteste/tempos.js"></script>
+<script src="../../vteste/palavras.js"></script>
+<style>
+  @font-face{font-family:"Bahnschrift";src:local("Bahnschrift");font-weight:100 900;}
+  :root{--bg:#f3eee4;--ink:#16191c;--muted:#5c574e;--line:#d8cfbe;--card:#fffdf8;--acc:#149a55;--soft:#dff3e6;--red:#d14343;--redsoft:#fbe3e0;--gold:#e9b949;}
+  html,body{margin:0;width:1920px;height:1080px;overflow:hidden;background:var(--bg);}
+  #root{position:relative;width:1920px;height:1080px;overflow:hidden;background:var(--bg);font-family:"Segoe UI",sans-serif;color:var(--ink);}
+  #dots{position:absolute;inset:0;background-image:radial-gradient(#cfc5b2 1.6px,transparent 1.7px);background-size:36px 36px;opacity:.55;}
+  #world{position:absolute;left:0;top:0;height:1080px;}
+  .panel{position:absolute;top:0;width:1920px;height:1080px;}
+  .h{font-family:"Bahnschrift",sans-serif;font-weight:700;letter-spacing:-1px;line-height:1.05;}
+  .card{background:var(--card);border:2px solid var(--line);border-radius:22px;box-shadow:0 18px 40px rgba(80,60,30,.10);box-sizing:border-box;}
+  .tag{font-family:"Consolas",monospace;font-size:28px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;}
+  .fonte{font-family:"Consolas",monospace;font-size:24px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;display:flex;align-items:center;gap:10px;white-space:nowrap;}
+  .fonte b{display:inline-flex;width:30px;height:30px;border-radius:50%;border:2px solid var(--muted);align-items:center;justify-content:center;font-size:20px;}
+  .chip{display:inline-flex;align-items:center;gap:12px;padding:14px 26px;border-radius:999px;background:var(--card);border:2px solid var(--line);
+        font-family:"Bahnschrift";font-weight:700;font-size:40px;box-shadow:0 10px 24px rgba(80,60,30,.08);white-space:nowrap;}
+  .chip.g{background:var(--soft);border-color:#9fd6b5;color:#0f7a43;}
+  .chip.r{background:var(--redsoft);border-color:#eeb4ad;color:#a52f2f;}
+  .chip.k{background:var(--ink);border-color:var(--ink);color:#fff;}
+  .stamp{padding:8px 28px;border:7px solid var(--red);border-radius:14px;color:var(--red);font-family:"Bahnschrift";font-weight:700;
+         font-size:60px;letter-spacing:4px;background:rgba(255,253,248,.92);white-space:nowrap;}
+  .stamp.g{border-color:var(--acc);color:var(--acc);}
+  .stamp.k{border-color:#8a8f96;color:#6b6f75;}
+  .ico{width:100%;height:100%;display:block;}
+  .row{display:flex;align-items:center;gap:22px;font-size:44px;}
+  .mk{width:62px;height:62px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:"Bahnschrift";font-weight:700;font-size:40px;color:#fff;flex:none;}
+  .mk.ok{background:var(--acc);} .mk.no{background:#9a948a;} .mk.q{background:var(--ink);}
+  .bar{height:14px;border-radius:7px;background:#e4dccb;}
+  .win{overflow:hidden;}
+  .win .top{height:56px;border-bottom:2px solid var(--line);display:flex;align-items:center;gap:10px;padding:0 22px;font-size:26px;color:var(--muted);}
+  .win .top i{width:16px;height:16px;border-radius:50%;background:#e4dccb;display:inline-block;}
+  .cc{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;text-align:center;}
+  .pc{position:absolute;top:95px;width:220px;height:170px;border-radius:18px;background:#ece5d6;border:2px dashed #c8bda7;box-sizing:border-box;}
+  .pc .q,.pc .v{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-family:"Bahnschrift";font-weight:700;}
+  .pc .q{font-size:110px;color:#b9ae98;}
+  .pc .v{font-size:70px;opacity:0;}
+  .op{position:absolute;top:105px;width:60px;text-align:center;font-family:"Bahnschrift";font-weight:700;font-size:100px;color:var(--muted);}
+  .coin{position:absolute;width:44px;height:44px;}
+  .lt{font-family:"Bahnschrift";font-weight:700;font-size:180px;line-height:1;color:var(--acc);}
+  .tbl{font-size:40px;}
+  .tbl .r{display:flex;align-items:center;height:76px;border-bottom:2px solid #ece5d6;}
+  .tbl .r>div{flex:1;text-align:center;} .tbl .r>div:first-child{flex:1.1;text-align:left;padding-left:34px;font-family:Consolas;font-size:28px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+  #legenda{position:absolute;left:760px;right:60px;bottom:40px;text-align:center;font-family:"Bahnschrift";font-weight:700;font-size:46px;line-height:1.25;}
+  #legenda .ph{display:none;}
+  #legenda span{display:inline-block;margin:0 7px;opacity:0;}
+  #legenda .g{color:var(--acc);}
+  #legenda .r{color:var(--red);}
+  svg.m{position:absolute;left:0;top:0;overflow:visible;}
+  .ln{stroke:#16191c;stroke-width:7;stroke-linejoin:round;stroke-linecap:round;}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="root" data-width="1920" data-height="1080" data-start="0" data-duration="32">
+  <div id="dots"></div>
+  <div id="world"></div>
+
+  <svg id="masc" class="m" width="1920" height="1080" viewBox="0 0 1920 1080">
+    <g transform="translate(-380 30) scale(0.92)">
+    <ellipse cx="760" cy="905" rx="190" ry="22" fill="#e2d9c7"/>
+    <g id="guy">
+      <path d="M668 700 L660 880 L716 880 L728 700 Z" fill="#3a5f8f" class="ln"/>
+      <path d="M782 700 L796 880 L852 880 L840 700 Z" fill="#3a5f8f" class="ln"/>
+      <path d="M640 880 h86 q16 0 16 18 v8 h-110 v-8 q0-18 8-18z" fill="#fff" class="ln"/>
+      <path d="M786 880 h86 q16 0 16 18 v8 h-110 v-8 q0-18 8-18z" fill="#fff" class="ln"/>
+      <path d="M640 470 Q650 430 700 420 L820 420 Q870 430 880 470 L880 720 L640 720 Z" fill="#2c3238" class="ln"/>
+      <path d="M690 640 h140 v60 h-140z" fill="#262b30" class="ln" style="stroke-width:5"/>
+      <path d="M735 440 L728 520 M785 440 L792 520" stroke="#149a55" stroke-width="8" stroke-linecap="round"/>
+      <circle cx="728" cy="524" r="7" fill="#149a55"/><circle cx="792" cy="524" r="7" fill="#149a55"/>
+      <g id="armL">
+        <path d="M650 480 Q600 560 640 640" fill="none" stroke="#16191c" stroke-width="62" stroke-linecap="round"/>
+        <path d="M650 480 Q600 560 640 640" fill="none" stroke="#2c3238" stroke-width="48" stroke-linecap="round"/>
+      </g>
+      <g id="head">
+        <path d="M640 330 Q640 170 760 160 Q880 170 880 330 Q880 440 760 450 Q640 440 640 330 Z" fill="#2c3238" class="ln"/>
+        <ellipse cx="760" cy="335" rx="92" ry="100" fill="#f2c9a0" class="ln"/>
+        <path d="M672 290 Q700 225 760 232 Q820 225 848 290 Q812 262 780 272 Q760 252 735 272 Q700 262 672 290 Z" fill="#2a1d14" class="ln" style="stroke-width:5"/>
+        <path d="M660 330 Q655 215 760 205 Q865 215 860 330" fill="none" stroke="#16191c" stroke-width="7"/>
+        <g id="eyes">
+          <ellipse cx="725" cy="330" rx="15" ry="19" fill="#16191c"/>
+          <ellipse cx="795" cy="330" rx="15" ry="19" fill="#16191c"/>
+          <circle cx="730" cy="323" r="5" fill="#fff"/><circle cx="800" cy="323" r="5" fill="#fff"/>
+        </g>
+        <path id="sobr" d="M705 298 Q725 288 745 296 M775 296 Q795 288 815 298" fill="none" stroke="#16191c" stroke-width="7" stroke-linecap="round"/>
+        <ellipse cx="700" cy="368" rx="14" ry="8" fill="#ec9f86" opacity=".7"/>
+        <ellipse cx="820" cy="368" rx="14" ry="8" fill="#ec9f86" opacity=".7"/>
+        <path id="m0" d="M735 382 Q760 402 785 382" fill="none" stroke="#16191c" stroke-width="7" stroke-linecap="round"/>
+        <path id="m1" d="M738 378 Q760 412 782 378 Z" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+        <path id="m2" d="M742 380 Q760 398 778 380 Z" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+        <ellipse id="m3" cx="760" cy="392" rx="15" ry="20" fill="#7a2b23" class="ln" style="stroke-width:6" opacity="0"/>
+      </g>
+      <g id="arm">
+        <path d="M865 485 Q930 520 985 470" fill="none" stroke="#16191c" stroke-width="62" stroke-linecap="round"/>
+        <path d="M865 485 Q930 520 985 470" fill="none" stroke="#2c3238" stroke-width="48" stroke-linecap="round"/>
+        <g id="hand">
+          <!-- objetos na mão (aparecem um por vez) -->
+          <g id="pAmp" opacity="0">
+            <rect x="972" y="296" width="116" height="18" rx="7" fill="#a87545" class="ln" style="stroke-width:5"/>
+            <rect x="972" y="436" width="116" height="18" rx="7" fill="#a87545" class="ln" style="stroke-width:5"/>
+            <path d="M990 314 Q990 356 1030 375 Q1070 356 1070 314 Z M990 436 Q990 394 1030 375 Q1070 394 1070 436 Z" fill="#e6f5ec" class="ln" style="stroke-width:5"/>
+            <path d="M1004 328 Q1030 346 1056 328 Q1048 350 1030 364 Q1012 350 1004 328Z" fill="#e9b949"/>
+            <path d="M1002 432 Q1030 400 1058 432 Z" fill="#e9b949"/>
+            <path d="M1030 366 V428" stroke="#e9b949" stroke-width="4"/>
+          </g>
+          <g id="pCam" opacity="0">
+            <rect x="972" y="372" width="128" height="80" rx="14" fill="#2c3238" class="ln" style="stroke-width:6"/>
+            <path d="M1100 392 L1150 368 L1150 456 L1100 432 Z" fill="#5d6670" class="ln" style="stroke-width:6"/>
+            <circle cx="1022" cy="412" r="22" fill="#5d6670" class="ln" style="stroke-width:5"/>
+            <circle cx="1022" cy="412" r="9" fill="#9fd6b5"/>
+            <circle id="rec" cx="1078" cy="390" r="8" fill="#d14343"/>
+          </g>
+          <g id="pLupa" opacity="0">
+            <path d="M1008 446 L1046 400" stroke="#16191c" stroke-width="20" stroke-linecap="round"/>
+            <path d="M1008 446 L1046 400" stroke="#8a5a32" stroke-width="10" stroke-linecap="round"/>
+            <circle cx="1070" cy="370" r="40" fill="#e6f5ec" stroke="#16191c" stroke-width="9"/>
+            <path d="M1052 356 Q1060 344 1074 342" stroke="#fff" stroke-width="7" fill="none" stroke-linecap="round"/>
+          </g>
+          <g id="pCart" opacity="0">
+            <rect x="992" y="392" width="104" height="72" rx="12" fill="#149a55" class="ln" style="stroke-width:6"/>
+            <path d="M992 412 h104" stroke="#0f7a43" stroke-width="8"/>
+            <rect x="1060" y="420" width="44" height="28" rx="7" fill="#e9b949" class="ln" style="stroke-width:5"/>
+            <circle cx="1072" cy="434" r="4" fill="#16191c"/>
+          </g>
+          <g id="pMart" opacity="0">
+            <path d="M1004 452 L1050 360" stroke="#16191c" stroke-width="20" stroke-linecap="round"/>
+            <path d="M1004 452 L1050 360" stroke="#a87545" stroke-width="10" stroke-linecap="round"/>
+            <g transform="rotate(27 1056 346)"><rect x="1012" y="318" width="88" height="54" rx="10" fill="#8a5a32" class="ln" style="stroke-width:6"/><path d="M1030 318 v54 M1082 318 v54" stroke="#16191c" stroke-width="5"/></g>
+          </g>
+          <circle cx="1000" cy="458" r="26" fill="#f2c9a0" class="ln" style="stroke-width:6"/>
+          <g id="finger">
+            <path d="M1015 448 L1062 432" stroke="#16191c" stroke-width="24" stroke-linecap="round"/>
+            <path d="M1015 448 L1062 432" stroke="#f2c9a0" stroke-width="12" stroke-linecap="round"/>
+          </g>
+          <g id="thumb" opacity="0">
+            <path d="M1000 440 L1000 395" stroke="#16191c" stroke-width="24" stroke-linecap="round"/>
+            <path d="M1000 440 L1000 395" stroke="#f2c9a0" stroke-width="12" stroke-linecap="round"/>
+          </g>
+        </g>
+      </g>
+    </g>
+    <g id="sweat" opacity="0"><path d="M880 250 q-14 22 0 30 q14 -8 0 -30z" fill="#7cc4e8" class="ln" style="stroke-width:4"/></g>
+    <g id="bubble" opacity="0">
+      <path d="M560 60 h330 q24 0 24 24 v90 q0 24 -24 24 h-250 l-40 40 l6 -40 h-46 q-24 0 -24 -24 v-90 q0 -24 24 -24z" fill="#fffdf8" class="ln" style="stroke-width:5"/>
+      <text id="bubbleTxt" x="725" y="146" text-anchor="middle" font-family="Bahnschrift" font-weight="700" font-size="54" fill="#16191c">?</text>
+      <path id="bubX" d="M612 130 L840 118" stroke="#d14343" stroke-width="10" stroke-linecap="round" opacity="0"/>
+    </g>
+    </g>
+  </svg>
+
+  <div id="legenda"></div>
+</div>
+
+<script>
+/* ---------- dados de tempo ---------- */
+const TP=window.TEMPOS, PAL=window.PAL.palavras;
+const DUR=+(TP.total+1.6).toFixed(2);
+const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]/g,'');
+function T(b,f){const B=TP.blocos.find(x=>x.n===b);return B.inicio_global+B.frases[f].ini;}
+function TF(b,f){const B=TP.blocos.find(x=>x.n===b);return B.inicio_global+B.frases[f].fim;}
+function W(b,f,word,nth=0){const ws=PAL.filter(p=>p.b===b&&p.f===f);const n=norm(word);let c=0;
+  for(const p of ws){if(norm(p.w).startsWith(n)){if(c===nth)return p.ini;c++;}}
+  console.log('palavra nao achada',b,f,word);return T(b,f)+0.3;}
+
+/* ---------- ícones (genéricos, sem marcas) ---------- */
+const G='#149a55',K='#16191c',GR='#8a8f96',R='#d14343',Y='#e9b949';
+const I={
+ play:`<svg class="ico" viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="4" fill="${G}"/><path d="M10 9l5 3-5 3z" fill="#fff"/></svg>`,
+ pessoa:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.2" fill="${G}"/><path d="M3.5 21c0-5 3.8-7.5 8.5-7.5s8.5 2.5 8.5 7.5z" fill="${G}"/></svg>`,
+ pessoaC:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4.2" fill="#b4ada1"/><path d="M3.5 21c0-5 3.8-7.5 8.5-7.5s8.5 2.5 8.5 7.5z" fill="#b4ada1"/></svg>`,
+ alerta:`<svg class="ico" viewBox="0 0 24 24"><path d="M12 2L1 21h22z" fill="${Y}" stroke="${K}" stroke-width="1.2" stroke-linejoin="round"/><path d="M12 9v5" stroke="${K}" stroke-width="2.4" stroke-linecap="round"/><circle cx="12" cy="17.3" r="1.4" fill="${K}"/></svg>`,
+ celular:`<svg class="ico" viewBox="0 0 24 24"><rect x="6" y="1.5" width="12" height="21" rx="2.5" fill="#fffdf8" stroke="${K}" stroke-width="1.5"/><path d="M10.5 9.5l4 2.5-4 2.5z" fill="${G}"/></svg>`,
+ tv:`<svg class="ico" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="13" rx="2.5" fill="${K}"/><rect x="3.5" y="5.5" width="17" height="10" rx="1.5" fill="#5d6670"/><path d="M10.5 8l4 2.5-4 2.5z" fill="#fff"/><path d="M8 20.5h8" stroke="${K}" stroke-width="2" stroke-linecap="round"/></svg>`,
+ cifrao:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="${G}"/><text x="12" y="17" text-anchor="middle" font-family="Bahnschrift" font-weight="700" font-size="14" fill="#fff">$</text></svg>`,
+ moeda:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="${Y}" stroke="${K}" stroke-width="1.6"/><circle cx="12" cy="12" r="6.6" fill="none" stroke="#c99a2e" stroke-width="1.2"/><text x="12" y="16" text-anchor="middle" font-family="Bahnschrift" font-weight="700" font-size="11" fill="${K}">$</text></svg>`,
+ megafone:`<svg class="ico" viewBox="0 0 24 24"><path d="M3 9.5v5h3.2l7.8 4.5V5L6.2 9.5z" fill="${Y}" stroke="${K}" stroke-width="1.3" stroke-linejoin="round"/><path d="M6.5 14.5l1.4 5h2.4l-1-4.4" fill="#fffdf8" stroke="${K}" stroke-width="1.2" stroke-linejoin="round"/><path d="M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11" stroke="${K}" stroke-width="1.8" fill="none" stroke-linecap="round"/></svg>`,
+ carteira:`<svg class="ico" viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="14" rx="3" fill="${G}" stroke="${K}" stroke-width="1.2"/><path d="M4.5 6l10-3 1.2 3" fill="#9fd6b5" stroke="${K}" stroke-width="1.1" stroke-linejoin="round"/><rect x="14.5" y="10.5" width="8" height="5" rx="1.5" fill="${Y}" stroke="${K}" stroke-width="1.1"/><circle cx="17" cy="13" r="1" fill="${K}"/></svg>`,
+ calc:`<svg class="ico" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="3" fill="${G}"/><rect x="6.5" y="4.5" width="11" height="4.5" rx="1" fill="#e6f5ec"/><g fill="#fff"><rect x="6.5" y="11" width="3" height="3" rx=".6"/><rect x="10.5" y="11" width="3" height="3" rx=".6"/><rect x="14.5" y="11" width="3" height="3" rx=".6"/><rect x="6.5" y="15.5" width="3" height="3" rx=".6"/><rect x="10.5" y="15.5" width="3" height="3" rx=".6"/><rect x="14.5" y="15.5" width="3" height="3" rx=".6"/></g></svg>`,
+ dado:`<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" fill="#fffdf8" stroke="${K}" stroke-width="1.8"/><circle cx="8" cy="8" r="1.7" fill="${K}"/><circle cx="16" cy="16" r="1.7" fill="${K}"/><circle cx="12" cy="12" r="1.7" fill="${K}"/><circle cx="16" cy="8" r="1.7" fill="${K}"/><circle cx="8" cy="16" r="1.7" fill="${K}"/></svg>`,
+ engrenagem:`<svg class="ico" viewBox="0 0 24 24"><path d="M12 2l2 3 3.5-.8.6 3.5 3 2-1.9 3 1.9 3-3 2-.6 3.5L14 19l-2 3-2-3-3.5.8-.6-3.5-3-2 1.9-3-1.9-3 3-2 .6-3.5L10 5z" fill="#8a8172"/><circle cx="12" cy="12" r="3.6" fill="#fffdf8"/></svg>`,
+ pecas:`<svg class="ico" viewBox="0 0 24 24"><rect x="2.5" y="2.5" width="8.5" height="8.5" rx="2" fill="${G}"/><rect x="13" y="2.5" width="8.5" height="8.5" rx="2" fill="${Y}" stroke="${K}" stroke-width="1"/><rect x="2.5" y="13" width="8.5" height="8.5" rx="2" fill="#5d6670"/><rect x="13" y="13" width="8.5" height="8.5" rx="2" fill="${R}"/></svg>`,
+ cal:`<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="3" fill="#fffdf8" stroke="${K}" stroke-width="1.5"/><path d="M3 9.5h18" stroke="${K}" stroke-width="1.5"/><rect x="3" y="4" width="18" height="5.5" rx="2.5" fill="${R}"/><path d="M8 2v4M16 2v4" stroke="${K}" stroke-width="1.8" stroke-linecap="round"/><g fill="${GR}"><rect x="6" y="12" width="3" height="2.5" rx=".6"/><rect x="10.5" y="12" width="3" height="2.5" rx=".6"/><rect x="15" y="12" width="3" height="2.5" rx=".6"/><rect x="6" y="16" width="3" height="2.5" rx=".6"/><rect x="10.5" y="16" width="3" height="2.5" rx=".6"/></g></svg>`,
+ cadeado:`<svg class="ico" viewBox="0 0 24 24"><path d="M7 11V8a5 5 0 0 1 10 0v3" fill="none" stroke="${K}" stroke-width="2.6" stroke-linecap="round"/><rect x="4" y="10.5" width="16" height="11.5" rx="2.5" fill="${Y}" stroke="${K}" stroke-width="1.4"/><circle cx="12" cy="15.3" r="1.6" fill="${K}"/><rect x="11.2" y="15.5" width="1.6" height="3.5" rx=".6" fill="${K}"/></svg>`,
+ martelo:`<svg class="ico" viewBox="0 0 24 24"><g transform="rotate(-40 9 7)"><rect x="3" y="4" width="12" height="6.5" rx="1.6" fill="#8a5a32" stroke="${K}" stroke-width="1.2"/></g><path d="M10.5 10.5l8.5 9" stroke="${K}" stroke-width="3" stroke-linecap="round"/><path d="M10.5 10.5l8.5 9" stroke="#a87545" stroke-width="1.4" stroke-linecap="round"/><rect x="2.5" y="19" width="10" height="3" rx="1" fill="${GR}"/></svg>`,
+ cofre:`<svg class="ico" viewBox="0 0 24 24"><ellipse cx="11.5" cy="13" rx="8.5" ry="6.5" fill="#f2a7b5" stroke="${K}" stroke-width="1.2"/><rect x="18.5" y="11" width="3.5" height="4" rx="1.2" fill="#f2a7b5" stroke="${K}" stroke-width="1.1"/><path d="M8 7.5l1-3 2.5 2.3" fill="#f2a7b5" stroke="${K}" stroke-width="1.1" stroke-linejoin="round"/><rect x="9.5" y="7.2" width="5" height="1.4" rx=".7" fill="${K}"/><circle cx="15.5" cy="11.5" r=".9" fill="${K}"/><path d="M6.5 18.5v2.5M15.5 18.5v2.5" stroke="${K}" stroke-width="2" stroke-linecap="round"/></svg>`,
+ grafico:`<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3" fill="#fffdf8" stroke="${K}" stroke-width="1.4"/><path d="M6 16l4-4 3 3 5-6" stroke="${G}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M15 9h3v3" stroke="${G}" stroke-width="2.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+ notebook:`<svg class="ico" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="11" rx="1.5" fill="#5d6670"/><rect x="5.5" y="6.5" width="13" height="8" fill="#cfe9da"/><path d="M2 17.5h20l-1.5 2.5h-17z" fill="${GR}"/></svg>`,
+ pote:`<svg class="ico" viewBox="0 0 24 24"><path d="M5.5 8h13v11.5a3 3 0 0 1-3 3h-7a3 3 0 0 1-3-3z" fill="#fffdf8" stroke="${K}" stroke-width="1.3"/><rect x="4.5" y="4.5" width="15" height="3.6" rx="1.2" fill="${GR}" stroke="${K}" stroke-width="1"/><circle cx="10" cy="17.5" r="2.3" fill="${Y}" stroke="${K}" stroke-width=".8"/><circle cx="14" cy="18.5" r="2.3" fill="${Y}" stroke="${K}" stroke-width=".8"/><circle cx="12" cy="14.8" r="2.3" fill="${Y}" stroke="${K}" stroke-width=".8"/></svg>`,
+ ampulheta:`<svg class="ico" viewBox="0 0 24 24"><path d="M6 2.5h12M6 21.5h12" stroke="${K}" stroke-width="2" stroke-linecap="round"/><path d="M7 2.5c0 5 4 6 5 9.5-1 3.5-5 4.5-5 9.5h10c0-5-4-6-5-9.5 1-3.5 5-4.5 5-9.5z" fill="#fffdf8" stroke="${K}" stroke-width="1.3"/><path d="M9 20.3c1-2 2-3 3-3s2 1 3 3z" fill="${Y}"/><path d="M9.6 6.5h4.8c-.6 1.4-1.4 2.3-2.4 3.2-1-.9-1.8-1.8-2.4-3.2z" fill="${Y}"/></svg>`,
+ semad:`<svg class="ico" viewBox="0 0 24 24"><rect x="2.5" y="6" width="19" height="12" rx="3" fill="${Y}" stroke="${K}" stroke-width="1.2"/><text x="12" y="14.8" font-size="7.5" text-anchor="middle" font-family="Bahnschrift" font-weight="700" fill="${K}">AD</text><path d="M3.5 21L20.5 3" stroke="${R}" stroke-width="2.8" stroke-linecap="round"/></svg>`,
+ membro:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="${G}"/><path d="M12 5.5l1.9 4 4.4.5-3.3 3 .9 4.3L12 15.1l-3.9 2.2.9-4.3-3.3-3 4.4-.5z" fill="#fff"/></svg>`,
+ obrigado:`<svg class="ico" viewBox="0 0 24 24"><path d="M12 21s-8.5-5.2-8.5-11.2A4.6 4.6 0 0 1 12 7a4.6 4.6 0 0 1 8.5 2.8C20.5 15.8 12 21 12 21z" fill="${R}"/><text x="12" y="15.5" text-anchor="middle" font-family="Bahnschrift" font-weight="700" font-size="8.5" fill="#fff">$</text></svg>`,
+ sacola:`<svg class="ico" viewBox="0 0 24 24"><path d="M4.5 8h15l-1.2 13.5H5.7z" fill="${G}" stroke="${K}" stroke-width="1.1" stroke-linejoin="round"/><path d="M8.5 10V6.5a3.5 3.5 0 0 1 7 0V10" stroke="${K}" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`,
+ etiqueta:`<svg class="ico" viewBox="0 0 24 24"><path d="M3 4v7.5L12.5 21l8.5-8.5L11.5 3H4z" fill="${Y}" stroke="${K}" stroke-width="1.3" stroke-linejoin="round"/><circle cx="7.5" cy="7.5" r="1.7" fill="#fffdf8" stroke="${K}" stroke-width="1"/></svg>`,
+ contrato:`<svg class="ico" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" fill="#fffdf8" stroke="${K}" stroke-width="1.4"/><path d="M8 7h8M8 10h8M8 13h5" stroke="${GR}" stroke-width="1.4" stroke-linecap="round"/><path d="M8 18c1.5-2 2.5 1 4-1s2 1 4 0" stroke="${G}" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`,
+ porta:`<svg class="ico" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="1.5" fill="#a87545" stroke="${K}" stroke-width="1.3"/><circle cx="15.5" cy="12.5" r="1.2" fill="${Y}"/></svg>`,
+ check:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="${G}"/><path d="M7 12.5l3.2 3.2L17 9" stroke="#fff" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+ sino:`<svg class="ico" viewBox="0 0 24 24"><path d="M6 17V11a6 6 0 0 1 12 0v6l2 2H4z" fill="${Y}" stroke="${K}" stroke-width="1.2"/><circle cx="12" cy="21" r="1.8" fill="${K}"/></svg>`,
+ lupa:`<svg class="ico" viewBox="0 0 24 24"><circle cx="10" cy="10" r="6.5" fill="#e6f5ec" stroke="${K}" stroke-width="2.4"/><path d="M15 15l6 6" stroke="${K}" stroke-width="2.8" stroke-linecap="round"/></svg>`,
+ relogio:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#fffdf8" stroke="${K}" stroke-width="1.6"/><path d="M12 6v6l4 2.5" stroke="${G}" stroke-width="2.2" fill="none" stroke-linecap="round"/></svg>`,
+};
+
+/* ---------- construção ---------- */
+const world=document.getElementById('world');
+const tl=gsap.timeline({paused:true});
+const E='power3.inOut';
+let panels=[];
+function panel(){const p=document.createElement('div');p.className='panel';p.style.left=(panels.length*1920)+'px';world.appendChild(p);panels.push(p);return p;}
+let uid=0;
+function add(P,html,css,cls=''){const d=document.createElement('div');d.id='e'+(uid++);d.className=cls;d.style.cssText='position:absolute;'+css;d.innerHTML=html;P.appendChild(d);return '#'+d.id;}
+// sons: cada animação registra um evento; o script de áudio lê window.EVENTOS
+const EVENTOS=[];function EV(t,k,g=1){EVENTOS.push([+t.toFixed(3),k,g]);}
+const A={
+ up:(s,t)=>{EV(t,'up');return tl.from(s,{y:50,opacity:0,duration:0.45,ease:'power3.out'},t);},
+ pop:(s,t)=>{EV(t,'pop');return tl.from(s,{scale:0.6,opacity:0,duration:0.45,ease:'back.out(1.8)'},t);},
+ fade:(s,t)=>tl.from(s,{opacity:0,duration:0.4},t),
+ left:(s,t)=>{EV(t,'up',0.6);return tl.from(s,{x:-60,opacity:0,duration:0.45,ease:'power3.out'},t);},
+ drop:(s,t)=>{EV(t+0.3,'impacto',0.6);return tl.from(s,{y:-160,opacity:0,duration:0.55,ease:'bounce.out'},t);},
+ stamp:(s,t)=>{EV(t+0.2,'impacto');return tl.from(s,{scale:2.2,opacity:0,duration:0.22,ease:'power4.in'},t);},
+};
+const ICON=(k,sz)=>`<div style="width:${sz}px;height:${sz}px;flex:none">${I[k]}</div>`;
+function title(P,txt,t,y=110,size=80){const s=add(P,`<div class="h" style="font-size:${size}px;text-align:center">${txt}</div>`,`left:780px;width:1100px;top:${y}px`);A.up(s,t);return s;}
+function chip(P,txt,x,y,t,cls='',an='pop'){const s=add(P,txt,`left:${x}px;top:${y}px`,'chip '+cls);A[an](s,t);return s;}
+function stamp(P,txt,x,y,t,rot=-8,cls='',fs=60){const s=add(P,txt,`left:${x}px;top:${y}px;transform:rotate(${rot}deg);font-size:${fs}px`,'stamp '+cls);A.stamp(s,t);return s;}
+function card(P,html,x,y,w,h,t,an='up',extra=''){const s=add(P,html,`left:${x}px;top:${y}px;width:${w}px;height:${h}px;${extra}`,'card');A[an](s,t);return s;}
+function fonte(P,txt,t,y=852){const s=add(P,`<b>i</b>${txt}`,`left:800px;top:${y}px`,'fonte');A.fade(s,t);return s;}
+function row(P,mk,txt,x,y,t,cls='ok',fs=44){const s=add(P,`<div class="row" style="font-size:${fs}px"><div class="mk ${cls}">${mk}</div><div>${txt}</div></div>`,`left:${x}px;top:${y}px`);A.left(s,t);return s;}
+// contadores de número (puros no tempo, atualizados em vivo())
+const NUM=[];const fmt=n=>String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+function conta(id,t0,t1,a,b,suf=''){NUM.push({id,t0,t1,a,b,suf});for(let k=0;k<8;k++)EV(t0+(t1-t0)*k/8,'tick',0.5);}
+// moedas caindo em loop (fim definido)
+function chuva(P,x,y,t0,t1,dist=150,per=0.6,n=3){for(let k=0;k<n;k++){const c=add(P,I.moeda,`left:${x+(k%2)*14-7}px;top:${y}px;width:44px;height:44px;opacity:0`);
+  const st=t0+k*per/n,rep=Math.max(0,Math.floor((t1-st)/per)-1);
+  tl.fromTo(c,{y:0,opacity:1},{y:dist,opacity:0,duration:per,ease:'power1.in',repeat:rep,immediateRender:false},st);}}
+// fórmula views ÷ 1.000 × RPM = R$
+function formula(P,x,y,t,rev){const k=uid++;
+  const pcs=[['views',''],['1.000',''],['RPM','color:#149a55'],['R$','']];const L=[25,315,605,895],O=[250,540,830],ops=['÷','×','='];
+  let h=`<div class="tag" style="position:absolute;left:30px;top:24px">a conta inteira</div>`;
+  pcs.forEach(([v,c],i)=>h+=`<div class="pc" id="pc${k}_${i}" style="left:${L[i]}px;${i===3?'width:180px':''}"><div class="q">?</div><div class="v" style="${c}">${v}</div></div>`);
+  O.forEach((l,i)=>h+=`<div class="op" style="left:${l}px">${ops[i]}</div>`);
+  const s=card(P,h,x,y,1100,320,t);
+  if(rev)rev.forEach((tt,i)=>{const p='#pc'+k+'_'+i;EV(tt,'clique');
+    tl.to(p,{scaleX:0,duration:0.1,ease:'power2.in'},tt);
+    tl.set(p+' .q',{opacity:0},tt+0.1);tl.set(p+' .v',{opacity:1},tt+0.1);
+    tl.set(p,{background:'#fffdf8',borderStyle:'solid',borderColor:i===2?'#149a55':'#d8cfbe'},tt+0.1);
+    tl.to(p,{scaleX:1,duration:0.14,ease:'back.out(2)'},tt+0.1);});
+  else tl.to(`#pc${k}_0 .q,#pc${k}_1 .q,#pc${k}_2 .q,#pc${k}_3 .q`,{rotation:12,duration:0.12,yoyo:true,repeat:5,stagger:0.05},t+0.6);
+  return {s,k};}
+// calendário 1º fev 2027
+function calendario(P,x,y,w,t,an='pop'){const h=w*1.1;return card(P,`<div style="position:absolute;left:0;right:0;top:0;height:${h*0.25}px;background:${R};border-radius:20px 20px 0 0;display:flex;align-items:center;justify-content:center;color:#fff" class="h"><span style="font-size:${w*0.14}px;letter-spacing:4px">FEV</span></div>
+  <div class="h" style="position:absolute;left:0;right:0;top:${h*0.3}px;text-align:center;font-size:${w*0.45}px">1º</div><div style="position:absolute;left:0;right:0;top:${h*0.76}px;text-align:center;font-family:Consolas;font-size:${w*0.11}px;color:var(--muted)">2027</div>`,x,y,w,h,t,an,'overflow:hidden');}
+
+/* ---------- mascote ---------- */
+function arm(pose,t,d=0.5){const r={down:55,point:-8,up:-45,mid:20,coca:-80}[pose];tl.to('#arm',{rotation:r,svgOrigin:'865 485',duration:d,ease:pose==='down'?E:'back.out(1.8)'},t);}
+function surpresa(t){tl.to('#sobr',{y:-12,duration:0.18},t).to('#sobr',{y:0,duration:0.3},t+1.1);}
+function inclina(t,r=-6){tl.to('#head',{rotation:r,svgOrigin:'760 440',duration:0.4,ease:'sine.inOut'},t).to('#head',{rotation:0,svgOrigin:'760 440',duration:0.5,ease:'sine.inOut'},t+1.4);}
+function suor(t){tl.fromTo('#sweat',{opacity:0,y:-10},{opacity:1,y:10,duration:0.5,immediateRender:false},t);tl.to('#sweat',{opacity:0,duration:0.3},t+1.5);}
+const BUB=[];function balao(t,txt,dur=2.2,cor=K){BUB.push([t,txt,cor]);EV(t,'pop',0.7);tl.fromTo('#bubble',{opacity:0,scale:0.7,svgOrigin:'640 260'},{opacity:1,scale:1,svgOrigin:'640 260',duration:0.3,ease:'back.out(2)',immediateRender:false},t);tl.to('#bubble',{opacity:0,duration:0.25},t+dur);}
+function troca(t,txt,cor=K){BUB.push([t,txt,cor]);tl.to('#bubble',{scale:1.1,svgOrigin:'640 260',duration:0.12,yoyo:true,repeat:1},t);}
+function joinha(t,d=2){tl.set('#finger',{opacity:0},t);tl.set('#thumb',{opacity:1},t);arm('mid',t,0.4);tl.set('#finger',{opacity:1},t+d);tl.set('#thumb',{opacity:0},t+d);arm('down',t+d,0.45);}
+function objeto(id,t,d,pose='mid'){tl.set('#finger',{opacity:0},t);tl.set(id,{opacity:1},t);arm(pose,t,0.45);tl.set(id,{opacity:0},t+d);tl.set('#finger',{opacity:1},t+d);}
+function coca(t,d=2.4){arm('coca',t,0.55);tl.to('#arm',{rotation:-74,svgOrigin:'865 485',duration:0.14,yoyo:true,repeat:Math.floor(d/0.14)|1,ease:'sine.inOut'},t+0.55);
+  tl.to('#head',{rotation:6,svgOrigin:'760 440',duration:0.4,ease:'sine.inOut'},t).to('#head',{rotation:0,svgOrigin:'760 440',duration:0.4},t+d+0.5);arm('down',t+d+0.6);}
+function dedo(t,d=1.6){arm('up',t,0.4);tl.to('#arm',{rotation:-32,svgOrigin:'865 485',duration:0.16,yoyo:true,repeat:Math.floor(d/0.16)|1,ease:'sine.inOut'},t+0.4);arm('down',t+d+0.5);}
+function alerta(t,d=2){arm('up',t,0.4);tl.to('#sobr',{y:-12,duration:0.18},t).to('#sobr',{y:0,duration:0.3},t+d);suor(t+0.2);arm('down',t+d);}
+tl.set('#arm',{rotation:55,svgOrigin:'865 485'},0);
+
+/* ---------- câmera ---------- */
+function go(t){const i=panels.length-1;if(i===0)return;const a=Math.max(0,t-0.45);EV(a,'whoosh');
+  tl.to('#world',{x:-i*1920,duration:0.75,ease:E},a);tl.to('#dots',{backgroundPositionX:-(i*1920*0.35)+'px',duration:0.75,ease:E},a);}
+function nova(t){const P=panel();go(t);return P;}
+
+/* =================== CENAS · vídeo 6 (4.000 horas) =================== */
+/* ícones novos (genéricos, sem marcas) */
+Object.assign(I,{
+ alavanca:`<svg class="ico" viewBox="0 0 24 24"><path d="M3 21.5h18" stroke="${K}" stroke-width="2" stroke-linecap="round"/><path d="M12 15l-3.6 6.4h7.2z" fill="${Y}" stroke="${K}" stroke-width="1.3" stroke-linejoin="round"/><path d="M2.5 18.5L20 10.5" stroke="${K}" stroke-width="3.8" stroke-linecap="round"/><path d="M2.5 18.5L20 10.5" stroke="${G}" stroke-width="1.8" stroke-linecap="round"/><circle cx="20.3" cy="8.3" r="2.6" fill="${R}" stroke="${K}" stroke-width="1.2"/></svg>`,
+ mao:`<svg class="ico" viewBox="0 0 24 24"><g fill="#f2c9a0" stroke="${K}" stroke-width="1.1"><rect x="5.4" y="7" width="2.9" height="9" rx="1.45"/><rect x="8.5" y="3.4" width="2.9" height="11" rx="1.45"/><rect x="11.6" y="2.6" width="2.9" height="11.5" rx="1.45"/><rect x="14.7" y="4.2" width="2.9" height="10.5" rx="1.45"/><rect x="17.3" y="9.6" width="2.9" height="7" rx="1.45" transform="rotate(32 18.7 13.1)"/><path d="M5.4 12h12.2v4.6c0 3.4-2.5 5.6-6.1 5.6s-6.1-2.2-6.1-5.6z"/></g></svg>`,
+ lixeira:`<svg class="ico" viewBox="0 0 24 24"><rect x="4" y="5" width="16" height="2.6" rx="1" fill="${GR}" stroke="${K}" stroke-width="1.1"/><path d="M9.5 5V3.4h5V5" stroke="${K}" stroke-width="1.3" fill="none"/><path d="M5.5 8h13l-1.2 13.5H6.7z" fill="#fffdf8" stroke="${K}" stroke-width="1.3" stroke-linejoin="round"/><path d="M9.5 11v7.5M14.5 11v7.5" stroke="${GR}" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+ live:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="${R}"/><circle cx="12" cy="12" r="3.2" fill="#fff"/><path d="M7.4 7.4a6.5 6.5 0 0 0 0 9.2M16.6 7.4a6.5 6.5 0 0 1 0 9.2" stroke="#fff" stroke-width="1.6" fill="none" stroke-linecap="round"/></svg>`,
+ luz:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="9" r="7" fill="none" stroke="${Y}" stroke-width="3.4"/><circle cx="12" cy="9" r="7" fill="none" stroke="${K}" stroke-width="1" /><circle cx="12" cy="9" r="2.4" fill="#5d6670"/><path d="M12 16v6M8.5 22h7" stroke="${K}" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+ lista:`<svg class="ico" viewBox="0 0 24 24"><rect x="4.5" y="3.5" width="15" height="19" rx="2" fill="#fffdf8" stroke="${K}" stroke-width="1.4"/><rect x="8.5" y="2" width="7" height="3.4" rx="1" fill="${GR}" stroke="${K}" stroke-width="1"/><g stroke="${G}" stroke-width="1.6" stroke-linecap="round"><path d="M8 9.5h8M8 13.5h8M8 17.5h5"/></g><text x="17.6" y="20.6" font-family="Bahnschrift" font-weight="700" font-size="6" fill="${R}">?</text></svg>`,
+ bolo:`<svg class="ico" viewBox="0 0 24 24"><rect x="3.5" y="12" width="17" height="9" rx="2" fill="#8a5a32" stroke="${K}" stroke-width="1.2"/><path d="M3.5 13.5c2 2 3.5 0 5.6 1.6s3.4-1.6 5.6 0 3.6-1 5.8-1.6V12h-17z" fill="#fffdf8" stroke="${K}" stroke-width="1"/><rect x="11" y="6" width="2" height="6" rx=".8" fill="${Y}" stroke="${K}" stroke-width=".8"/><path d="M12 2.4c1.2 1.3 1.2 2.4 0 3.2-1.2-.8-1.2-1.9 0-3.2z" fill="${R}"/></svg>`,
+ link:`<svg class="ico" viewBox="0 0 24 24"><g fill="none" stroke="${G}" stroke-width="2.4" stroke-linecap="round"><path d="M10 14a4 4 0 0 0 5.6 0l3.2-3.2a4 4 0 0 0-5.6-5.6l-1.2 1.2"/><path d="M14 10a4 4 0 0 0-5.6 0l-3.2 3.2a4 4 0 0 0 5.6 5.6l1.2-1.2"/></g></svg>`,
+ balaoC:`<svg class="ico" viewBox="0 0 24 24"><path d="M3 4.5h18v12H9l-5 4v-4H3z" fill="#fffdf8" stroke="${K}" stroke-width="1.4" stroke-linejoin="round"/><path d="M7 9h10M7 12.5h6" stroke="${GR}" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+ pino:`<svg class="ico" viewBox="0 0 24 24"><path d="M9 3h6l-1 6 3 3v2H7v-2l3-3z" fill="${R}" stroke="${K}" stroke-width="1.2" stroke-linejoin="round"/><path d="M12 14v7" stroke="${K}" stroke-width="1.8" stroke-linecap="round"/></svg>`,
+});
+const CURSOR=`<svg width="44" height="56" viewBox="0 0 22 28"><path d="M2 2v21l5.5-5 4 8.5 3.6-1.6-4-8.4h7.4z" fill="#fff" stroke="${K}" stroke-width="2" stroke-linejoin="round"/></svg>`;
+
+/* ---------- peças reutilizáveis ---------- */
+function relogio(P,x,y,w,h,t,id,lab='horas assistidas',an='pop',fs){fs=fs||Math.round(h*0.4);
+  return card(P,`<div class="tag" style="position:absolute;left:34px;top:24px">${lab}</div><div style="position:absolute;right:28px;top:18px;width:58px;height:58px">${I.relogio}</div>
+   <div class="cc" style="padding-top:34px;box-sizing:border-box"><div style="white-space:nowrap"><span id="${id}" style="font-family:Consolas;font-weight:700;font-size:${fs}px;letter-spacing:-3px">0</span><span style="font-family:Consolas;font-weight:700;font-size:${Math.round(fs*0.5)}px;color:var(--muted)"> h</span></div></div>`,x,y,w,h,t,an);}
+const TL=['T','E','M','P','O'],TN=['tema buscado','encadear','minutos','prender','outras portas'];
+function sigla(P,x,y,sz,t,on,o={}){const ids=[],gap=Math.round(sz*0.22),k=uid++;
+  TL.forEach((L,i)=>{const lit=i===on,done=o.todas||(on>=0&&i<on);
+    const st=lit?`background:${G};border-color:${G};color:#fff`:done?'background:var(--soft);border-color:#9fd6b5;color:#0f7a43':'';
+    const nm=o.nomes?`<div id="sn${k}_${i}" style="font-size:${Math.round(sz*0.15)}px;font-weight:700;margin-top:6px;line-height:1.1;padding:0 6px">${TN[i]}</div>`:'';
+    ids.push(card(P,`<div class="cc"><div class="h" style="font-size:${Math.round(sz*0.62)}px">${L}</div>${nm}</div>`,x+i*(sz+gap),y,sz,Math.round(sz*(o.nomes?1.3:1)),o.tt?o.tt[i]:t+i*0.08,o.an||'pop',st));});
+  if(on>=0&&!o.todas){tl.to(ids[on],{scale:1.14,duration:0.22,yoyo:true,repeat:1,ease:'sine.inOut'},t+0.75);EV(t+0.75,'ding',0.6);}
+  return ids;}
+function formula3(P,x,y,t,rev,lab='a conta inteira'){const k=uid++;
+  const pcs=[['views','',230,66],['tempo médio','color:#149a55',340,56],['horas','',230,66]];
+  let L=30,h=`<div class="tag" style="position:absolute;left:30px;top:24px">${lab}</div>`;
+  pcs.forEach(([v,c,w,fs],i)=>{h+=`<div class="pc" id="pc${k}_${i}" style="left:${L}px;width:${w}px"><div class="q">?</div><div class="v" style="${c};font-size:${fs}px">${v}</div></div>`;L+=w;
+    if(i<2){h+=`<div class="op" style="left:${L+10}px">${['×','='][i]}</div>`;L+=80;}});
+  const s=card(P,h,x,y,L+30,320,t);
+  rev.forEach((tt,i)=>{const p='#pc'+k+'_'+i;EV(tt,'clique');
+    tl.to(p,{scaleX:0,duration:0.1,ease:'power2.in'},tt);tl.set(p+' .q',{opacity:0},tt+0.1);tl.set(p+' .v',{opacity:1},tt+0.1);
+    tl.set(p,{background:'#fffdf8',borderStyle:'solid',borderColor:i===1?'#149a55':'#d8cfbe'},tt+0.1);tl.to(p,{scaleX:1,duration:0.14,ease:'back.out(2)'},tt+0.1);});
+  return s;}
+function studio(P,x,y,w,h,t,tabs,body,menuW=240){const k=uid++;const menu=['Painel','Conteúdo','Análises','Comentários','Ganhar'];
+  card(P,`<div class="win" style="position:relative;height:100%"><div class="top"><i></i><i></i><i></i>&nbsp; painel do canal</div>
+   <div style="position:absolute;left:0;top:58px;bottom:0;width:${menuW}px;border-right:2px solid var(--line);padding-top:20px">${menu.map((m,i)=>`<div id="mn${k}_${i}" style="margin:6px 14px;padding:12px 18px;border-radius:12px;font-size:30px;font-weight:600;height:40px;line-height:40px">${m}</div>`).join('')}</div>
+   ${tabs?`<div style="position:absolute;left:${menuW+28}px;top:78px;display:flex;gap:14px">${tabs.map((m,i)=>`<div id="tb${k}_${i}" style="padding:10px 18px;border-radius:10px;font-size:28px;font-weight:600;color:var(--muted);border-bottom:4px solid transparent;white-space:nowrap">${m}</div>`).join('')}</div>`:''}
+   <div style="position:absolute;left:${menuW+30}px;top:${tabs?160:84}px;right:34px;bottom:30px">${body}</div></div>`,x,y,w,h,t,'pop');
+  const cur=add(P,CURSOR,`left:${x+w-110}px;top:${y+h-70}px;width:44px;height:56px`);A.fade(cur,t+0.35);
+  const go_=(px,py,tt)=>tl.to(cur,{left:px+'px',top:py+'px',duration:0.6,ease:E},tt-0.6);
+  return {k,cur,to:go_,
+    menu:(i,tt)=>{go_(x+150,y+58+20+6+20+i*76,tt);tl.to(`#mn${k}_${i}`,{backgroundColor:'#dff3e6',color:'#0f7a43',duration:0.2},tt);EV(tt,'clique');},
+    tab:(i,tt)=>{let px=x+menuW+28;for(let j=0;j<i;j++)px+=36+tabs[j].length*15.5+14;px+=(36+tabs[i].length*15.5)/2;
+      go_(px,y+100,tt);tl.to(`#tb${k}_${i}`,{color:'#0f7a43',borderBottomColor:G,duration:0.2},tt);EV(tt,'clique');}};}
+function seta(P,x,y,w,t,cor=G){const s=add(P,`<svg width="${w}" height="60" viewBox="0 0 ${w} 60"><path d="M6 30 H${w-26}" stroke="${cor}" stroke-width="10" stroke-linecap="round"/><path d="M${w-40} 10 L${w-8} 30 L${w-40} 50" fill="none" stroke="${cor}" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/></svg>`,`left:${x}px;top:${y}px;width:${w}px;height:60px`);
+  tl.from(s,{scaleX:0,transformOrigin:'0 50%',duration:0.4,ease:'power3.out'},t);EV(t,'up',0.6);return s;}
+function risco(P,x,y,w,t,h=12){const ln=add(P,'',`left:${x}px;top:${y}px;width:${w}px;height:${h}px;border-radius:${h/2}px;background:${R};transform-origin:left center`);tl.from(ln,{scaleX:0,duration:0.35,ease:'power2.out'},t);EV(t,'risca');return ln;}
+// linha desenhada (pathLength=1)
+function traço(sel,t,d=0.9,e='power2.inOut'){tl.fromTo(sel,{strokeDashoffset:1},{strokeDashoffset:0,duration:d,ease:e},t);}
+const DASH='style="stroke-dasharray:1;stroke-dashoffset:1" pathLength="1"';
+const thumb=(w,h,txt='')=>`<div style="width:${w}px;height:${h}px;border-radius:14px;background:#2c3238;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden">${txt}<div style="position:absolute;right:14px;bottom:12px;width:${Math.round(h*0.32)}px;height:${Math.round(h*0.22)}px">${I.play}</div></div>`;
+function pop2(s,t){tl.from(s,{scale:0.6,opacity:0,duration:0.4,ease:'back.out(2)'},t);EV(t,'pop',0.7);}
+
+
+/* =================== CENAS · vídeo 7 (Shorts sem aparecer) =================== */
+/* ícones novos (genéricos, sem marcas) */
+Object.assign(I,{
+ robo:`<svg class="ico" viewBox="0 0 24 24"><path d="M12 2.5v3" stroke="${K}" stroke-width="1.4"/><circle cx="12" cy="2.4" r="1.4" fill="${G}" stroke="${K}" stroke-width="1"/><rect x="4" y="5.5" width="16" height="12" rx="3.5" fill="#fffdf8" stroke="${K}" stroke-width="1.5"/><circle cx="9" cy="11" r="1.8" fill="${G}"/><circle cx="15" cy="11" r="1.8" fill="${G}"/><path d="M9 14.5h6" stroke="${K}" stroke-width="1.3" stroke-linecap="round"/><path d="M7 17.5v3.5M17 17.5v3.5M5 21h14" stroke="${K}" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+ filme:`<svg class="ico" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2" fill="#2c3238" stroke="${K}" stroke-width="1.2"/><g fill="#fffdf8"><rect x="4.5" y="5.5" width="2" height="2"/><rect x="4.5" y="11" width="2" height="2"/><rect x="4.5" y="16.5" width="2" height="2"/><rect x="17.5" y="5.5" width="2" height="2"/><rect x="17.5" y="11" width="2" height="2"/><rect x="17.5" y="16.5" width="2" height="2"/></g><path d="M10 9l5 3-5 3z" fill="${Y}"/></svg>`,
+ micro:`<svg class="ico" viewBox="0 0 24 24"><rect x="8.5" y="2.5" width="7" height="12" rx="3.5" fill="${G}" stroke="${K}" stroke-width="1.3"/><path d="M5.5 11a6.5 6.5 0 0 0 13 0" fill="none" stroke="${K}" stroke-width="1.5" stroke-linecap="round"/><path d="M12 17.5v3.5M8.5 21h7" stroke="${K}" stroke-width="1.6" stroke-linecap="round"/></svg>`,
+ copy:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="#fffdf8" stroke="${R}" stroke-width="2.2"/><path d="M15.2 9.3a4 4 0 1 0 0 5.4" fill="none" stroke="${R}" stroke-width="2.2" stroke-linecap="round"/></svg>`,
+ trofeu:`<svg class="ico" viewBox="0 0 24 24"><path d="M7 3h10v5a5 5 0 0 1-10 0z" fill="${Y}" stroke="${K}" stroke-width="1.3"/><path d="M7 5H4v1.5A3.5 3.5 0 0 0 7.5 10M17 5h3v1.5A3.5 3.5 0 0 1 16.5 10" fill="none" stroke="${K}" stroke-width="1.3"/><path d="M12 13v4" stroke="${K}" stroke-width="1.8"/><rect x="7.5" y="17" width="9" height="4" rx="1" fill="#a87545" stroke="${K}" stroke-width="1.2"/></svg>`,
+ musica:`<svg class="ico" viewBox="0 0 24 24"><path d="M9 18V5l11-2v13" fill="none" stroke="${K}" stroke-width="1.8" stroke-linejoin="round"/><circle cx="6.5" cy="18" r="3" fill="${G}" stroke="${K}" stroke-width="1.2"/><circle cx="17.5" cy="16" r="3" fill="${G}" stroke="${K}" stroke-width="1.2"/></svg>`,
+ mundo:`<svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5" fill="#e6f5ec" stroke="${K}" stroke-width="1.4"/><path d="M2.5 12h19M12 2.5c3 3 3 16 0 19M12 2.5c-3 3-3 16 0 19" fill="none" stroke="${G}" stroke-width="1.3"/></svg>`,
+ lampada:`<svg class="ico" viewBox="0 0 24 24"><path d="M12 2.5a6.5 6.5 0 0 0-3.8 11.8c.6.5.8 1.2.8 2V17h6v-.7c0-.8.2-1.5.8-2A6.5 6.5 0 0 0 12 2.5z" fill="${Y}" stroke="${K}" stroke-width="1.3"/><path d="M9 19.5h6M10 22h4" stroke="${K}" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+ pincel:`<svg class="ico" viewBox="0 0 24 24"><path d="M14.5 3.5l6 6-8 8-6-6z" fill="${G}" stroke="${K}" stroke-width="1.3" stroke-linejoin="round"/><path d="M6.5 11.5l6 6-2.5 2.5c-1.5 1.5-5 1.8-6.5.3s-1.2-5 .5-6.3z" fill="${Y}" stroke="${K}" stroke-width="1.3"/></svg>`,
+ grafico2:`<svg class="ico" viewBox="0 0 24 24"><rect x="2.5" y="3" width="19" height="18" rx="2.5" fill="#fffdf8" stroke="${K}" stroke-width="1.3"/><rect x="6" y="13" width="3" height="5" fill="${GR}"/><rect x="10.5" y="9" width="3" height="9" fill="${G}"/><rect x="15" y="6" width="3" height="12" fill="${Y}"/></svg>`,
+});
+
+/* ---------- peças do vídeo 7 ---------- */
+// celular vertical com um "Short" genérico dentro
+function fone(P,x,y,h,t,inner='',an='pop'){const w=Math.round(h*0.52);
+  return card(P,`<div style="position:absolute;inset:14px;border-radius:22px;background:#2c3238;overflow:hidden">${inner}</div><div style="position:absolute;left:50%;top:5px;width:60px;height:6px;margin-left:-30px;border-radius:3px;background:#d8cfbe"></div>`,x,y,w,h,t,an,'border:4px solid #16191c;border-radius:34px;background:#16191c');}
+// conteúdo de um Short de ranking
+const SH=(n,cor='#5d6670',txt='')=>`<div style="position:absolute;inset:0;background:linear-gradient(160deg,${cor},#2c3238)"></div>${txt}<div style="position:absolute;left:18px;top:18px;width:74px;height:74px;border-radius:50%;background:${Y};border:4px solid #16191c;display:flex;align-items:center;justify-content:center;font-family:Bahnschrift;font-weight:700;font-size:44px;color:#16191c">${n}</div>`;
+// cartão de passo numerado
+function passo(P,n,lab,x,y,w,t,on){const k=uid++;const s=card(P,`<div style="display:flex;align-items:center;gap:20px;padding:22px 26px"><div class="mk q" id="pm${k}" style="width:70px;height:70px">${n}</div><div class="h" style="font-size:40px">${lab}</div></div>`,x,y,w,114,t,'pop');
+  if(on!==undefined){tl.to(s,{borderColor:G,backgroundColor:'#f3fbf6',duration:0.2},on);tl.to('#pm'+k,{backgroundColor:G,duration:0.2},on);tl.to(s,{scale:1.06,duration:0.18,yoyo:true,repeat:1},on);EV(on,'ding',0.6);}return s;}
+// cifrão contador
+function dolar(P,x,y,w,h,t,id,lab,fs=150){return card(P,`<div class="tag" style="position:absolute;left:34px;top:24px">${lab}</div><div class="cc" style="padding-top:30px;box-sizing:border-box"><div style="white-space:nowrap;font-family:Consolas;font-weight:700"><span style="font-size:${Math.round(fs*0.5)}px;color:var(--muted)">US$ </span><span id="${id}" style="font-size:${fs}px;letter-spacing:-3px">0</span></div></div>`,x,y,w,h,t,'pop');}
+// grade de mini Shorts
+function grade(P,x,y,cols,rows,w,t,cor='#5d6670',gap=16,step=0.03){const h=Math.round(w*1.6),ids=[];
+  for(let r=0;r<rows;r++)for(let c=0;c<cols;c++){const s=add(P,`<div style="width:${w}px;height:${h}px;border-radius:14px;border:3px solid #16191c;background:${cor};position:relative;overflow:hidden"><div style="position:absolute;left:8px;top:8px;width:${Math.round(w*0.32)}px;height:${Math.round(w*0.32)}px;border-radius:50%;background:${Y}"></div><div style="position:absolute;left:10px;right:10px;bottom:12px;height:8px;border-radius:4px;background:#fffdf8;opacity:.7"></div></div>`,`left:${x+c*(w+gap)}px;top:${y+r*(h+gap)}px`);
+    tl.from(s,{scale:0.5,opacity:0,duration:0.25,ease:'back.out(2)'},t+(r*cols+c)*step);ids.push(s);}EV(t,'pop');return ids;}
+
+/* =================== CENAS · teste de ritmo (prévia de ~25 s) ===================
+   Ritmo novo: algo novo na tela a cada 1,5–2,5 s, câmera sempre andando (push-in lento),
+   "soco" de zoom nas revelações, mockups inclinados (2.5D) com sombra longa, destaque desenhado,
+   lupa, chaves liga/desliga, pausa de alerta (escurece + música para) e um som para cada ação. */
+
+/* palavra pela ordem da fala: w('dez') acha a 1ª depois do cursor; o cursor anda sozinho */
+let CUR=0;
+function w(word,{depois}={}){const n=norm(word);const from=depois!==undefined?depois:CUR;
+  for(const p of PAL){if(p.ini>=from-0.001&&norm(p.w).startsWith(n)){CUR=p.ini;return p.ini;}}
+  console.log('palavra nao achada',word);return from+0.3;}
+const fim=(word)=>{const n=norm(word);for(const p of PAL){if(p.ini>=CUR-0.001&&norm(p.w).startsWith(n))return p.fim;}return CUR+0.4;};
+
+/* ---------- câmera nova ---------- */
+// cada painel tem um "palco" que vai se aproximando devagar (push-in) enquanto está na tela
+let palcoAtual=null,palcoIni=0;
+function palcoDe(P){const s=document.createElement('div');s.className='palco';s.style.cssText='position:absolute;inset:0;transform-origin:1330px 470px;';P.appendChild(s);return s;}
+function fechaPalco(t){if(palcoAtual)tl.fromTo(palcoAtual,{scale:1},{scale:1.045,duration:Math.max(0.5,t-palcoIni+0.8),ease:'none',immediateRender:false},palcoIni);}
+// troca de painel: deslize mais rápido com desfoque de movimento; 'whip' = troca de assunto (mais brusca)
+function cena(t,tipo='slide'){fechaPalco(t);const P=panel();const i=panels.length-1;
+  if(i>0){const d=tipo==='whip'?0.42:0.6,a=Math.max(0,t-d*0.6);EV(a,tipo==='whip'?'whip':'whoosh');
+    tl.to('#world',{x:-i*1920,duration:d,ease:tipo==='whip'?'expo.inOut':'power3.inOut'},a);
+    tl.to('#dots',{backgroundPositionX:-(i*1920*0.35)+'px',duration:d,ease:E},a);
+    tl.fromTo('#world',{filter:'blur(0px)'},{filter:tipo==='whip'?'blur(14px)':'blur(6px)',duration:d/2,yoyo:true,repeat:1,ease:'sine.inOut',immediateRender:false},a);}
+  palcoAtual=palcoDe(P);palcoIni=t;return palcoAtual;}
+// "soco": zoom rápido no palco + grave
+function soco(t,k=1.07){EV(t,'boom');tl.to(palcoAtual,{scale:'+='+(k-1),duration:0.16,ease:'power2.out'},t).to(palcoAtual,{scale:'-='+(k-1)*0.7,duration:0.45,ease:'power2.inOut'},t+0.16);}
+
+/* ---------- peças novas ---------- */
+const SOMBRA='box-shadow:26px 46px 70px rgba(80,60,30,.20),0 6px 14px rgba(80,60,30,.10);';
+// celular inclinado (2.5D) com um vídeo genérico dentro
+function mock(P,x,y,h,t,lado,inner){const wd=Math.round(h*0.52);
+  const s=add(P,`<div style="position:absolute;inset:14px;border-radius:24px;overflow:hidden;background:#2c3238">${inner}</div><div style="position:absolute;left:50%;top:6px;width:64px;height:7px;margin-left:-32px;border-radius:4px;background:#5d6670"></div>`,
+    `left:${x}px;top:${y}px;width:${wd}px;height:${h}px;border:5px solid #16191c;border-radius:38px;background:#16191c;${SOMBRA}`);
+  const ry=lado<0?16:-16;EV(t,'whoosh',0.7);
+  tl.fromTo(s,{x:lado*520,opacity:0,rotationY:lado*-50,transformPerspective:1600},{x:0,opacity:1,rotationY:ry,transformPerspective:1600,duration:0.6,ease:'power3.out',immediateRender:false},t);
+  tl.set(s,{opacity:0},0);return s;}
+const VID=(cor,thumbTxt)=>`<div style="position:absolute;inset:0;background:linear-gradient(170deg,${cor},#2c3238)"></div>
+  <div style="position:absolute;left:18px;right:18px;top:40px;height:150px;border-radius:14px;background:#fffdf8;display:flex;align-items:center;justify-content:center;font-family:Bahnschrift;font-weight:700;font-size:40px;color:#16191c">${thumbTxt}</div>
+  <div style="position:absolute;left:18px;right:60px;top:210px;height:16px;border-radius:8px;background:#fffdf8;opacity:.8"></div>
+  <div style="position:absolute;left:18px;right:120px;top:238px;height:16px;border-radius:8px;background:#fffdf8;opacity:.5"></div>`;
+// etiqueta em caixa alta (cor do canal), entra com pop elástico
+function kw(P,txt,x,y,t,cor=G,fs=40){const s=add(P,txt,`left:${x}px;top:${y}px;padding:10px 24px;border-radius:14px;background:${cor};color:#fff;font-family:Bahnschrift;font-weight:700;font-size:${fs}px;letter-spacing:2px;text-transform:uppercase;white-space:nowrap;${SOMBRA}`);
+  EV(t,'pop');tl.from(s,{scale:0,opacity:0,duration:0.42,ease:'back.out(2.6)'},t);return s;}
+// contorno desenhado em volta de algo (marca-texto)
+function contorno(P,x,y,wd,h,t,cor=G,r=24){const s=add(P,`<svg width="${wd+20}" height="${h+20}" style="overflow:visible"><rect x="10" y="10" width="${wd}" height="${h}" rx="${r}" pathLength="1" fill="none" stroke="${cor}" stroke-width="9" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1"/></svg>`,`left:${x-10}px;top:${y-10}px`);
+  EV(t,'risca',0.7);tl.to(s+' rect',{strokeDashoffset:0,duration:0.38,ease:'power2.inOut'},t);return s;}
+function risco(P,x,y,wd,t){const s=add(P,`<svg width="${wd}" height="40" style="overflow:visible"><path d="M0 22 L${wd} 16" pathLength="1" stroke="${R}" stroke-width="12" stroke-linecap="round" fill="none" stroke-dasharray="1" stroke-dashoffset="1"/></svg>`,`left:${x}px;top:${y}px`);
+  EV(t,'risca');tl.to(s+' path',{strokeDashoffset:0,duration:0.25,ease:'power2.in'},t);return s;}
+// chave liga/desliga
+function chave(P,lab,x,y,t,on){const k=uid++;const s=card(P,`<div style="display:flex;align-items:center;gap:34px;padding:26px 36px">
+   <div id="tr${k}" style="position:relative;width:150px;height:80px;border-radius:40px;background:#cfc6b4;border:3px solid #16191c;flex:none"><div id="kn${k}" style="position:absolute;left:6px;top:6px;width:62px;height:62px;border-radius:50%;background:#fffdf8;border:3px solid #16191c;box-sizing:border-box"></div></div>
+   <div class="h" style="font-size:58px;letter-spacing:1px;text-transform:uppercase">${lab}</div></div>`,x,y,560,132,t,'pop',SOMBRA);
+  EV(on,'toggle');tl.to('#kn'+k,{x:70,duration:0.28,ease:'back.out(2.4)'},on);tl.to('#tr'+k,{backgroundColor:G,duration:0.2},on);
+  tl.to(s,{borderColor:G,duration:0.2},on);return s;}
+// curva de retenção (SVG) — usada no cartão e dentro da lupa
+const CURVA=(id='')=>`<svg width="1000" height="420" viewBox="0 0 1000 420">
+  <path d="M60 30 V380 H980" stroke="#8a8f96" stroke-width="4" fill="none"/>
+  <text x="70" y="410" font-family="Consolas" font-size="26" fill="#5c574e">0:00</text><text x="250" y="410" font-family="Consolas" font-size="26" fill="#d14343">0:30</text><text x="900" y="410" font-family="Consolas" font-size="26" fill="#5c574e">8:00</text>
+  <path ${id?`id="${id}"`:''} d="M60 50 C150 55 220 70 270 250 C330 300 600 310 980 330" pathLength="1" stroke="#d14343" stroke-width="9" fill="none" stroke-linecap="round" ${id?'stroke-dasharray="1" stroke-dashoffset="1"':''}/>
+  <circle cx="270" cy="250" r="12" fill="#d14343"/></svg>`;
+
+/* ======================= roteiro ======================= */
+let P,t;
+/* f0–f1: dois vídeos iguais */
+t=T(1,0);P=cena(t);
+{mock(P,900,90,620,w('dois'),-1,VID('#3b7a8f','TEMA X'));
+ mock(P,1470,90,620,w('videos')+0.15,1,VID('#3b7a8f','TEMA X'));
+ arm('point',w('dois',{depois:0}));
+ const t1=w('tema'),t2=w('thumb'),t3=w('dia');
+ kw(P,'= tema',940,760,t1);kw(P,'= thumb',1170,760,t2);kw(P,'= dia',1440,760,t3);
+ tl.to(palcoAtual,{rotation:-0.6,duration:2,ease:'sine.inOut',yoyo:true,repeat:1},t1);
+ arm('down',fim('dia'));}
+
+/* f2–f3: um explode, o outro trava */
+t=T(1,2);P=cena(t);
+{const tA=w('dez'),tB=w('duzentas');
+ const a=card(P,`<div class="tag" style="position:absolute;left:34px;top:26px">vídeo A</div><div class="cc"><div style="font-family:Consolas;font-weight:700;white-space:nowrap"><span id="na" style="font-size:150px;letter-spacing:-4px">0</span></div><div class="h" style="font-size:40px;color:var(--muted)">visualizações</div></div>`,820,170,500,420,t,'left',SOMBRA);
+ const b=card(P,`<div class="tag" style="position:absolute;left:34px;top:26px">vídeo B</div><div class="cc"><div style="font-family:Consolas;font-weight:700;white-space:nowrap"><span id="nb" style="font-size:150px;letter-spacing:-4px">0</span></div><div class="h" style="font-size:40px;color:var(--muted)">visualizações</div></div>`,1380,170,500,420,T(1,3)-0.2,'pop',SOMBRA);
+ conta('na',tA-0.3,tA+0.9,0,10000);tl.to('#na',{color:G,duration:0.15},tA+0.9);EV(tA+0.9,'caixa');
+ tl.to(a,{scale:1.06,duration:0.18,yoyo:true,repeat:1},tA+0.9);surpresa(tA+0.8);
+ conta('nb',tB-0.4,tB+0.3,0,200);tl.to('#nb',{color:R,duration:0.12},tB+0.3);EV(tB+0.3,'impacto');
+ tl.to(b,{y:24,duration:0.12,yoyo:true,repeat:1,ease:'power2.out'},tB+0.3);
+ const ne=add(P,'≠',`left:1312px;top:300px;font-family:Bahnschrift;font-weight:700;font-size:150px;color:${K}`);EV(tB+0.6,'pop');
+ tl.from(ne,{scale:0,rotation:-90,duration:0.4,ease:'back.out(2.5)'},tB+0.6);
+ tl.from(a+','+b,{rotationY:0},0);tl.set(a,{rotationY:8,transformPerspective:1600},t);tl.set(b,{rotationY:-8,transformPerspective:1600},t);
+ kw(P,'travou',1520,640,tB+0.35,R);}
+
+/* f4: não é o título */
+t=T(1,4);P=cena(t);
+{const c=card(P,`<div style="display:flex;align-items:center;gap:30px;padding:36px 44px"><div class="tag">título</div><div class="h" style="font-size:64px;white-space:nowrap">Como crescer no YouTube</div></div>`,860,250,1000,170,t,'up',SOMBRA);
+ risco(P,1060,315,770,w('titulo')+0.1);stamp(P,'NÃO É ISSO',1250,470,w('titulo')+0.35,-7,'',64);
+ arm('mid',t);arm('down',fim('titulo')+0.2);
+/* f5: os primeiros 30 s (troca de assunto = whip) */
+ t=T(1,5);P=cena(t,'whip');
+ const k=uid++;card(P,`<div class="cc"><svg width="380" height="380" viewBox="0 0 380 380" style="position:absolute;left:60px;top:40px"><circle cx="190" cy="190" r="160" stroke="#e4dccb" stroke-width="34" fill="none"/>
+   <circle id="ar${k}" cx="190" cy="190" r="160" stroke="${G}" stroke-width="34" fill="none" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="1" transform="rotate(-90 190 190)"/></svg>
+   <div style="position:absolute;left:60px;top:40px;width:380px;height:380px;display:flex;align-items:center;justify-content:center;font-family:Consolas;font-weight:700;font-size:110px">0:<span id="sg">00</span></div>
+   <div style="position:absolute;left:490px;top:110px" class="h"><div style="font-size:84px">primeiros</div><div style="font-size:120px;color:${G}">30 s</div></div></div>`,860,150,1000,470,t-0.1,'pop',SOMBRA);
+ const tt=w('trinta');tl.to('#ar'+k,{strokeDashoffset:0,duration:1.1,ease:'none'},tt-0.4);conta('sg',tt-0.4,tt+0.7,0,30);
+ soco(tt+0.7);contorno(P,1340,240,500,300,tt+0.75);arm('point',tt);}
+
+/* f6–f7: pausa de alerta + lupa na curva */
+{const root=document.getElementById('root'),masc=document.getElementById('masc');
+ const dim=document.createElement('div');dim.id='dim';dim.style.cssText='position:absolute;inset:0;background:#16191c;opacity:0';root.insertBefore(dim,masc);
+ const ta=w('so');EV(ta-0.9,'riser');EV(ta-0.05,'mudo',0.9);EV(ta+0.85,'boom');
+ tl.to('#dim',{opacity:0.88,duration:0.18},ta-0.05);
+ const al=document.createElement('div');al.id='alerta';al.style.cssText='position:absolute;left:880px;top:300px;width:960px;text-align:center;opacity:0';
+ al.innerHTML=`<div style="width:170px;height:170px;margin:0 auto">${I.alerta}</div><div class="h" style="font-size:120px;color:#fffdf8;margin-top:10px;letter-spacing:2px">SÓ QUE…</div>`;root.insertBefore(al,masc);
+ tl.to('#alerta',{opacity:1,duration:0.01},ta);tl.from('#alerta',{scale:0.4,duration:0.5,ease:'back.out(2)'},ta);alerta(ta,1.6);
+ tl.to('#dim,#alerta',{opacity:0,duration:0.3},w('detalhe')+0.35);
+ t=w('detalhe')+0.3;P=cena(t,'whip');
+ const cx=860,cy=170;card(P,`<div class="tag" style="position:absolute;left:34px;top:24px">quem continua assistindo</div><div style="position:absolute;left:0;top:50px">${CURVA('cv')}</div>`,cx,cy,1020,500,t-0.1,'up',SOMBRA);
+ tl.to('#cv',{strokeDashoffset:0,duration:0.9,ease:'power1.inOut'},t+0.1);EV(t+0.1,'risca',0.5);
+ // lupa: anda pela curva e para no tombo dos 30 s
+ const R0=120,Z=2,px0=60,py0=50,px1=270,py1=250,ox=cx+2,oy=cy+52;
+ const L=add(P,`<div class="lz" style="position:absolute;inset:0;border-radius:50%;overflow:hidden;background:#fffdf8;border:9px solid #16191c;box-shadow:0 24px 50px rgba(0,0,0,.25)"><div id="lin" style="position:absolute;left:-9px;top:-9px;transform-origin:0 0">${CURVA()}</div></div>
+   <div style="position:absolute;left:${R0*1.62}px;top:${R0*1.62}px;width:30px;height:130px;border-radius:15px;background:#16191c;transform:rotate(-45deg);transform-origin:15px 0"></div>`,
+   `left:${ox+px0-R0}px;top:${oy+py0-R0}px;width:${R0*2}px;height:${R0*2}px;opacity:0`);
+ const tl0=w('ninguem');
+ tl.set(L,{opacity:1},tl0-0.5);EV(tl0-0.5,'pop');tl.from(L+' .lz',{scale:0.3,duration:0.35,ease:'back.out(2)'},tl0-0.5);
+ tl.fromTo('#lin',{x:-(px0*Z-R0),y:-(py0*Z-R0),scale:Z},{x:-(px1*Z-R0),y:-(py1*Z-R0),scale:Z,duration:1.1,ease:'power2.inOut',immediateRender:true},tl0-0.3);
+ tl.fromTo(L,{x:0,y:0},{x:px1-px0,y:py1-py0,duration:1.1,ease:'power2.inOut',immediateRender:false},tl0-0.3);
+ EV(tl0+0.85,'shutter');const fl=add(P,'',`left:${ox+px1-R0}px;top:${oy+py1-R0}px;width:${R0*2}px;height:${R0*2}px;border-radius:50%;background:#fff;opacity:0`);tl.fromTo(fl,{opacity:0.9},{opacity:0,duration:0.35,immediateRender:false},tl0+0.85);contorno(P,ox+px1-R0-10,oy+py1-R0-10,R0*2+20,R0*2+20,tl0+0.95,R,R0+10);
+ kw(P,'aqui o YouTube decide',1080,700,w('decide')-0.1,K,44);
+ tl.to(palcoAtual,{scale:'+=0.05',duration:0.6,ease:'power2.out'},w('decide'));inclina(w('mostrando'));}
+
+/* f8–f10: liga os botões, o gráfico sobe */
+t=T(1,8);P=cena(t);
+{chave(P,'retenção',880,190,t,w('retencao'));chave(P,'clique',880,360,T(1,9),w('clique'));arm('point',w('retencao',{depois:0}));
+ const tg=w('grafico');const gk=uid++;
+ card(P,`<svg width="380" height="300" viewBox="0 0 560 360" style="position:absolute;left:20px;top:40px"><path d="M30 20 V330 H540" stroke="#8a8f96" stroke-width="4" fill="none"/>
+   <path id="gl${gk}" d="M40 310 C140 300 200 290 260 240 C330 180 400 120 530 40" pathLength="1" stroke="${G}" stroke-width="10" fill="none" stroke-linecap="round" stroke-dasharray="1" stroke-dashoffset="1"/></svg>`,1470,170,420,380,T(1,10)-0.1,'pop',SOMBRA);
+ EV(tg-0.6,'riser');tl.to('#gl'+gk,{strokeDashoffset:0,duration:1.2,ease:'power2.in'},tg-0.3);EV(tg+0.9,'ding');
+ const sobe=kw(P,'▲ sobe',1560,580,tg+0.9,G,52);soco(tg+0.9,1.05);joinha(tg+1.0,1.8);}
+
+/* ---------- legenda (por frase, palavra por palavra) ---------- */
+const VERDE=new Set(['trinta','segundos','retencao','clique','grafico']);
+const VERM=new Set(['trava','duzentas','titulo','ninguem']);
+const leg=document.getElementById('legenda');
+const FR=[];TP.blocos.forEach(B=>B.frases.forEach((F,fi)=>{const all=PAL.filter(p=>p.b===B.n&&p.f===fi);if(!all.length)return;
+  const n=Math.ceil(all.length/9),per=Math.ceil(all.length/n);
+  for(let c=0;c<n;c++){const ws=all.slice(c*per,(c+1)*per);if(!ws.length)continue;
+  const d=document.createElement('div');d.className='ph';ws.forEach(p=>{const s=document.createElement('span');s.textContent=p.w.replace(/^"|"$/g,'');const k=norm(p.w);if(VERDE.has(k))s.className='g';if(VERM.has(k))s.className='r';d.appendChild(s);});
+  const nx=all[(c+1)*per];leg.appendChild(d);FR.push({el:d,ini:c===0?B.inicio_global+F.ini:ws[0].ini,fim:nx?nx.ini-0.26:B.inicio_global+F.fim,ws,spans:[...d.children]});}}));
+
+/* ---------- respiração / piscar / números (função do tempo) ---------- */
+const BLINK=[];for(let b=1.3;b<DUR;b+=3.1+((b*7)%1.7))BLINK.push(b);
+const MO=['m0','m1','m2','m3'].map(id=>document.getElementById(id));
+const guy=document.getElementById('guy'),eyes=document.getElementById('eyes');
+const bubT=document.getElementById('bubbleTxt');
+const NUME=NUM.map(n=>({...n,el:document.getElementById(n.id)}));
+const NBY={};for(const n of NUME)(NBY[n.id]=NBY[n.id]||[]).push(n);
+function vivo(t){
+  let bt='?',bc=K;for(const [a,x,c] of BUB){if(t>=a){bt=x;bc=c;}}if(bubT.textContent!==bt)bubT.textContent=bt;bubT.setAttribute('fill',bc);
+  for(const id in NBY){const L=NBY[id];let n=L[0];for(const x of L)if(t>=x.t0)n=x;const p=Math.min(1,Math.max(0,(t-n.t0)/Math.max(0.01,n.t1-n.t0)));const v=n.a+(n.b-n.a)*p*p;n.el.textContent=fmt(v)+n.suf;}
+  let cur=null;for(const f of FR){const on=t>=f.ini-0.05&&t<f.fim+0.25&&!(cur);if(on)cur=f;f.el.style.display=on?'block':'none';}
+  if(cur)cur.ws.forEach((p,i)=>{cur.spans[i].style.opacity=t>=p.ini?1:0;});
+  let w=null;for(const p of PAL){if(t>=p.ini&&t<p.fim){w=p;break;}}
+  let m=0;if(w){const k=Math.floor((t-w.ini)/0.11);m=[1,2,1,0][k%4];if(w.fim-w.ini<0.12)m=2;}
+  MO.forEach((e,i)=>e.setAttribute('opacity',i===m?1:0));
+  guy.setAttribute('transform',`translate(0 ${(-3-3*Math.sin(t*2*Math.PI/1.8)).toFixed(2)})`);
+  let sy=1;for(const b of BLINK){if(t>=b&&t<b+0.16){sy=0.12;break;}}
+  eyes.setAttribute('transform',`translate(0 ${330*(1-sy)}) scale(1 ${sy})`);
+}
+fechaPalco(DUR);
+tl.to('#root',{opacity:1,duration:0.01},DUR-0.01);
+window.EVENTOS=EVENTOS.sort((a,b)=>a[0]-b[0]);window.DURACAO=DUR;
+window.__timelines=window.__timelines||{};window.__timelines['root']=tl;
+window.seek=(t)=>{tl.seek(t,false);vivo(t);};
+window.seek(0);
+console.log('paineis',panels.length,'dur',DUR);
+</script>
+</body>
+</html>
