@@ -1,0 +1,35 @@
+# Analisa um vídeo de referência (Gemini assiste pelo link) e tenta baixar quadros e áudio.
+name: Analisar referência
+on:
+  push:
+    branches: [analise-referencia]
+    paths: [ref.txt]
+permissions:
+  contents: write
+jobs:
+  analisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    env:
+      GH_TOKEN: ${{ github.token }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Gemini assiste
+        run: |
+          export REF_URL="$(head -1 ref.txt)"
+          python3 automacao/analisar_ref.py
+      - name: Baixar trechos (melhor esforço)
+        continue-on-error: true
+        run: |
+          pip install -q yt-dlp
+          sudo apt-get install -y -qq ffmpeg >/dev/null
+          yt-dlp -f "bv*[height<=720]+ba/b[height<=720]" --merge-output-format mp4 -o ref.mp4 "$(head -1 ref.txt)"
+          ffmpeg -loglevel error -i ref.mp4 -t 90 -vf "fps=1,scale=640:-1,tile=5x3" saida/quadros_%02d.jpg
+          ffmpeg -loglevel error -i ref.mp4 -t 90 -vn -ac 1 -ar 44100 -b:a 128k saida/audio_90s.mp3
+          ffprobe -v error -show_entries format=duration -of csv=p=0 ref.mp4 > saida/duracao.txt
+      - name: Guardar na Release
+        if: always()
+        run: |
+          gh release delete ref-analise -y --cleanup-tag 2>/dev/null || true
+          gh release create ref-analise --target analise-referencia --prerelease -t "Análise da referência" -n "Análise automática" saida/*
