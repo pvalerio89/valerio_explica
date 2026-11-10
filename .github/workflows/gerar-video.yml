@@ -92,11 +92,12 @@ jobs:
         run: |
           arquivos=("$PASTA"/voz/*.wav)
           [ "$MODO" = completo ] && arquivos+=(saida/video-$NN-final.mp4)
+          [ "$MODO" = previa ] && [ -f saida/prancha.jpg ] && cp saida/prancha.jpg "saida/prancha-video-$NN.jpg" && arquivos+=("saida/prancha-video-$NN.jpg")
           for t in "$PASTA"/publicar/thumbnail*.jpg; do [ -f "$t" ] && arquivos+=("$t"); done
           if gh release view "video-$NN" > /dev/null 2>&1; then
             gh release upload "video-$NN" "${arquivos[@]}" --clobber
           else
-            gh release create "video-$NN" "${arquivos[@]}" --title "Vídeo $NN ($PASTA)" \
+            gh release create "video-$NN" "${arquivos[@]}" --target "$GITHUB_SHA" --title "Vídeo $NN ($PASTA)" \
               --notes "Gerado na nuvem em $(date -u +%Y-%m-%d) (commit $GITHUB_SHA)."
           fi
 
@@ -107,5 +108,5 @@ jobs:
           git add "motion/v$NN" "motion/hf/v$NN/index.html" 2>/dev/null || true
           git diff --cached --quiet && exit 0
           git commit -m "Gerar vídeo: tempos e eventos de $PASTA"
-          git pull --rebase origin "$GITHUB_REF_NAME"
-          git push origin "HEAD:$GITHUB_REF_NAME"
+          git pull --rebase origin "refs/heads/$GITHUB_REF_NAME"
+          git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"

@@ -6,7 +6,7 @@ Canal **Valerio Explica** (@ValerioExplica, ID `UCpt3lpOipp-lWumvdIUD9jg`) sobre
 ## Pastas
 - `canal/` — foto, banner, mascote (`gerar_canal.py`).
 - `motion/` — pipeline dos vídeos (`hf/` HyperFrames para o estilo claro; Remotion/HTML com `seek(t)`, `render.mjs`, `audio_full.py`, `shorts.py N` para Shorts).
-- `video-01-70-views/`, `video-02-titulos-thumbs/`, `video-03-primeiros-30s/`, `video-04-ia-sem-desmonetizar/` (https://youtu.be/aTwwTp0bwV0, 31/out) — vídeos publicados (vídeo 4: cenas em `motion/hf/v04/`, render em 3 partes com `render.mjs --inicio`), `video-05-quanto-o-youtube-paga/`, `video-06-4000-horas/` (https://youtu.be/cSI3xtbYbM8, 9/nov; cenas em `motion/hf/v06/cenas.js` + `montar.py`, som `motion/audio_v06.py`) (cada um com `gerar_voz.py` e `publicar/`).
+- `video-01-70-views/`, `video-02-titulos-thumbs/`, `video-03-primeiros-30s/`, `video-04-ia-sem-desmonetizar/` (https://youtu.be/aTwwTp0bwV0, 31/out) — vídeos publicados (vídeo 4: cenas em `motion/hf/v04/`, render em 3 partes com `render.mjs --inicio`), `video-05-quanto-o-youtube-paga/`, `video-06-4000-horas/` (https://youtu.be/cSI3xtbYbM8, 9/nov; cenas em `motion/hf/v06/cenas.js` + `montar.py`, som `motion/audio_v06.py`), `video-07-shorts-sem-aparecer/` (https://youtu.be/Lc0lDUSic2o, 10/nov, feito todo pelo GitHub; cenas em `motion/hf/v07/`) (cada um com `gerar_voz.py` e `publicar/`).
 - `gemini_voz.py` — voz (Gemini TTS); a chave fica em `~/.config/watch/.env`.
 
 ## GitHub (desde 09/nov/2026)
@@ -25,6 +25,6 @@ Canal **Valerio Explica** (@ValerioExplica, ID `UCpt3lpOipp-lWumvdIUD9jg`) sobre
 - Ferramentas: cenas em **HyperFrames** (`motion/hf/`, GSAP pausado + `window.seek`, `npx hyperframes check` e `snapshot` para conferir); render final pelo `motion/render.mjs` (o render do HyperFrames recusa com disco quase cheio). Batida de **120 BPM** com `beats/batida.json` (batidas + cliques nos momentos-chave), mixada baixa sob a voz. Voz continua Sadaltager (não usar Fish Audio).
 - **Mascote desenhado (aprovado)**: personagem de capuz em SVG feito em código, contorno preto grosso, moletom `#2c3238` com cordões verdes; partes separadas (cabeça, olhos, bocas, braço, mão) animadas com GSAP: respirar, piscar, apontar, boca no ritmo da fala. Grátis, sem IA de imagem/vídeo. Modelo: `motion/hf/teste-desenho/index.html`.
 - Prancha + nota própria 8+ antes de mostrar. Som -14 LUFS. Render: no máximo 3 Chromes em paralelo.
-- Thumbs: personagem realista de capuz (Gem do Gemini).
+- Thumbs: bem chamativas (fundo vibrante com raios e brilho, texto gigante com contorno, dinheiro/ícones) com o personagem realista de capuz, rosto escondido. Poses prontas (recortadas) em `canal/thumb-chamativa/capuz-poses/`; modelo em `video-07-shorts-sem-aparecer/publicar/thumb.html`. Poses novas: ChatGPT do Patrick pelo Chrome do PC.
 - Postar: **Chrome do perfil "Valerio Explica"** (nunca o Quiz nem o Patrick; não trocar sem perguntar). Conferir o canal antes de agir. Sempre **"Não é conteúdo para crianças"**. Esperar a verificação de direitos autorais antes de Publicar. Shorts com "Vídeo relacionado" = vídeo longo.
 - Economizar o plano: uma conversa por tarefa, ler páginas por texto, não repetir ações falhas — perguntar ao usuário.
