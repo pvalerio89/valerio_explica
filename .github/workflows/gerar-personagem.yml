@@ -1,0 +1,38 @@
+# Gera o personagem do canal (rosto do Patrick) com o Gemini e guarda na Release "personagem".
+name: Gerar personagem
+
+on:
+  workflow_dispatch:
+    inputs:
+      poses:
+        description: "Poses separadas por espaço (vazio = todas): surpreso pensativo apontando desconfiado comemorando cartoon-3d"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Gerar
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: python automacao/gerar_personagem.py ${{ inputs.poses }}
+      - name: Guardar na Release
+        if: always()
+        run: |
+          ls saida/personagem/*.png || exit 0
+          if gh release view personagem > /dev/null 2>&1; then
+            gh release upload personagem saida/personagem/*.png --clobber
+          else
+            gh release create personagem saida/personagem/*.png --target "$GITHUB_SHA" --title "Personagem do canal" --notes "Poses geradas com o Gemini a partir da foto do Patrick."
+          fi
