@@ -26,7 +26,7 @@ def chamar(model, prompt):
 
 os.makedirs("saida", exist_ok=True)
 for nome, prompt in PROMPTS.items():
-    for model in ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-2.0-flash"]:
+    for model in ["gemini-3.1-pro-preview", "gemini-3.8-flash"]:
         try:
             txt = chamar(model, prompt)
             open(f"saida/{nome}.md", "w", encoding="utf-8").write(f"<!-- {model} -->\n{txt}")
