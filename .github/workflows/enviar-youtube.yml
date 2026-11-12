@@ -1,5 +1,9 @@
-# Envia ao YouTube o vídeo que o "Gerar vídeo" guardou na Release "video-NN".
-# Título, descrição e thumbnail vêm de <pasta>/publicar/. Anota o link no publicados.json.
+# Envia ao YouTube o vídeo longo ou um Short do vídeo.
+# Padrão: PÚBLICO direto (regra do Patrick: pode postar sem pedir aprovação).
+# Vídeo longo: mp4 da Release "video-NN"; título, descrição e thumbnail de <pasta>/publicar/.
+# Short N: mp4 "short-N.mp4" da Release "video-NN" ou de <pasta>/shorts/ no repositório;
+#          título e descrição do bloco "SHORT N" de <pasta>/shorts/titulos.txt.
+# Anota o link no publicados.json e nunca envia de novo o que já está lá.
 name: Enviar ao YouTube
 
 on:
@@ -9,14 +13,33 @@ on:
         description: "Pasta do vídeo (ex.: video-07-tema)"
         required: true
         type: string
+      short:
+        description: "Vazio = vídeo longo. Número do Short (1, 2...) = envia esse Short"
+        required: false
+        type: string
       privacidade:
-        description: "privado = só você vê; publico = vai ao ar; agendado = usa o campo abaixo"
+        description: "publico = vai ao ar já; privado = só você vê; agendado = usa o campo abaixo"
         required: true
-        default: privado
+        default: publico
         type: choice
-        options: [privado, publico, agendado]
+        options: [publico, privado, agendado]
       quando:
         description: "Só para agendado: data e hora de Brasília (ex.: 2026-11-14T12:00)"
+        required: false
+        type: string
+  workflow_call:   # usado pelo "Gerar e publicar"
+    inputs:
+      pasta:
+        required: true
+        type: string
+      short:
+        required: false
+        type: string
+      privacidade:
+        required: false
+        default: publico
+        type: string
+      quando:
         required: false
         type: string
 
@@ -33,9 +56,11 @@ jobs:
     timeout-minutes: 90
     env:
       PASTA: ${{ inputs.pasta }}
+      SHORT: ${{ inputs.short }}
       PRIV: ${{ inputs.privacidade }}
       QUANDO: ${{ inputs.quando }}
     steps:
+      # Pega a versão mais nova da branch (inclui o link do vídeo longo gravado minutos antes).
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
@@ -44,7 +69,7 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Baixar o vídeo da Release
+      - name: Achar o vídeo
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -52,8 +77,16 @@ jobs:
           NN=$(printf "%02d" "$(echo "$PASTA" | sed -E 's/^video-0*([0-9]+).*/\1/')")
           echo "PASTA=$PASTA" >> "$GITHUB_ENV"
           mkdir -p baixado
-          gh release download "video-$NN" --dir baixado --pattern '*-final.mp4'
-          echo "MP4=$(ls baixado/*.mp4 | head -1)" >> "$GITHUB_ENV"
+          if [ -z "$SHORT" ]; then
+            gh release download "video-$NN" --dir baixado --pattern '*-final.mp4'
+            MP4=$(ls baixado/*.mp4 | head -1)
+          else
+            gh release download "video-$NN" --dir baixado --pattern "short-$SHORT.mp4" 2>/dev/null || true
+            MP4=$(ls baixado/short-$SHORT.mp4 2>/dev/null || ls "$PASTA/shorts/short-$SHORT.mp4" 2>/dev/null || true)
+            [ -n "$MP4" ] || { echo "::error::Não achei short-$SHORT.mp4 na Release video-$NN nem em $PASTA/shorts/."; exit 1; }
+          fi
+          echo "MP4=$MP4" >> "$GITHUB_ENV"
+          echo "Arquivo: $MP4 ($(du -h "$MP4" | cut -f1))"
 
       - name: Enviar
         env:
@@ -67,8 +100,10 @@ jobs:
             [ -n "$QUANDO" ] || { echo "::error::Escolheu agendado mas não preencheu a data."; exit 1; }
             extra="--agendar $QUANDO"
           fi
+          [ -n "$SHORT" ] && extra="$extra --short $SHORT"
           python automacao/youtube.py enviar "$PASTA" "$MP4" $extra | tee -a "$GITHUB_STEP_SUMMARY"
 
+      # Roda mesmo se algo falhar depois do envio, para o link nunca se perder.
       - name: Gravar no publicados.json
         if: always()
         run: |
@@ -76,6 +111,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add publicados.json
-          git commit -m "YouTube: $PASTA enviado ($PRIV)"
-          git pull --rebase origin "$GITHUB_REF_NAME"
-          git push origin "HEAD:$GITHUB_REF_NAME"
+          git commit -m "YouTube: $PASTA ${SHORT:+short-$SHORT }enviado ($PRIV)"
+          git pull --rebase origin "refs/heads/$GITHUB_REF_NAME"
+          git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"

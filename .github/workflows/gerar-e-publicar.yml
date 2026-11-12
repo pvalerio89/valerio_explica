@@ -1,0 +1,96 @@
+# Tudo de uma vez: gera o vídeo completo (se ainda não estiver na Release), posta no YouTube
+# e depois posta os Shorts pedidos, com o link do vídeo longo já trocado na descrição.
+# Padrão: PÚBLICO direto. É este que o Claude dispara quando o Patrick pede "faz e posta".
+name: Gerar e publicar
+
+on:
+  workflow_dispatch:
+    inputs:
+      pasta:
+        description: "Pasta do vídeo (ex.: video-08-tema)"
+        required: true
+        type: string
+      privacidade:
+        description: "publico = vai ao ar já; privado = só você vê; agendado = usa o campo abaixo"
+        required: true
+        default: publico
+        type: choice
+        options: [publico, privado, agendado]
+      quando:
+        description: "Só para agendado: data e hora de Brasília (ex.: 2026-11-14T12:00)"
+        required: false
+        type: string
+      shorts:
+        description: "Shorts para postar depois do vídeo (ex.: 1,2). Vazio = nenhum"
+        required: false
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  conferir:
+    runs-on: ubuntu-latest
+    outputs:
+      tem_video: ${{ steps.c.outputs.tem_video }}
+      ja_postado: ${{ steps.c.outputs.ja_postado }}
+      shorts: ${{ steps.c.outputs.shorts }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: c
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PASTA: ${{ inputs.pasta }}
+          SHORTS: ${{ inputs.shorts }}
+        run: |
+          PASTA=$(basename "${PASTA%/}")
+          [ -d "$PASTA" ] || { echo "::error::Pasta $PASTA não existe no repositório."; exit 1; }
+          NN=$(printf "%02d" "$(echo "$PASTA" | sed -E 's/^video-0*([0-9]+).*/\1/')")
+          if gh release view "video-$NN" --json assets -q '.assets[].name' 2>/dev/null | grep -q -- '-final\.mp4$'; then
+            echo "tem_video=true" >> "$GITHUB_OUTPUT"; echo "Vídeo já gerado na Release video-$NN: não gera de novo."
+          else
+            echo "tem_video=false" >> "$GITHUB_OUTPUT"
+          fi
+          ja=$(python3 -c "import json,sys;d=json.load(open('publicados.json'));print(d['videos'].get(sys.argv[1],{}).get('youtube',{}).get('status',''))" "$PASTA")
+          [ -n "$ja" ] && echo "ja_postado=true" >> "$GITHUB_OUTPUT" && echo "Vídeo longo já está no YouTube ($ja): só os Shorts."
+          echo "shorts=$(echo "$SHORTS" | tr -cs '0-9' '\n' | grep . | python3 -c 'import json,sys;print(json.dumps([l.strip() for l in sys.stdin]))')" >> "$GITHUB_OUTPUT"
+
+  gerar:
+    needs: conferir
+    if: needs.conferir.outputs.tem_video != 'true' && needs.conferir.outputs.ja_postado != 'true'
+    uses: ./.github/workflows/gerar-video.yml
+    with:
+      pasta: ${{ inputs.pasta }}
+      modo: completo
+    secrets: inherit
+
+  postar_video:
+    needs: [conferir, gerar]
+    if: >-
+      !cancelled() && needs.conferir.result == 'success' && needs.conferir.outputs.ja_postado != 'true' &&
+      (needs.gerar.result == 'success' || needs.gerar.result == 'skipped')
+    uses: ./.github/workflows/enviar-youtube.yml
+    with:
+      pasta: ${{ inputs.pasta }}
+      privacidade: ${{ inputs.privacidade }}
+      quando: ${{ inputs.quando }}
+    secrets: inherit
+
+  postar_shorts:
+    needs: [conferir, postar_video]
+    # Short só sai depois do vídeo longo estar no YouTube (a descrição leva o link dele).
+    if: >-
+      !cancelled() && needs.conferir.outputs.shorts != '[]' &&
+      (needs.postar_video.result == 'success' || needs.conferir.outputs.ja_postado == 'true')
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        short: ${{ fromJSON(needs.conferir.outputs.shorts) }}
+    uses: ./.github/workflows/enviar-youtube.yml
+    with:
+      pasta: ${{ inputs.pasta }}
+      short: ${{ matrix.short }}
+      privacidade: ${{ inputs.privacidade }}
+      quando: ${{ inputs.quando }}
+    secrets: inherit

@@ -25,6 +25,8 @@ cookies*.txt
 *.mkv
 *.webm
 *.avi
+# Shorts são leves (até ~15 MB): podem ir no repositório para o "Enviar ao YouTube" achar
+!**/shorts/short-*.mp4
 
 # ===== Python: caches e ambientes =====
 __pycache__/
