@@ -1,12 +1,84 @@
 {
   "_sobre": "O que já foi para o YouTube. O workflow 'Enviar ao YouTube' lê este arquivo e não envia de novo o que já está aqui. id null = publicado, mas o ID não foi anotado.",
   "videos": {
-    "video-01-70-views": {"youtube": {"status": "publicado", "id": null, "origem": "manual"}},
-    "video-02-titulos-thumbs": {"youtube": {"status": "publicado", "id": null, "origem": "manual"}},
-    "video-03-primeiros-30s": {"titulo": "Os primeiros 30 segundos...", "youtube": {"status": "publicado", "id": "QCeYPku_WLE", "url": "https://youtu.be/QCeYPku_WLE", "data": "2026-10-31", "origem": "manual"}},
-    "video-04-ia-sem-desmonetizar": {"youtube": {"status": "publicado", "id": "aTwwTp0bwV0", "url": "https://youtu.be/aTwwTp0bwV0", "data": "2026-10-31", "origem": "manual"}},
-    "video-05-quanto-o-youtube-paga": {"titulo": "Quanto o YouTube paga de verdade (1 milhão de views)", "youtube": {"status": "publicado", "id": "Zeef3BfWGig", "url": "https://youtu.be/Zeef3BfWGig", "data": "2026-11-04", "origem": "manual"}, "short-1": {"status": "publicado", "id": "StWANbooHqA", "url": "https://youtube.com/shorts/StWANbooHqA", "data": "2026-11-04"}},
-    "video-06-4000-horas": {"titulo": "Como chegar nas 4.000 horas antes de fevereiro (antes de dobrar)", "youtube": {"status": "publicado", "id": "cSI3xtbYbM8", "url": "https://youtu.be/cSI3xtbYbM8", "data": "2026-11-09", "origem": "manual"}},
-    "video-07-shorts-sem-aparecer": {"titulo": "Canal de Shorts sem aparecer com IA: o método dos 30 mil por mês funciona?", "youtube": {"status": "publicado", "id": "Lc0lDUSic2o", "url": "https://youtu.be/Lc0lDUSic2o", "data": "2026-11-10", "origem": "github"}}
+    "video-01-70-views": {
+      "youtube": {
+        "status": "publicado",
+        "id": null,
+        "origem": "manual"
+      }
+    },
+    "video-02-titulos-thumbs": {
+      "youtube": {
+        "status": "publicado",
+        "id": null,
+        "origem": "manual"
+      }
+    },
+    "video-03-primeiros-30s": {
+      "titulo": "Os primeiros 30 segundos...",
+      "youtube": {
+        "status": "publicado",
+        "id": "QCeYPku_WLE",
+        "url": "https://youtu.be/QCeYPku_WLE",
+        "data": "2026-10-31",
+        "origem": "manual"
+      }
+    },
+    "video-04-ia-sem-desmonetizar": {
+      "youtube": {
+        "status": "publicado",
+        "id": "aTwwTp0bwV0",
+        "url": "https://youtu.be/aTwwTp0bwV0",
+        "data": "2026-10-31",
+        "origem": "manual"
+      }
+    },
+    "video-05-quanto-o-youtube-paga": {
+      "titulo": "Quanto o YouTube paga de verdade (1 milhão de views)",
+      "youtube": {
+        "status": "publicado",
+        "id": "Zeef3BfWGig",
+        "url": "https://youtu.be/Zeef3BfWGig",
+        "data": "2026-11-04",
+        "origem": "manual"
+      },
+      "short-1": {
+        "status": "publicado",
+        "id": "StWANbooHqA",
+        "url": "https://youtube.com/shorts/StWANbooHqA",
+        "data": "2026-11-04"
+      }
+    },
+    "video-06-4000-horas": {
+      "titulo": "Como chegar nas 4.000 horas antes de fevereiro (antes de dobrar)",
+      "youtube": {
+        "status": "publicado",
+        "id": "cSI3xtbYbM8",
+        "url": "https://youtu.be/cSI3xtbYbM8",
+        "data": "2026-11-09",
+        "origem": "manual"
+      }
+    },
+    "video-07-shorts-sem-aparecer": {
+      "titulo": "Canal de Shorts sem aparecer com IA: o método dos 30 mil por mês funciona?",
+      "youtube": {
+        "status": "publicado",
+        "id": "Lc0lDUSic2o",
+        "url": "https://youtu.be/Lc0lDUSic2o",
+        "data": "2026-11-10",
+        "origem": "github"
+      }
+    },
+    "video-08-numeros-do-studio": {
+      "titulo": "Os 5 números do YouTube Studio que mostram se o seu canal vai crescer",
+      "youtube": {
+        "status": "publicado",
+        "id": "122HHWS6LBE",
+        "url": "https://youtu.be/122HHWS6LBE",
+        "data": "2026-11-13",
+        "sha256": "571a91d0ec8cecb2df8065e7215c33a40eef79f071e6e7f68c9da0f520db5480"
+      }
+    }
   }
 }
