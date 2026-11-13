@@ -45,6 +45,17 @@ SHORTS = {
                gancho="motion/shorts-voz/gancho-5b-pronto.wav", gancho_completo=5.5,
                gancho_txt=[("FEVEREIRO:", 0, 0), ("O YOUTUBE", 0, 0), ("DOBRA A REGRA", 1, 0), ("E TEM UM DETALHE", 0, 2.4), ("QUE NINGUÉM VIU", 1, 3.6)],
                saida="video-05-quanto-o-youtube-paga/shorts/short-2.mp4"),
+    # vídeo 8 (feitos no GitHub pelo workflow "Gerar Short"; o mp4 longo vem da Release video-08)
+    "8a": dict(video="video-08-numeros-do-studio/video-08-final.mp4", palavras="motion/v08/palavras.json",
+               trechos=[(67.6, 96.55)], claro=True, recorte="1180:880:720:30",  # "E qual é um número bom?" ... "quem já te conhece."
+               musica="motion/hf/v08/out/batida.wav", musica_em=60.0,
+               manchete=("TAXA DE CLIQUES CAINDO?", "PODE SER BOM SINAL"),
+               saida="video-08-numeros-do-studio/shorts/short-1.mp4"),
+    "8b": dict(video="video-08-numeros-do-studio/video-08-final.mp4", palavras="motion/v08/palavras.json",
+               trechos=[(336.45, 380.85)], claro=True, recorte="1180:880:720:30",  # "O total de inscritos..." ... "o que você deve mudar."
+               musica="motion/hf/v08/out/batida.wav", musica_em=200.0,
+               manchete=("PARE DE OLHAR", "ESSES 3 NÚMEROS"),
+               saida="video-08-numeros-do-studio/shorts/short-2.mp4"),
 }
 DOT, STROKE, CAIXA, BOTAO_TXT = (35, 42, 50), (0, 0, 0), (10, 12, 15, 255), None
 
@@ -84,7 +95,7 @@ CAUDA = 0.8   # depois da chamada
 
 
 def fonte(tam, peso="Bold"):
-    f = ImageFont.truetype("C:/Windows/Fonts/bahnschrift.ttf", tam)
+    f = ImageFont.truetype(os.environ.get("FONTES", "C:/Windows/Fonts") + "/bahnschrift.ttf", tam)
     try:
         f.set_variation_by_name(peso)
     except Exception:
@@ -93,7 +104,7 @@ def fonte(tam, peso="Bold"):
 
 
 def fonte_ui(tam):
-    return ImageFont.truetype("C:/Windows/Fonts/seguibl.ttf", tam)
+    return ImageFont.truetype(os.environ.get("FONTES", "C:/Windows/Fonts") + "/seguibl.ttf", tam)
 
 
 def ease_back(x):
@@ -385,7 +396,7 @@ def quadro_gancho(t, base, linhas, card, masc, vol, cfg):
 def selo_canto():
     """Selo pequeno fixo durante o Short."""
     txt = "vídeo completo no canal"
-    f = ImageFont.truetype("C:/Windows/Fonts/seguisb.ttf", 34)
+    f = ImageFont.truetype(os.environ.get("FONTES", "C:/Windows/Fonts") + "/seguisb.ttf", 34)
     w0 = int(f.getlength(txt)) + 80
     im = Image.new("RGBA", (w0, 58), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
     d.rounded_rectangle((0, 0, w0 - 1, 57), 29, fill=(255, 253, 248), outline=ACC, width=3)
