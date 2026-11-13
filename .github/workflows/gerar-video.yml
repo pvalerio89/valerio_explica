@@ -16,6 +16,15 @@ on:
         default: previa
         type: choice
         options: [previa, completo]
+  workflow_call:   # usado pelo "Gerar e publicar"
+    inputs:
+      pasta:
+        required: true
+        type: string
+      modo:
+        required: false
+        default: completo
+        type: string
 
 concurrency:
   group: gerar-${{ inputs.pasta }}

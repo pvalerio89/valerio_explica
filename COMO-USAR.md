@@ -14,7 +14,12 @@ Tudo em **Settings → Secrets and variables → Actions** deste repositório.
 2. **Gerar:** Actions → **Gerar vídeo** → pasta `video-NN-tema`.
    - `previa`: gera a narração e uma prancha com um quadro a cada 15 s (em Actions → a execução → Artifacts).
    - `completo`: gera o vídeo final (leva uns 30 a 60 min) e guarda na Release `video-NN`.
-3. **Postar:** Actions → **Enviar ao YouTube** → pasta `video-NN-tema` → `privado`, `publico` ou `agendado` (com data e hora de Brasília). O link fica anotado no `publicados.json`.
+3. **Postar:** Actions → **Enviar ao YouTube** → pasta `video-NN-tema` → `publico` (padrão), `privado` ou `agendado` (com data e hora de Brasília). O link fica anotado no `publicados.json`.
+   - **Short:** mesmo workflow, preencha `short` com o número (1, 2...). O arquivo `short-N.mp4` fica em `video-NN-tema/shorts/` (pode ir no repositório) e o título/descrição no bloco `SHORT N` de `shorts/titulos.txt`. Se a descrição tiver `LINK_DO_VIDEO_LONGO`, vira o link do vídeo longo sozinho.
+   - O "Vídeo relacionado" do Short a API do YouTube não deixa pôr: coloque depois no Studio (ou peça ao Claude pelo Chrome do PC).
+
+### Tudo de uma vez
+Actions → **Gerar e publicar** → pasta `video-NN-tema` (e, se quiser, `shorts` = `1,2`). Ele gera o vídeo (se ainda não estiver na Release), posta público no YouTube e depois os Shorts. É o que o Claude dispara quando você pede "faz e posta".
 
 ## Bom saber
 - Repositório privado no plano grátis: 2.000 minutos de Actions por mês, e cada minuto em Windows conta como 2. Dá para uns 8 a 10 vídeos completos por mês.
