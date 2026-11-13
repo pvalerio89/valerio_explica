@@ -1,0 +1,136 @@
+# Gera Shorts verticais a partir do vídeo longo já gerado (Release "video-NN"), com motion/shorts.py.
+# Cada Short precisa de uma entrada em SHORTS de motion/shorts.py (ex.: "8a" -> short-1.mp4) e do bloco
+# "SHORT N" em <pasta>/shorts/titulos.txt. O mp4 vai para a Release "video-NN" como short-N.mp4.
+# Com "publicar" marcado, posta cada Short no YouTube logo depois (público, link do vídeo longo na descrição).
+name: Gerar Short
+
+on:
+  workflow_dispatch:
+    inputs:
+      pasta:
+        description: "Pasta do vídeo (ex.: video-08-tema)"
+        required: true
+        type: string
+      shorts:
+        description: "Chaves do shorts.py = número do Short (ex.: 8a=1,8b=2)"
+        required: true
+        type: string
+      publicar:
+        description: "Postar no YouTube depois de gerar"
+        required: false
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  gerar:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    defaults:
+      run:
+        shell: bash
+    outputs:
+      numeros: ${{ steps.fim.outputs.numeros }}
+    env:
+      PASTA: ${{ inputs.pasta }}
+      SHORTS: ${{ inputs.shorts }}
+      PYTHONUTF8: "1"
+      PYTHONIOENCODING: utf-8
+      GH_TOKEN: ${{ github.token }}
+      FONTES: C:/Windows/Fonts
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instalar pacotes e ffmpeg
+        run: |
+          python -m pip install -q -r requirements.txt pillow
+          choco install ffmpeg -y --no-progress > /dev/null
+          ls C:/Windows/Fonts | grep -i -E "bahnschrift|seguibl|seguisb" || echo "::warning::fontes não achadas"
+
+      - name: Baixar vídeo longo e narração
+        run: |
+          PASTA=$(basename "${PASTA%/}")
+          NN=$(printf "%02d" "$(echo "$PASTA" | sed -E 's/^video-0*([0-9]+).*/\1/')")
+          echo "PASTA=$PASTA" >> "$GITHUB_ENV"; echo "NN=$NN" >> "$GITHUB_ENV"
+          mkdir -p "$PASTA/voz" motion/quadros motion/shorts-voz
+          gh release download "video-$NN" --dir "$PASTA" --pattern '*-final.mp4'
+          gh release download "video-$NN" --dir "$PASTA/voz" --pattern 'narracao.wav'
+          ls -la "$PASTA" "$PASTA/voz"
+
+      - name: Voz da chamada final (guardada na Release shorts-voz)
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          if gh release download shorts-voz --dir motion/shorts-voz --pattern cta.wav 2>/dev/null; then
+            echo "cta.wav reaproveitada"
+          else
+            python - <<'PY'
+          import sys; sys.path.insert(0, ".")
+          sys.path.insert(0, "motion")
+          from gemini_voz import falar
+          import re
+          cta = re.search(r'CTA_TXT = "([^"]+)"', open("motion/shorts.py", encoding="utf-8").read()).group(1)
+          falar(cta, "motion/shorts-voz/cta.wav", voz="Sadaltager",
+                estilo="youtuber brasileiro chamando o espectador, animado, próximo, ritmo natural de vídeo do YouTube")
+          PY
+            if gh release view shorts-voz >/dev/null 2>&1; then gh release upload shorts-voz motion/shorts-voz/cta.wav --clobber
+            else gh release create shorts-voz motion/shorts-voz/cta.wav --target "$GITHUB_SHA" --title "Voz dos Shorts" --notes "Chamada final falada dos Shorts."; fi
+          fi
+
+      - name: Batida do vídeo (fundo do Short)
+        run: (cd motion && python audio.py "$NN" "$PASTA") && ls motion/hf/v$NN/out
+
+      - name: Gerar os Shorts
+        run: |
+          for par in $(echo "$SHORTS" | tr ',' ' '); do
+            chave=${par%%=*}; num=${par##*=}
+            (cd motion && python shorts.py "$chave")
+            cp "$PASTA/shorts/short-$num.mp4" "short-$num.mp4"
+            gh release upload "video-$NN" "short-$num.mp4" --clobber
+            for q in motion/quadros/short-$chave-q*.png; do [ -f "$q" ] && cp "$q" "quadro-short-$num-$(basename $q)"; done
+          done
+          ls -la short-*.mp4
+
+      - name: Quadros de conferência na Release
+        run: |
+          python - <<'PY'
+          import glob, re
+          from PIL import Image
+          for num in sorted({re.search(r"quadro-short-(\d+)-", f).group(1) for f in glob.glob("quadro-short-*.png")}):
+              fs = sorted(glob.glob(f"quadro-short-{num}-*.png"))[:6]
+              ims = [Image.open(f).resize((360, 640)) for f in fs]
+              tela = Image.new("RGB", (360 * len(ims), 640))
+              for i, im in enumerate(ims):
+                  tela.paste(im, (i * 360, 0))
+              tela.save(f"prancha-short-{num}.jpg", quality=85)
+          PY
+          for f in prancha-short-*.jpg; do [ -f "$f" ] && gh release upload "video-$NN" "$f" --clobber; done; true
+
+      - id: fim
+        run: |
+          nums=$(echo "$SHORTS" | tr ',' '\n' | sed 's/.*=//' | python -c "import json,sys;print(json.dumps([l.strip() for l in sys.stdin if l.strip()]))")
+          echo "numeros=$nums" >> "$GITHUB_OUTPUT"
+
+  postar:
+    needs: gerar
+    if: inputs.publicar
+    strategy:
+      max-parallel: 1
+      fail-fast: false
+      matrix:
+        short: ${{ fromJSON(needs.gerar.outputs.numeros) }}
+    uses: ./.github/workflows/enviar-youtube.yml
+    with:
+      pasta: ${{ inputs.pasta }}
+      short: ${{ matrix.short }}
+      privacidade: publico
+    secrets: inherit
