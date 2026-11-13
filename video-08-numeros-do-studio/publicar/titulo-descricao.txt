@@ -9,7 +9,15 @@ DESCRIÇÃO
 O YouTube Studio mostra dezenas de números, mas só alguns dizem de verdade se um vídeo está pegando ou se vai parar. Neste vídeo eu mostro os 5 números que importam (taxa de cliques, retenção nos primeiros 30 segundos, origens de tráfego, espectadores recorrentes e a posição comparada ao normal do canal), onde achar cada um no Studio, o que fazer quando um deles está ruim e quais números você pode olhar menos. Sem valor mágico: a ideia é comparar o seu vídeo com os seus próprios vídeos.
 
 Capítulos
-CAPITULOS
+0:00 O número que menos importa
+0:41 1: Taxa de cliques
+1:41 2: Os primeiros 30 segundos
+2:41 3: De onde vem o tráfego
+3:47 4: Espectadores recorrentes
+4:40 5: Comparado ao normal do canal
+5:33 Os números pra olhar menos
+6:21 Como usar os 5 juntos
+7:24 Resumo
 
 Fontes
 - Central de Ajuda do YouTube, "Impressões e taxa de cliques das impressões": https://support.google.com/youtube/answer/7628154
