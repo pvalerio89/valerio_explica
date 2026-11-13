@@ -6,7 +6,7 @@ Canal **Valerio Explica** (@ValerioExplica, ID `UCpt3lpOipp-lWumvdIUD9jg`) sobre
 ## Pastas
 - `canal/` — foto, banner, mascote (`gerar_canal.py`).
 - `motion/` — pipeline dos vídeos (`hf/` HyperFrames para o estilo claro; Remotion/HTML com `seek(t)`, `render.mjs`, `audio_full.py`, `shorts.py N` para Shorts).
-- `video-01-70-views/`, `video-02-titulos-thumbs/`, `video-03-primeiros-30s/`, `video-04-ia-sem-desmonetizar/` (https://youtu.be/aTwwTp0bwV0, 31/out) — vídeos publicados (vídeo 4: cenas em `motion/hf/v04/`, render em 3 partes com `render.mjs --inicio`), `video-05-quanto-o-youtube-paga/`, `video-06-4000-horas/` (https://youtu.be/cSI3xtbYbM8, 9/nov; cenas em `motion/hf/v06/cenas.js` + `montar.py`, som `motion/audio_v06.py`), `video-07-shorts-sem-aparecer/` (https://youtu.be/Lc0lDUSic2o, 10/nov, feito todo pelo GitHub; cenas em `motion/hf/v07/`) (cada um com `gerar_voz.py` e `publicar/`).
+- `video-01-70-views/`, `video-02-titulos-thumbs/`, `video-03-primeiros-30s/`, `video-04-ia-sem-desmonetizar/` (https://youtu.be/aTwwTp0bwV0, 31/out) — vídeos publicados (vídeo 4: cenas em `motion/hf/v04/`, render em 3 partes com `render.mjs --inicio`), `video-05-quanto-o-youtube-paga/`, `video-06-4000-horas/` (https://youtu.be/cSI3xtbYbM8, 9/nov; cenas em `motion/hf/v06/cenas.js` + `montar.py`, som `motion/audio_v06.py`), `video-07-shorts-sem-aparecer/` (https://youtu.be/Lc0lDUSic2o, 10/nov, feito todo pelo GitHub; cenas em `motion/hf/v07/`), `video-08-numeros-do-studio/` (https://youtu.be/122HHWS6LBE, 13/nov, 8:07, thumb feita no Google Flow; cenas em `motion/hf/v08/`) (cada um com `gerar_voz.py` e `publicar/`).
 - `gemini_voz.py` — voz (Gemini TTS); a chave fica em `~/.config/watch/.env`.
 
 ## GitHub (desde 09/nov/2026)
