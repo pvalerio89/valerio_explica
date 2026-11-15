@@ -95,6 +95,16 @@
         "data": "2026-11-13",
         "sha256": "d28deb535cb687669d914ddd4447f6c9203173c0ca74cea66aeb2d4a3873e126"
       }
+    },
+    "video-09-plano-90-dias": {
+      "titulo": "O plano de 90 dias pra destravar seu canal no YouTube (3 fases)",
+      "youtube": {
+        "status": "publicado",
+        "id": "0HLtqgO7lBY",
+        "url": "https://youtu.be/0HLtqgO7lBY",
+        "data": "2026-11-15",
+        "sha256": "6be42cd0516c2dd0308ada7971e6aa7f4716cacad8299ed192761d37d3610a17"
+      }
     }
   }
 }
