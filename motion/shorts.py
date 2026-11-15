@@ -56,6 +56,17 @@ SHORTS = {
                musica="motion/hf/v08/out/batida.wav", musica_em=200.0,
                manchete=("PARE DE OLHAR", "ESSES 3 NÚMEROS"),
                saida="video-08-numeros-do-studio/shorts/short-2.mp4"),
+    # vídeo 9 (plano de 90 dias)
+    "9a": dict(video="video-09-plano-90-dias/video-09-final.mp4", palavras="motion/v09/palavras.json",
+               trechos=[(331.82, 362.3)], claro=True, recorte="1180:880:720:30",  # "Por que dobrar?" ... "é repetição."
+               musica="motion/hf/v09/out/batida.wav", musica_em=60.0,
+               manchete=("POSTE O DOBRO", "POR 5 SEMANAS"),
+               saida="video-09-plano-90-dias/shorts/short-1.mp4"),
+    "9b": dict(video="video-09-plano-90-dias/video-09-final.mp4", palavras="motion/v09/palavras.json",
+               trechos=[(436.1, 481.5)], claro=True, recorte="1180:880:720:30",  # "Agora um aviso honesto" ... "segue pro próximo."
+               musica="motion/hf/v09/out/batida.wav", musica_em=200.0,
+               manchete=("VONTADE DE DESISTIR", "NO 3º VÍDEO?"),
+               saida="video-09-plano-90-dias/shorts/short-2.mp4"),
 }
 DOT, STROKE, CAIXA, BOTAO_TXT = (35, 42, 50), (0, 0, 0), (10, 12, 15, 255), None
 
