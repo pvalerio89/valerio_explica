@@ -2,7 +2,7 @@
 name: Analisar referência
 on:
   push:
-    branches: [analise-referencia]
+    branches: [analise-referencia, "analise-ref-*"]
     paths: [ref.txt]
 permissions:
   contents: write
@@ -23,4 +23,4 @@ jobs:
         if: always()
         run: |
           gh release delete ref-analise -y --cleanup-tag 2>/dev/null || true
-          gh release create ref-analise --target analise-referencia --prerelease -t "Análise da referência" -n "Análise automática" saida/* || true
+          gh release create ref-analise --target "$GITHUB_SHA" --prerelease -t "Análise da referência" -n "Análise automática" saida/* || true
