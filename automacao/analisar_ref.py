@@ -13,6 +13,14 @@ PROMPTS = {
 6. Como termina (chamada final).
 7. O que funciona bem e o que é exagero, promessa duvidosa ou desatualizado.
 8. 5 ideias de título em português do Brasil para um vídeo próprio sobre o mesmo tema, para um canal que explica como crescer e monetizar no YouTube.""",
+ "estilo": """Assista este vídeo e descreva em português, com detalhe, a EDIÇÃO VISUAL e o RITMO (queremos um estilo dinâmico, que muda a cada frase):
+1. Com que frequência a imagem muda (média de segundos por corte/cena) no começo, no meio e no fim.
+2. Que tipos de visual aparecem (b-roll, imagens geradas, prints, textos, memes, zoom, ícones, gráficos, apresentador) e em que proporção.
+3. Como os textos na tela aparecem (tamanho, cor, animação, palavras-chave destacadas).
+4. Transições e movimentos de câmera usados (zoom punch, whip, shake, slide...).
+5. Efeitos sonoros e música (quando entram).
+6. Descreva os primeiros 60 segundos corte a corte (mm:ss - o que aparece - o que é dito).
+7. 10 regras práticas para reproduzir esse ritmo num canal faceless feito com animação em código + imagens geradas por IA.""",
 }
 
 def chamar(model, prompt):
