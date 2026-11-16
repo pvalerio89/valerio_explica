@@ -190,6 +190,15 @@ function SETA(d, x, y, rot, t, cor = '#ffd23f') {
   tl.from(s, { scale: 0, opacity: 0, duration: 0.25, ease: 'back.out(2)' }, t); tl.to(s, { x: 18, duration: 0.3, yoyo: true, repeat: 5, ease: 'sine.inOut' }, t + 0.25); EV(t, 'pop'); return s;
 }
 
+/* contador no canto (ex.: NICHO 3/15). txt='' esconde. */
+const badge = document.getElementById('badge');
+function CANTO(t, txt) {
+  if (!badge) return;
+  const k = uid++; const d = el(badge, txt ? `<span>${txt}</span>` : '', 'right:0;top:0;visibility:hidden');
+  tl.set(badge.children, { visibility: 'hidden' }, t); tl.set(d, { visibility: 'visible' }, t);
+  if (txt) { tl.from(d, { scale: 1.8, opacity: 0, duration: 0.25, ease: 'back.out(2)' }, t); EV(t, 'tick', 0.6); }
+}
+
 /* ---------- legenda (palavra por palavra, grupos de até 3 palavras) ---------- */
 const leg = document.getElementById('legenda');
 const DESTAQUE = new Set(window.DESTAQUE || []);
@@ -221,6 +230,21 @@ function fechar() {
     const fim = i + 1 < SHOTS.length ? SHOTS[i + 1].t + 0.4 : DUR + 1;
     tl.set(s.d, { visibility: 'visible' }, s.t); tl.set(s.d, { visibility: 'hidden' }, fim);
     TR[s.tr](s.d, s.t);
+  });
+  // cena longa ganha "reenquadramentos" (punch-in/out alternado) a cada ~2,4 s, no começo de uma palavra
+  const inicios = PAL.map(p => p.ini);
+  const snap = x => { let m = x, dm = 9; for (const w of inicios) { const d = Math.abs(w - x); if (d < dm) { dm = d; m = w; } } return dm < 0.6 ? m : x; };
+  const ORIG = ['30% 35%', '70% 40%', '50% 30%', '35% 65%', '65% 60%'];
+  SHOTS.forEach((s, i) => {
+    const fim = i + 1 < SHOTS.length ? SHOTS[i + 1].t : DUR;
+    const d = fim - s.t; if (d < 3.6) return;
+    const n = Math.floor(d / 2.4); let on = false;
+    for (let k = 1; k <= n; k++) {
+      const tk = snap(s.t + k * d / (n + 1)); if (fim - tk < 0.9) continue;
+      on = !on; const o = ORIG[(i + k) % ORIG.length];
+      tl.to(s.d, { scale: on ? 1.16 : 1, transformOrigin: o, duration: 0.22, ease: 'expo.out' }, tk);
+      flash(tk, 0.25); EV(tk, 'tick', 0.7);
+    }
   });
   // legenda some nas cenas de texto gigante
   SHOTS.forEach((s, i) => { const fim = i + 1 < SHOTS.length ? SHOTS[i + 1].t : DUR; tl.set(leg, { opacity: s.sem_legenda ? 0 : 1 }, s.t + (s.sem_legenda ? 0 : 0.0)); });
