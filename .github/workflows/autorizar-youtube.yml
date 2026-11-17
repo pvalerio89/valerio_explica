@@ -1,7 +1,7 @@
 # Autoriza o canal Valerio Explica (uma vez). 1) Rode sem endereço: o resumo/log mostra o link.
 # 2) Abra, entre na conta do canal VALERIO EXPLICA (não a do Quiz) e aceite.
 # 3) A página final "não abre" (127.0.0.1): copie o endereço inteiro e rode de novo colando no campo.
-# 4) O log mostra o valor para o Secret YT_REFRESH_TOKEN. Salve o Secret e apague esta execução.
+# 4) O token novo vai CIFRADO para automacao/yt-token.enc (o repositório é público: nada de token no log).
 name: Autorizar YouTube
 
 on:
@@ -13,7 +13,7 @@ on:
         type: string
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   autorizar:
@@ -34,4 +34,10 @@ jobs:
             { echo "### Abra este link e autorize com a conta do Valerio Explica"; echo; python automacao/youtube.py link; } | tee -a "$GITHUB_STEP_SUMMARY"
           else
             python automacao/youtube.py trocar "$ENDERECO"
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add automacao/yt-token.enc
+            git commit -m "YouTube: token novo (cifrado)"
+            git pull --rebase origin "refs/heads/$GITHUB_REF_NAME"
+            git push origin "HEAD:refs/heads/$GITHUB_REF_NAME"
           fi

@@ -2,7 +2,7 @@
 
 Uso:
   python automacao/youtube.py link                 -> link para autorizar o canal (1ª vez)
-  python automacao/youtube.py trocar <endereço>    -> troca o código pelo YT_REFRESH_TOKEN
+  python automacao/youtube.py trocar <endereço>    -> troca o código e grava o token cifrado (automacao/yt-token.enc)
   python automacao/youtube.py enviar <pasta do vídeo> <arquivo.mp4> [--publico | --agendar AAAA-MM-DDTHH:MM] [--short N]
       Título, descrição e thumbnail vêm de <pasta>/publicar/ (titulo-descricao.txt e thumbnail*.jpg).
       --short N: envia o Short N do vídeo. Título e descrição vêm do bloco "SHORT N" de <pasta>/shorts/titulos.txt;
@@ -11,7 +11,7 @@ Uso:
       Anota tudo em publicados.json e não envia de novo o que já está lá.
 Variáveis (no GitHub vêm dos Secrets e nunca são impressas): YT_CLIENT_ID, YT_CLIENT_SECRET, YT_REFRESH_TOKEN.
 """
-import datetime, glob, hashlib, json, os, re, sys, urllib.error, urllib.parse, urllib.request
+import base64, datetime, glob, hashlib, hmac, json, os, re, sys, urllib.error, urllib.parse, urllib.request
 
 RAIZ = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REGISTRO = os.path.join(RAIZ, "publicados.json")
@@ -28,14 +28,58 @@ def env(*nomes):
     return [os.environ[n] for n in nomes]
 
 
+TOKEN_ARQ = os.path.join(RAIZ, "automacao", "yt-token.enc")
+
+
+def _chaves(segredo):
+    return hashlib.sha256(b"cifra" + segredo.encode()).digest(), hashlib.sha256(b"mac" + segredo.encode()).digest()
+
+
+def _fluxo(chave, nonce, n):
+    out, i = b"", 0
+    while len(out) < n:
+        out += hmac.new(chave, nonce + i.to_bytes(4, "big"), hashlib.sha256).digest(); i += 1
+    return out[:n]
+
+
+def cifrar(txt, segredo):
+    """Cifra o token com uma chave tirada do YT_CLIENT_SECRET (o repositório é público: nunca o token em texto)."""
+    ck, mk = _chaves(segredo)
+    nonce, dado = os.urandom(16), txt.encode()
+    ct = bytes(a ^ b for a, b in zip(dado, _fluxo(ck, nonce, len(dado))))
+    return base64.b64encode(nonce + ct + hmac.new(mk, nonce + ct, hashlib.sha256).digest()).decode()
+
+
+def decifrar(b64, segredo):
+    ck, mk = _chaves(segredo)
+    raw = base64.b64decode(b64)
+    nonce, ct, tag = raw[:16], raw[16:-32], raw[-32:]
+    if not hmac.compare_digest(tag, hmac.new(mk, nonce + ct, hashlib.sha256).digest()):
+        raise ValueError("token cifrado não confere com o YT_CLIENT_SECRET")
+    return bytes(a ^ b for a, b in zip(ct, _fluxo(ck, nonce, len(ct)))).decode()
+
+
 def token():
-    cid, cs, rt = env("YT_CLIENT_ID", "YT_CLIENT_SECRET", "YT_REFRESH_TOKEN")
-    dados = urllib.parse.urlencode({"client_id": cid, "client_secret": cs, "refresh_token": rt,
-                                    "grant_type": "refresh_token"}).encode()
-    try:
-        return json.load(urllib.request.urlopen("https://oauth2.googleapis.com/token", dados, timeout=30))["access_token"]
-    except urllib.error.HTTPError as e:
-        sys.exit(f"ERRO ao renovar o acesso ao YouTube (HTTP {e.code}). Rode o workflow 'Autorizar YouTube' de novo.")
+    cid, cs = env("YT_CLIENT_ID", "YT_CLIENT_SECRET")
+    candidatos = []
+    if os.path.exists(TOKEN_ARQ):  # gravado pelo "Autorizar YouTube" (o mais novo)
+        try:
+            candidatos.append(decifrar(open(TOKEN_ARQ).read().strip(), cs))
+        except Exception as e:
+            print("aviso: não deu para ler automacao/yt-token.enc:", e)
+    if os.environ.get("YT_REFRESH_TOKEN"):
+        candidatos.append(os.environ["YT_REFRESH_TOKEN"])
+    if not candidatos:
+        sys.exit("ERRO: sem token do YouTube. Rode o workflow 'Autorizar YouTube'.")
+    erro = None
+    for rt in candidatos:
+        dados = urllib.parse.urlencode({"client_id": cid, "client_secret": cs, "refresh_token": rt,
+                                        "grant_type": "refresh_token"}).encode()
+        try:
+            return json.load(urllib.request.urlopen("https://oauth2.googleapis.com/token", dados, timeout=30))["access_token"]
+        except urllib.error.HTTPError as e:
+            erro = f"HTTP {e.code}"
+    sys.exit(f"ERRO ao renovar o acesso ao YouTube ({erro}). Rode o workflow 'Autorizar YouTube' de novo.")
 
 
 def link():
@@ -57,8 +101,9 @@ def trocar(endereco):
         sys.exit(f"ERRO na troca do código (HTTP {e.code}): {e.read().decode(errors='replace')[:300]}")
     if "refresh_token" not in r:
         sys.exit("O Google não devolveu o token de longa duração. Gere o link de novo e autorize outra vez.")
-    print("OK: copie a linha abaixo para o Secret YT_REFRESH_TOKEN e depois apague esta execução.")
-    print(r["refresh_token"])
+    # repositório público: o token nunca aparece no log; vai cifrado para automacao/yt-token.enc
+    open(TOKEN_ARQ, "w").write(cifrar(r["refresh_token"], cs) + "\n")
+    print("OK: token novo guardado (cifrado) em automacao/yt-token.enc. Não precisa mexer nos Secrets.")
 
 
 def ler_publicar(pasta):
