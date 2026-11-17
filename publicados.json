@@ -130,6 +130,14 @@
         "url": "https://youtu.be/gnGLFD5akdc",
         "data": "2026-11-17",
         "sha256": "96a88c9b4e1e945d28f1cdc57849bddbdb064a80fb02d5f6239829c4ed6e647f"
+      },
+      "short-1": {
+        "status": "publicado",
+        "id": "3zFKdAZlCjw",
+        "url": "https://youtube.com/shorts/3zFKdAZlCjw",
+        "titulo": "Por que vídeo \"chato\" paga mais que vídeo viral no YouTube #shorts",
+        "data": "2026-11-17",
+        "sha256": "a72ef0dd6f946b4484dd729eeb07781a52678e3b33523492557c8dad0f87eb05"
       }
     }
   }
