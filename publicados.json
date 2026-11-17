@@ -95,6 +95,58 @@
         "data": "2026-11-13",
         "sha256": "d28deb535cb687669d914ddd4447f6c9203173c0ca74cea66aeb2d4a3873e126"
       }
+    },
+    "video-09-plano-90-dias": {
+      "titulo": "O plano de 90 dias pra destravar seu canal no YouTube (3 fases)",
+      "youtube": {
+        "status": "publicado",
+        "id": "0HLtqgO7lBY",
+        "url": "https://youtu.be/0HLtqgO7lBY",
+        "data": "2026-11-15",
+        "sha256": "6be42cd0516c2dd0308ada7971e6aa7f4716cacad8299ed192761d37d3610a17"
+      },
+      "short-1": {
+        "status": "publicado",
+        "id": "S1Q5ywH7Qp4",
+        "url": "https://youtube.com/shorts/S1Q5ywH7Qp4",
+        "titulo": "Por que postar o dobro por 5 semanas destrava seu canal #shorts",
+        "data": "2026-11-15",
+        "sha256": "afdcd4c61d19759b159a0855dfd14af81ab689056167a536cf47b0514769272c"
+      },
+      "short-2": {
+        "status": "publicado",
+        "id": "5V71A62S3Bc",
+        "url": "https://youtube.com/shorts/5V71A62S3Bc",
+        "titulo": "Deu vontade de desistir do canal no 3º vídeo? Assista isso #shorts",
+        "data": "2026-11-15",
+        "sha256": "f7a772613507c93144f3947cde9cda6f2a6ca9806ec4f62725e53d182cf28d62"
+      }
+    },
+    "video-10-nichos-chatos": {
+      "titulo": "15 nichos CHATOS no YouTube que pagam mais que entretenimento",
+      "youtube": {
+        "status": "publicado",
+        "id": "gnGLFD5akdc",
+        "url": "https://youtu.be/gnGLFD5akdc",
+        "data": "2026-11-17",
+        "sha256": "96a88c9b4e1e945d28f1cdc57849bddbdb064a80fb02d5f6239829c4ed6e647f"
+      },
+      "short-1": {
+        "status": "publicado",
+        "id": "3zFKdAZlCjw",
+        "url": "https://youtube.com/shorts/3zFKdAZlCjw",
+        "titulo": "Por que vídeo \"chato\" paga mais que vídeo viral no YouTube #shorts",
+        "data": "2026-11-17",
+        "sha256": "a72ef0dd6f946b4484dd729eeb07781a52678e3b33523492557c8dad0f87eb05"
+      },
+      "short-2": {
+        "status": "publicado",
+        "id": "L0PM9ct92Lg",
+        "url": "https://youtube.com/shorts/L0PM9ct92Lg",
+        "titulo": "O nicho mais escondido do YouTube (quase ninguém faz) #shorts",
+        "data": "2026-11-17",
+        "sha256": "fa9f0a479d7b7ec55f5929dffd8b7c862449f8226397ca17de077bf3374272c2"
+      }
     }
   }
 }

@@ -98,9 +98,12 @@ jobs:
           retention-days: 7
 
       - name: Guardar na Release (vídeo + narração)
+        if: always()   # guarda os blocos de voz já gerados mesmo se algo falhar (não gasta a cota de novo)
         run: |
+          shopt -s nullglob
           arquivos=("$PASTA"/voz/*.wav)
-          [ "$MODO" = completo ] && arquivos+=(saida/video-$NN-final.mp4)
+          [ ${#arquivos[@]} -eq 0 ] && [ ! -f saida/prancha.jpg ] && [ ! -f "saida/video-$NN-final.mp4" ] && { echo "nada para guardar"; exit 0; }
+          [ "$MODO" = completo ] && [ -f "saida/video-$NN-final.mp4" ] && arquivos+=(saida/video-$NN-final.mp4)
           [ "$MODO" = previa ] && [ -f saida/prancha.jpg ] && cp saida/prancha.jpg "saida/prancha-video-$NN.jpg" && arquivos+=("saida/prancha-video-$NN.jpg")
           for t in "$PASTA"/publicar/thumbnail*.jpg; do [ -f "$t" ] && arquivos+=("$t"); done
           if gh release view "video-$NN" > /dev/null 2>&1; then

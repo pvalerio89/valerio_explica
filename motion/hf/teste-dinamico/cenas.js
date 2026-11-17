@@ -1,0 +1,13 @@
+const IMG='../../../video-09-plano-90-dias/publicar/', POS='../../../canal/thumb-chamativa/capuz-poses/';
+let t;
+FOTO(T(1,0), IMG+'thumb-flow-B.jpg', {txt:'CANAL PARADO?', y:120, tr:'flash'});
+TEXTO(W(1,0,'meses'), [['FAZ',W(1,0,'faz')],['MESES',W(1,0,'meses'),'a']], {bg:COR.esc});
+POSE(W(1,0,'provavelmente'), POS+'pose-2-pensativo.png', {txt:'O PROBLEMA?', tt:W(1,0,'problema')});
+VS(W(1,0,'falta'), ['🎨','FALTA DE TALENTO'], ['🧠','OUTRA COISA'], W(1,1,'tentando'));
+CARTAS(W(1,1,'acertar'), [['📝','título',W(1,1,'tudo')],['🖼️','thumb',W(1,1,'tudo')+0.2],['🎬','edição',W(1,1,'vez')],['🎵','som',W(1,1,'todo')]], {titulo:'TUDO DE UMA VEZ', bg:COR.cre});
+NUM(T(1,2), 90, {suf:' DIAS', lab:'o plano', tr:'punch'});
+TEXTO(W(1,2,'doze'), [['12',W(1,2,'doze'),'a'],['SEMANAS',W(1,2,'semanas')]], {bg:COR.ver});
+FOTO(W(1,2,'dividido'), IMG+'thumbnail.jpg', {txt:'3 FASES', tt:W(1,2,'tres'), cor:'a', y:700});
+CARTAS(T(1,3), [['🎯','objetivo',W(1,3,'objetivo')],['⏱️','ritmo',W(1,3,'ritmo')]], {titulo:'CADA FASE', bg:COR.roxo});
+POSE(T(1,4), POS+'pose-6-apontando.png', {txt:'ARRUMA A BASE', tt:W(1,4,'arruma'), lado:'esq', bg:COR.azu});
+fechar();

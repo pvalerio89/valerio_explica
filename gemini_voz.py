@@ -32,14 +32,16 @@ def falar(texto, saida, voz="Puck", estilo=ESTILO):
     req = urllib.request.Request("https://generativelanguage.googleapis.com/v1beta/interactions",
                                  data=json.dumps(body).encode(), method="POST",
                                  headers={"Content-Type": "application/json", "x-goog-api-key": chave()})
-    for tentativa in range(5):
+    for tentativa in range(8):
         try:
-            resp = urllib.request.urlopen(req, timeout=120)
+            resp = urllib.request.urlopen(req, timeout=180)
             break
         except urllib.error.HTTPError as e:
             msg = e.read().decode(errors="replace")[:400]
-            if e.code == 429 and tentativa < 4:
-                time.sleep(20 * (tentativa + 1))
+            # 429 = limite por minuto; 500/503/504 = Gemini sobrecarregado (temporário): espera e tenta de novo
+            if e.code in (429, 500, 502, 503, 504) and tentativa < 7:
+                print(f"   Gemini {e.code}, tentando de novo em {30 * (tentativa + 1)} s...", flush=True)
+                time.sleep(30 * (tentativa + 1))
                 continue
             sys.exit(f"Erro {e.code} do Gemini: {msg}")
     data = resp.read()
