@@ -138,6 +138,14 @@
         "titulo": "Por que vídeo \"chato\" paga mais que vídeo viral no YouTube #shorts",
         "data": "2026-11-17",
         "sha256": "a72ef0dd6f946b4484dd729eeb07781a52678e3b33523492557c8dad0f87eb05"
+      },
+      "short-2": {
+        "status": "publicado",
+        "id": "L0PM9ct92Lg",
+        "url": "https://youtube.com/shorts/L0PM9ct92Lg",
+        "titulo": "O nicho mais escondido do YouTube (quase ninguém faz) #shorts",
+        "data": "2026-11-17",
+        "sha256": "fa9f0a479d7b7ec55f5929dffd8b7c862449f8226397ca17de077bf3374272c2"
       }
     }
   }
