@@ -56,6 +56,17 @@ SHORTS = {
                musica="motion/hf/v08/out/batida.wav", musica_em=200.0,
                manchete=("PARE DE OLHAR", "ESSES 3 NÚMEROS"),
                saida="video-08-numeros-do-studio/shorts/short-2.mp4"),
+    # vídeo 10 (estilo dinâmico): recorte sem a legenda embutida (fica em y 880-1010) nem a barra de progresso
+    "10a": dict(video="video-10-nichos-chatos/video-10-final.mp4", palavras="motion/v10/palavras.json",
+                trechos=[(0.0, 41.66)], recorte="1440:860:240:14", capuz="motion/hf/v10/img/img34.jpg",  # "Tem canal..." ... "vale mais"
+                musica="motion/hf/v10/out/batida.wav", musica_em=60.0,
+                manchete=("VÍDEO CHATO", "PAGA MAIS QUE VIRAL?"),
+                saida="video-10-nichos-chatos/shorts/short-1.mp4"),
+    "10b": dict(video="video-10-nichos-chatos/video-10-final.mp4", palavras="motion/v10/palavras.json",
+                trechos=[(436.26, 496.34)], recorte="1440:860:240:14", capuz="motion/hf/v10/img/img34.jpg",  # "Nicho quinze..." ... "canal pronto"
+                musica="motion/hf/v10/out/batida.wav", musica_em=200.0,
+                manchete=("O NICHO MAIS", "ESCONDIDO DO YOUTUBE"),
+                saida="video-10-nichos-chatos/shorts/short-2.mp4"),
     # vídeo 9 (plano de 90 dias)
     "9a": dict(video="video-09-plano-90-dias/video-09-final.mp4", palavras="motion/v09/palavras.json",
                trechos=[(331.82, 362.3)], claro=True, recorte="1180:880:720:30",  # "Por que dobrar?" ... "é repetição."
@@ -440,7 +451,12 @@ def main(n):
     os.makedirs(os.path.dirname(f"{RAIZ}/{cfg['saida']}"), exist_ok=True)
     wav, dur, tc = montar_audio(n, cfg)
     bls = blocos(medir(n, cfg, wav, tc))
-    capuz = Image.open(f"{RAIZ}/canal/rosto-real/capuz-patrick.jpg").convert("RGB")
+    if cfg.get("capuz"):  # estilo dinâmico (vídeo 10+): capuz em desenho, recorte quadrado do centro
+        capuz = Image.open(f"{RAIZ}/{cfg['capuz']}").convert("RGB")
+        lado = min(capuz.size); x = (capuz.width - lado) // 2
+        capuz = capuz.crop((x, 0, x + lado, lado))
+    else:
+        capuz = Image.open(f"{RAIZ}/canal/rosto-real/capuz-patrick.jpg").convert("RGB")
     G = 0.0
     if cfg.get("gancho"):
         wav, G, vol = juntar_gancho(n, cfg, wav)
