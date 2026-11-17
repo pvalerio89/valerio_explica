@@ -121,6 +121,16 @@
         "data": "2026-11-15",
         "sha256": "f7a772613507c93144f3947cde9cda6f2a6ca9806ec4f62725e53d182cf28d62"
       }
+    },
+    "video-10-nichos-chatos": {
+      "titulo": "15 nichos CHATOS no YouTube que pagam mais que entretenimento",
+      "youtube": {
+        "status": "publicado",
+        "id": "gnGLFD5akdc",
+        "url": "https://youtu.be/gnGLFD5akdc",
+        "data": "2026-11-17",
+        "sha256": "96a88c9b4e1e945d28f1cdc57849bddbdb064a80fb02d5f6239829c4ed6e647f"
+      }
     }
   }
 }
