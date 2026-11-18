@@ -56,6 +56,17 @@ SHORTS = {
                musica="motion/hf/v08/out/batida.wav", musica_em=200.0,
                manchete=("PARE DE OLHAR", "ESSES 3 NÚMEROS"),
                saida="video-08-numeros-do-studio/shorts/short-2.mp4"),
+    # vídeo 11 (estilo dinâmico, 5 negócios com um canal)
+    "11a": dict(video="video-11-negocios-2027/video-11-final.mp4", palavras="motion/v11/palavras.json",
+                trechos=[(0.0, 39.3)], recorte="1440:860:240:14", capuz="motion/hf/v11/img/v34.jpg",  # "Em 2027..." ... "dinheiro dos anúncios"
+                musica="motion/hf/v11/out/batida.wav", musica_em=60.0,
+                manchete=("FAZER VÍDEO VAI", "SER FÁCIL DEMAIS"),
+                saida="video-11-negocios-2027/shorts/short-1.mp4"),
+    "11b": dict(video="video-11-negocios-2027/video-11-final.mp4", palavras="motion/v11/palavras.json",
+                trechos=[(230.29, 253.7)], recorte="1440:860:240:14", capuz="motion/hf/v11/img/v34.jpg",  # "Faz a conta..." ... "quem assistiu"
+                musica="motion/hf/v11/out/batida.wav", musica_em=200.0,
+                manchete=("10 MIL VIEWS", "OU 1 CLIENTE?"),
+                saida="video-11-negocios-2027/shorts/short-2.mp4"),
     # vídeo 10 (estilo dinâmico): recorte sem a legenda embutida (fica em y 880-1010) nem a barra de progresso
     "10a": dict(video="video-10-nichos-chatos/video-10-final.mp4", palavras="motion/v10/palavras.json",
                 trechos=[(0.0, 41.66)], recorte="1440:860:240:14", capuz="motion/hf/v10/img/img34.jpg",  # "Tem canal..." ... "vale mais"
