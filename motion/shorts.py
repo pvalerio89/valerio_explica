@@ -57,6 +57,16 @@ SHORTS = {
                manchete=("PARE DE OLHAR", "ESSES 3 NÚMEROS"),
                saida="video-08-numeros-do-studio/shorts/short-2.mp4"),
     # vídeo 11 (estilo dinâmico, 5 negócios com um canal)
+    "12a": dict(video="video-12-erros-canal-pequeno/video-12-final.mp4", palavras="motion/v12/palavras.json",
+                trechos=[(0.0, 40.28)], recorte="1440:860:240:14", capuz="motion/hf/v12/img/v34.jpg",  # "Tem canal..." ... "é de graça"
+                musica="motion/hf/v12/out/batida.wav", musica_em=60.0,
+                manchete=("20 VIEWS POR VÍDEO?", "NÃO É O ALGORITMO"),
+                saida="video-12-erros-canal-pequeno/shorts/short-1.mp4"),
+    "12b": dict(video="video-12-erros-canal-pequeno/video-12-final.mp4", palavras="motion/v12/palavras.json",
+                trechos=[(331.6, 371.32)], recorte="1440:860:240:14", capuz="motion/hf/v12/img/v34.jpg",  # "Só que o próprio YouTube..." ... "vídeo antigo"
+                musica="motion/hf/v12/out/batida.wav", musica_em=300.0,
+                manchete=("NUNCA APAGUE", "O VÍDEO QUE FLOPOU"),
+                saida="video-12-erros-canal-pequeno/shorts/short-2.mp4"),
     "11a": dict(video="video-11-negocios-2027/video-11-final.mp4", palavras="motion/v11/palavras.json",
                 trechos=[(0.0, 39.3)], recorte="1440:860:240:14", capuz="motion/hf/v11/img/v34.jpg",  # "Em 2027..." ... "dinheiro dos anúncios"
                 musica="motion/hf/v11/out/batida.wav", musica_em=60.0,
