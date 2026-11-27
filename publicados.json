@@ -183,6 +183,15 @@
         "data": "2026-11-27",
         "sha256": "400562d8c182dcc86b36090cc6bd53863fb3536e70c8936314be79c7a5039fa7",
         "agendado_para": "2026-11-27T09:00"
+      },
+      "short-1": {
+        "status": "agendado",
+        "id": "T-hI-ciHvQY",
+        "url": "https://youtube.com/shorts/T-hI-ciHvQY",
+        "titulo": "Seu canal tem 20 views por vídeo? Não é o algoritmo #shorts",
+        "data": "2026-11-27",
+        "sha256": "9a0c143f95e8f9a5e1102d74ec5224ce26b546ec0287a08d266c9d5eb40fba90",
+        "agendado_para": "2026-11-27T08:50"
       }
     }
   }
