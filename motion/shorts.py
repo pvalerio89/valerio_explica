@@ -57,6 +57,16 @@ SHORTS = {
                manchete=("PARE DE OLHAR", "ESSES 3 NÚMEROS"),
                saida="video-08-numeros-do-studio/shorts/short-2.mp4"),
     # vídeo 11 (estilo dinâmico, 5 negócios com um canal)
+    "13a": dict(video="video-13-video-morre-48h/video-13-final.mp4", palavras="motion/v13/palavras.json",
+                trechos=[(0.0, 36.52)], recorte="1440:860:240:14", capuz="motion/hf/v13/img/v34.jpg",  # "Você posta..." ... "morre em dois dias"
+                musica="motion/hf/v13/out/batida.wav", musica_em=60.0,
+                manchete=("DIA 3: LINHA RETA", "O VÍDEO MORREU?"),
+                saida="video-13-video-morre-48h/shorts/short-1.mp4"),
+    "13b": dict(video="video-13-video-morre-48h/video-13-final.mp4", palavras="motion/v13/palavras.json",
+                trechos=[(190.84, 231.5)], recorte="1440:860:240:14", capuz="motion/hf/v13/img/v34.jpg",  # "Muita gente escreve título..." ... "todo mundo comete"
+                musica="motion/hf/v13/out/batida.wav", musica_em=170.0,
+                manchete=("ESSE TÍTULO", "NINGUÉM ACHA NA BUSCA"),
+                saida="video-13-video-morre-48h/shorts/short-2.mp4"),
     "12a": dict(video="video-12-erros-canal-pequeno/video-12-final.mp4", palavras="motion/v12/palavras.json",
                 trechos=[(0.0, 40.28)], recorte="1440:860:240:14", capuz="motion/hf/v12/img/v34.jpg",  # "Tem canal..." ... "é de graça"
                 musica="motion/hf/v12/out/batida.wav", musica_em=60.0,
