@@ -202,6 +202,17 @@
         "sha256": "d878b3db0a392e8b76608f476a099af23b43844e2d952d329599c82d9197dbdf",
         "agendado_para": "2026-11-28T09:00"
       }
+    },
+    "video-13-video-morre-48h": {
+      "titulo": "Por que seu vídeo morre em 2 dias (e como fazer ele render por anos)",
+      "youtube": {
+        "status": "agendado",
+        "id": "mqytyfmNs6w",
+        "url": "https://youtu.be/mqytyfmNs6w",
+        "data": "2026-11-27",
+        "sha256": "d985b5f602132215928ff4cc8a880e83a9459a0ecb0de982315777754acc268f",
+        "agendado_para": "2026-11-28T21:00"
+      }
     }
   }
 }
