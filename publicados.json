@@ -221,6 +221,15 @@
         "data": "2026-11-27",
         "sha256": "8a7ac00b4d45eabc38d16541ca3db86de9c53f46a4d19e4489e40f5e98bc8d34",
         "agendado_para": "2026-11-28T20:50"
+      },
+      "short-2": {
+        "status": "agendado",
+        "id": "yZF_MIU-Ib4",
+        "url": "https://youtube.com/shorts/yZF_MIU-Ib4",
+        "titulo": "Esse título ninguém vai achar na busca #shorts",
+        "data": "2026-11-27",
+        "sha256": "c09750ea78f8bb1600bd8780e87dba08915f8e06f05c25a6731d485af6a01603",
+        "agendado_para": "2026-11-30T09:00"
       }
     }
   }
