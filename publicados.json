@@ -192,6 +192,15 @@
         "data": "2026-11-27",
         "sha256": "9a0c143f95e8f9a5e1102d74ec5224ce26b546ec0287a08d266c9d5eb40fba90",
         "agendado_para": "2026-11-27T08:50"
+      },
+      "short-2": {
+        "status": "agendado",
+        "id": "QikvOpWMAPY",
+        "url": "https://youtube.com/shorts/QikvOpWMAPY",
+        "titulo": "Nunca apague o vídeo que flopou. Faz isso no lugar #shorts",
+        "data": "2026-11-27",
+        "sha256": "d878b3db0a392e8b76608f476a099af23b43844e2d952d329599c82d9197dbdf",
+        "agendado_para": "2026-11-28T09:00"
       }
     }
   }
