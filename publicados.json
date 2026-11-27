@@ -173,6 +173,17 @@
         "data": "2026-11-18",
         "sha256": "3e8d5d053b95d58ca2c925175f1f31698a73a8923d755d876bd0dbde22fc2a6f"
       }
+    },
+    "video-12-erros-canal-pequeno": {
+      "titulo": "7 erros que travam canal pequeno no YouTube (o 5º quase todo mundo comete)",
+      "youtube": {
+        "status": "agendado",
+        "id": "GHpKi8UAkao",
+        "url": "https://youtu.be/GHpKi8UAkao",
+        "data": "2026-11-27",
+        "sha256": "400562d8c182dcc86b36090cc6bd53863fb3536e70c8936314be79c7a5039fa7",
+        "agendado_para": "2026-11-27T09:00"
+      }
     }
   }
 }
