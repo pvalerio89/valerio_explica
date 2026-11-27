@@ -212,6 +212,15 @@
         "data": "2026-11-27",
         "sha256": "d985b5f602132215928ff4cc8a880e83a9459a0ecb0de982315777754acc268f",
         "agendado_para": "2026-11-28T21:00"
+      },
+      "short-1": {
+        "status": "agendado",
+        "id": "sxawK5WJW7A",
+        "url": "https://youtube.com/shorts/sxawK5WJW7A",
+        "titulo": "Seu vídeo para de ter views no 3º dia? O motivo #shorts",
+        "data": "2026-11-27",
+        "sha256": "8a7ac00b4d45eabc38d16541ca3db86de9c53f46a4d19e4489e40f5e98bc8d34",
+        "agendado_para": "2026-11-28T20:50"
       }
     }
   }
